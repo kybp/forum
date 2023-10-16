@@ -4,9 +4,16 @@
 
 To run the app, all you need is a recent version of Docker.
 
+To set up, first copy `.env.example` into a file named `.env`. The
+default settings should work, but take a peek in the file and see if
+you want to change anything.
+
 The included `run` script wraps docker commands for common tasks. To
 spin up the app in dev mode, just do `./run`. See the bottom of the
 `run` script for other commands.
+
+The first time you run the app, you will also need to `./run migrate`
+in order to set up the database.
 
 ### e2e Specs
 

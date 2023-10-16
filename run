@@ -4,6 +4,10 @@ frontend_run() {
     docker compose run --rm frontend $*
 }
 
+backend_run() {
+    docker compose run --rm backend $*
+}
+
 e2e_run() {
     docker compose build e2e
     docker compose run --rm e2e $*
@@ -12,11 +16,14 @@ e2e_run() {
 lint() {
     frontend_run npm run lint
     frontend_run npm run typecheck
+    backend_run python -m flake8
+    backend_run python -m mypy .
     e2e_run python -m flake8
 }
 
 format() {
     frontend_run npm run format
+    backend_run python -m black .
     e2e_run python -m black .
 }
 
@@ -25,6 +32,7 @@ unit_test() {
 }
 
 e2e() {
+    backend_run python manage.py flush --no-input
     e2e_run python -m pytest
 }
 
@@ -47,6 +55,7 @@ case $command in
     lint) lint ;;
     format) format ;;
     test) unit_test ;;
+    migrate) backend_run python manage.py migrate ;;
     e2e) e2e ;;
     stop) docker-compose down ;;
     rm) docker-compose down -v ;;
