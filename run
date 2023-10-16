@@ -1,16 +1,27 @@
 #!/bin/sh -e
 
+frontend_run() {
+    docker compose run --rm frontend $*
+}
+
 e2e_run() {
     docker compose build e2e
     docker compose run --rm e2e $*
 }
 
 lint() {
+    frontend_run npm run lint
+    frontend_run npm run typecheck
     e2e_run python -m flake8
 }
 
 format() {
+    frontend_run npm run format
     e2e_run python -m black .
+}
+
+unit_test() {
+    frontend_run npm run test -- --run
 }
 
 e2e() {
@@ -18,7 +29,7 @@ e2e() {
 }
 
 dev() {
-    echo TODO >&2
+    docker compose up --build -d
 }
 
 if [ $# -gt 1 ]; then
@@ -35,6 +46,7 @@ case $command in
     restart) docker-compose down && dev ;;
     lint) lint ;;
     format) format ;;
+    test) unit_test ;;
     e2e) e2e ;;
     stop) docker-compose down ;;
     rm) docker-compose down -v ;;

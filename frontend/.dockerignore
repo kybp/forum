@@ -1,0 +1,6 @@
+# Ignore logs
+*.log
+npm-debug.log*
+
+# Ignore compiler output
+dist/

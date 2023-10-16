@@ -14,3 +14,11 @@ services:
       - e2e
     volumes:
       - ./e2e:/usr/src/e2e
+  frontend:
+    build: ./frontend
+    command: npm run dev
+    volumes:
+      - /usr/src/app/node_modules/
+      - ./frontend/:/usr/src/app/
+    ports:
+      - 3000:3000
