@@ -23,30 +23,42 @@ lint() {
 
 format() {
     frontend_run npm run format
-    backend_run python -m black .
-    e2e_run python -m black .
+    backend_run python -m black --line-length 79 .
+    e2e_run python -m black --line-length 79 .
 }
 
 unit_test() {
+    backend_run python -m pytest
     frontend_run npm run test -- --run
 }
 
 e2e() {
     backend_run python manage.py flush --no-input
-    e2e_run python -m pytest
+    backend_run python manage.py seed
+    e2e_run python -m pytest $*
+}
+
+debug_e2e() {
+    backend_run python manage.py flush --no-input
+    backend_run python manage.py seed
+    set -o allexport
+    . ./.env
+    set +o allexport
+    . env/bin/activate
+    cd e2e
+    E2E_HOST=http://localhost:3000 PWDEBUG=1 python -m pytest $*
+    deactivate
 }
 
 dev() {
     docker compose up --build -d
 }
 
-if [ $# -gt 1 ]; then
-    echo "Error: expected at most 1 command (see bottom of script for options)" >&2
-    exit 1
-elif [ $# -eq 0 ]; then
+if [ $# -eq 0 ]; then
     command=dev
 else
     command=$1
+    shift
 fi
 
 case $command in
@@ -56,7 +68,8 @@ case $command in
     format) format ;;
     test) unit_test ;;
     migrate) backend_run python manage.py migrate ;;
-    e2e) e2e ;;
+    e2e) e2e $* ;;
+    debug-e2e) debug_e2e $* ;;
     stop) docker-compose down ;;
     rm) docker-compose down -v ;;
     *)

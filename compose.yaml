@@ -4,16 +4,16 @@ services:
   e2e:
     build: ./e2e
     ipc: host # Chrome can run out of memory without this
+    env_file:
+      - ./.env
     environment:
       E2E_HOST: http://frontend:3000
-      E2E_USERNAME: e2e
-      E2E_PASSWORD: GreatPassword
-      E2E_UNUSED_USERNAME: bad_e2e
-      E2E_UNUSED_EMAIL: bad_e2e@example.com
     profiles:
       - e2e
     volumes:
       - ./e2e:/usr/src/e2e
+    depends_on:
+      - frontend
   frontend:
     build: ./frontend
     command: npm run dev
@@ -22,6 +22,8 @@ services:
       - ./frontend/:/usr/src/app/
     ports:
       - 3000:3000
+    env_file:
+      - ./.env
     depends_on:
       - backend
   backend:
@@ -31,12 +33,14 @@ services:
       - ./backend/:/usr/src/app/
     ports:
       - 8000:8000
+    stdin_open: true # We need this to be able to use pdb
     env_file:
       - ./.env
     environment:
       SQL_HOST: db
     depends_on:
-      - db
+      db:
+        condition: service_healthy
   db:
     image: postgres:15
     volumes:
@@ -47,6 +51,11 @@ services:
       POSTGRES_USER: ${SQL_USER}
       POSTGRES_PASSWORD: ${SQL_PASSWORD}
       POSTGRES_DB: ${SQL_DATABASE}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres_data:

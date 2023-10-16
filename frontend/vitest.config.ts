@@ -8,7 +8,8 @@ export default mergeConfig(
     test: {
       environment: 'jsdom',
       exclude: configDefaults.exclude,
-      root: fileURLToPath(new URL('./', import.meta.url))
+      mockReset: true,
+      root: fileURLToPath(new URL('./', import.meta.url)),
     }
   })
 )
