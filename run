@@ -1,5 +1,22 @@
 #!/bin/sh -e
 
+e2e_run() {
+    docker compose build e2e
+    docker compose run --rm e2e $*
+}
+
+lint() {
+    e2e_run python -m flake8
+}
+
+format() {
+    e2e_run python -m black .
+}
+
+e2e() {
+    e2e_run python -m pytest
+}
+
 dev() {
     echo TODO >&2
 }
@@ -16,6 +33,13 @@ fi
 case $command in
     dev) dev ;;
     restart) docker-compose down && dev ;;
+    lint) lint ;;
+    format) format ;;
+    e2e) e2e ;;
     stop) docker-compose down ;;
     rm) docker-compose down -v ;;
+    *)
+        echo "$0: Unrecognised command (see script for options): $command" >&2
+        exit 1
+        ;;
 esac

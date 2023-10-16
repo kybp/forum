@@ -1,0 +1,3 @@
+# Ignore Python virtual environment directory, which may exist for
+# running e2e specs locally with the inspector.
+env/
