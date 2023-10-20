@@ -20,12 +20,15 @@ type State = {
   threads: Record<number, Thread>
   /** A map of post ID's to booleans indicating whether they're loading */
   loading: Record<number, boolean>
+  /** Whether the list of threads is being fetched */
+  loadingThreadList: boolean
 }
 
 export const useThreadStore = defineStore('thread', {
   state: (): State => ({
     threads: {},
     loading: {},
+    loadingThreadList: false,
   }),
   actions: {
     async post(params: PostThreadParams): Promise<Thread> {
@@ -44,10 +47,17 @@ export const useThreadStore = defineStore('thread', {
       if (this.loading[id]) return
 
       this.loading[id] = true
-      const thread: Thread = await api.get(`threads/posts/${id}`)
+      const thread: Thread = await api.get(`threads/posts/${id}/`)
       this.loading[id] = false
 
       this.threads[id] = thread
+    },
+    async fetchThreadList(): Promise<void> {
+      this.loadingThreadList = true
+      const threads: Thread[] = await api.get('threads/posts/')
+      this.loadingThreadList = false
+
+      threads.forEach((thread) => (this.threads[thread.id] = thread))
     },
   },
   getters: {

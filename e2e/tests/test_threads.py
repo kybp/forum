@@ -17,3 +17,15 @@ def test_posting_a_thread(page: Page):
     expect(thread_page.author).to_have_text(username)
     expect(thread_page.title).to_have_text(title)
     expect(thread_page.body).to_have_text(body)
+
+
+def test_created_threads_appear_in_list(page: Page):
+    home_page = HomePage(page)
+
+    home_page.sign_in()
+    title = "a great title"
+    home_page.post_thread(title=title)
+    home_page.go_to_home_page()
+
+    home_page.open_thread(title)
+    expect(ThreadDetailPage(page).title).to_have_text(title)

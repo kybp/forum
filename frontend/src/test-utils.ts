@@ -9,3 +9,5 @@ export const wrap = <T>(component: T, options = {}): VueWrapper<T> =>
       plugins: [createTestingPinia({ createSpy: vi.fn })],
     },
   })
+
+export const makeId = (): number => Math.floor(Math.random() * 100000)

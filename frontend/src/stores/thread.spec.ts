@@ -23,6 +23,20 @@ describe('thread store', () => {
     authStore.user = userFactory({ token })
   })
 
+  describe('initially', () => {
+    it('has no threads', () => {
+      expect(useThreadStore().threads).toEqual({})
+    })
+
+    it('is not loading any individual threads', () => {
+      expect(useThreadStore().loading).toEqual({})
+    })
+
+    it('is not loading the list of threads', () => {
+      expect(useThreadStore().loadingThreadList).toBe(false)
+    })
+  })
+
   describe('post', () => {
     const params = { title: 'a title', body: 'a body' }
 
@@ -31,9 +45,9 @@ describe('thread store', () => {
     })
 
     it('posts to the new thread endpoint', async () => {
-      const thread = useThreadStore()
+      const threadStore = useThreadStore()
 
-      await thread.post(params)
+      await threadStore.post(params)
 
       expect(api.post).toHaveBeenCalledWith('threads/posts/', params, {
         headers: { Authorization: `Token ${token}` },
@@ -41,40 +55,60 @@ describe('thread store', () => {
     })
 
     it('saves the returned thread in the store', async () => {
-      const thread = useThreadStore()
+      const threadStore = useThreadStore()
       const createdThread = threadFactory()
       api.post.mockResolvedValueOnce(createdThread)
 
-      await thread.post(params)
+      await threadStore.post(params)
 
-      const threadInStore = thread.thread(createdThread.id)
+      const threadInStore = threadStore.thread(createdThread.id)
       expect(threadInStore.id).toEqual(createdThread.id)
       expect(threadInStore.title).toEqual(createdThread.title)
     })
   })
 
   describe('fetchThread', () => {
-    beforeEach(() => {
-      api.post.mockResolvedValue(threadFactory())
-    })
-
     it('makes a GET request to the endpoint', async () => {
-      const thread = useThreadStore()
+      const threadStore = useThreadStore()
       const id = 12
 
-      await thread.fetchThread(id)
+      await threadStore.fetchThread(id)
 
-      expect(api.get).toHaveBeenCalledWith(`threads/posts/${id}`)
+      expect(api.get).toHaveBeenCalledWith(`threads/posts/${id}/`)
     })
 
     it('saves the fetched thread', async () => {
-      const thread = useThreadStore()
+      const threadStore = useThreadStore()
       const fetchedThread = threadFactory()
       api.get.mockResolvedValueOnce(fetchedThread)
 
-      await thread.fetchThread(fetchedThread.id)
+      await threadStore.fetchThread(fetchedThread.id)
 
-      expect(thread.thread(fetchedThread.id)).toEqual(fetchedThread)
+      expect(threadStore.thread(fetchedThread.id)).toEqual(fetchedThread)
+    })
+  })
+
+  describe('fetchThreadList', () => {
+    beforeEach(() => {
+      api.get.mockResolvedValue([])
+    })
+
+    it('makes a GET request to the endpoint', async () => {
+      const threadStore = useThreadStore()
+
+      await threadStore.fetchThreadList()
+
+      expect(api.get).toHaveBeenCalledWith('threads/posts/')
+    })
+
+    it('saves all the returned threads', async () => {
+      const threadStore = useThreadStore()
+      const threads = [threadFactory(), threadFactory()]
+      api.get.mockResolvedValueOnce(threads)
+
+      await threadStore.fetchThreadList()
+
+      threads.forEach((t) => expect(threadStore.thread(t.id)).toEqual(t))
     })
   })
 })

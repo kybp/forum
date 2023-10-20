@@ -14,6 +14,9 @@ class HomePage:
         self.page.get_by_role("link", name="Register").click()
         return RegistrationPage(self.page)
 
+    def go_to_home_page(self):
+        self.page.get_by_role("link", name="Home").click()
+
     @property
     def header(self):
         return self.page.get_by_role("banner")
@@ -61,7 +64,10 @@ class HomePage:
     def sign_out(self):
         self.sign_out_button.click()
 
-    def post_thread(self, title: str, body: str):
+    def post_thread(self, title: str = "title", body: str = "body"):
         self.post_thread_button.click()
         post_thread_page = PostThreadPage(self.page)
         post_thread_page.post_thread(title, body)
+
+    def open_thread(self, title):
+        self.page.get_by_role("link", name=title).first.click()
