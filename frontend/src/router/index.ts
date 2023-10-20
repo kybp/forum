@@ -14,6 +14,16 @@ const router = createRouter({
       name: 'register',
       component: () => import('../views/RegisterView.vue'),
     },
+    {
+      path: '/post',
+      name: 'post',
+      component: () => import('../views/NewThreadView.vue'),
+    },
+    {
+      path: '/threads/:id',
+      name: 'thread detail',
+      component: () => import('../views/ThreadDetailView.vue'),
+    },
   ],
 })
 

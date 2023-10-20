@@ -1,6 +1,7 @@
 from playwright.sync_api import Page
 
 from e2e import config
+from .post_thread_page import PostThreadPage
 from .registration_page import RegistrationPage
 
 
@@ -41,6 +42,10 @@ class HomePage:
     def password_input(self):
         return self.header.get_by_role("textbox", name="Password")
 
+    @property
+    def post_thread_button(self):
+        return self.page.get_by_role("link", name="New Thread")
+
     def register(self):
         registration_page = self.go_to_registration_page()
         username, password = registration_page.register()
@@ -51,5 +56,12 @@ class HomePage:
         self.password_input.fill(password)
         self.sign_in_button.click()
 
+        return username
+
     def sign_out(self):
         self.sign_out_button.click()
+
+    def post_thread(self, title: str, body: str):
+        self.post_thread_button.click()
+        post_thread_page = PostThreadPage(self.page)
+        post_thread_page.post_thread(title, body)

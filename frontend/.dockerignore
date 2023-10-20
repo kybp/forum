@@ -4,3 +4,7 @@ npm-debug.log*
 
 # Ignore compiler output
 dist/
+.vite/
+
+# Ignore installed dependencies
+node_modules/
