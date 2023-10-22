@@ -1,4 +1,4 @@
-from rest_framework import status, viewsets
+from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -16,12 +16,8 @@ class PostViewSet(viewsets.ModelViewSet):
             return []
         return [IsAuthenticated()]
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        # Load newly created instance
-        serializer = self.get_serializer(serializer.save())
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
 
 
 class ReplyViewSet(viewsets.ModelViewSet):
@@ -33,13 +29,8 @@ class ReplyViewSet(viewsets.ModelViewSet):
             return []
         return [IsAuthenticated()]
 
-    def create(self, request):
-        serializer_class = self.get_serializer_class()
-        serializer = serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save(author=request.user)
-
-        return Response(serializer.data)
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
 
 
 class GetPostReplies(APIView):

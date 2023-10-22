@@ -6,7 +6,7 @@ const api = mande(import.meta.env.VITE_API_HOST)
 
 export type Thread = {
   id: number
-  author_id: number
+  author: number
   title: string
   body: string
   date_posted: string

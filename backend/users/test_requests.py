@@ -60,6 +60,6 @@ def test_sign_in_returns_400_if_no_such_user(client: Client, user: User):
 
 
 @pytest.mark.django_db
-def test_get_users_returns_200(client: Client, user: User):
+def test_get_user_returns_200(client: Client, user: User):
     response = client.get(f"/api/users/{user.id}/")
     assert response.status_code == 200

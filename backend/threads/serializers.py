@@ -19,10 +19,7 @@ class ReplySerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
-    author_id: Any = serializers.PrimaryKeyRelatedField(
-        read_only=True,
-        default=serializers.CurrentUserDefault(),
-    )
+    author: Any = serializers.PrimaryKeyRelatedField(read_only=True)
 
     replies: Any = serializers.PrimaryKeyRelatedField(
         many=True, read_only=True
@@ -32,13 +29,9 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
         fields = [
             "id",
-            "author_id",
+            "author",
             "title",
             "body",
             "date_posted",
             "replies",
         ]
-
-    def create(self, serializer):
-        author_id = self.data["author_id"]
-        return Post.objects.create(**self.validated_data, author_id=author_id)

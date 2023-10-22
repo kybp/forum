@@ -79,11 +79,22 @@ def test_create_post_returns_400_when_invalid(
 
 
 @pytest.mark.django_db
-def test_create_reply_returns_200_when_valid(
+def test_create_post_assigns_request_user_as_author(
+    user_client: APIClient, user: User, create_post_props: dict
+):
+    user_client.post("/api/threads/posts/", create_post_props)
+
+    post = Post.objects.last()
+    assert post is not None
+    assert post.author_id == user.id
+
+
+@pytest.mark.django_db
+def test_create_reply_returns_201_when_valid(
     user_client: APIClient, create_reply_props: dict
 ):
     response = user_client.post("/api/threads/replies/", create_reply_props)
-    assert response.status_code == 200
+    assert response.status_code == 201
 
 
 @pytest.mark.django_db

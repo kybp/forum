@@ -50,7 +50,7 @@ beforeEach(async () => {
   userStore = useUserStore()
   userStore.users = { [user.id]: user }
 
-  thread = threadFactory({ id: postId, author_id: user.id })
+  thread = threadFactory({ id: postId, author: user.id })
   threadStore = useThreadStore()
   threadStore.threads = { [postId]: thread }
 })

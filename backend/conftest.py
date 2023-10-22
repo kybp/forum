@@ -1,6 +1,5 @@
 import pytest
 from rest_framework.authtoken.models import Token
-from rest_framework.request import Request
 from rest_framework.test import APIClient
 
 import threads.factories as threads_factories
@@ -32,12 +31,6 @@ def post():
 @pytest.fixture
 def reply():
     return threads_factories.ReplyFactory()
-
-
-@pytest.fixture
-def user_request(user: User, request: Request) -> Request:
-    request.user = user
-    return request
 
 
 @pytest.fixture

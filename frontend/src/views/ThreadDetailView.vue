@@ -20,11 +20,11 @@ const thread = computed(() => threadStore.thread(postId))
 if (!thread.value) threadStore.fetchThread(postId)
 
 const author = computed(() => {
-  return thread.value ? userStore.user(thread.value.author_id) : null
+  return thread.value ? userStore.user(thread.value.author) : null
 })
 
 watchEffect(() => {
-  if (thread.value && !author.value) userStore.fetchUser(thread.value.author_id)
+  if (thread.value && !author.value) userStore.fetchUser(thread.value.author)
 })
 </script>
 <template>
