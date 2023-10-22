@@ -53,4 +53,7 @@ export const useAuthStore = defineStore({
       this.updateUser(null)
     },
   },
+  getters: {
+    isSignedIn: (state: State) => !!state.user,
+  },
 })

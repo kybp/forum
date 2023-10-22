@@ -21,3 +21,14 @@ class Post(models.Model):
         separator = " --- " if body else ""
 
         return f"{title}{separator}{body}"
+
+
+class Reply(models.Model):
+    """A reply to a Post."""
+
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(
+        Post, on_delete=models.CASCADE, related_name="replies"
+    )
+    body = models.TextField(null=False, blank=False)
+    date_posted = models.DateTimeField(auto_now_add=True)

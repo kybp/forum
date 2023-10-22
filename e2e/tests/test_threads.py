@@ -29,3 +29,17 @@ def test_created_threads_appear_in_list(page: Page):
 
     home_page.open_thread(title)
     expect(ThreadDetailPage(page).title).to_have_text(title)
+
+
+def test_replying_to_a_thread(page: Page):
+    home_page = HomePage(page)
+
+    username = home_page.sign_in()
+    home_page.post_thread()
+
+    thread_page = ThreadDetailPage(page)
+    body = "A well thought-out response"
+    thread_page.reply(body)
+
+    expect(thread_page.first_reply_author).to_have_text(username)
+    expect(thread_page.first_reply_body).to_have_text(body)

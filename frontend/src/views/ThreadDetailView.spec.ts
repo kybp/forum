@@ -1,16 +1,20 @@
 import { VueWrapper } from '@vue/test-utils'
-import { beforeEach, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import ReplyForm from '@/components/ReplyForm.vue'
 import ThreadDetailView from '@/views/ThreadDetailView.vue'
+import { useAuthStore } from '@/stores/auth'
+import { userFactory as authUserFactory } from '@/stores/auth.factories'
 import type { Thread } from '@/stores/thread'
 import { useThreadStore } from '@/stores/thread'
-import { wrap } from '@/test-utils'
-import { userFactory } from '@/stores/auth.factories'
 import { threadFactory } from '@/stores/thread.factories'
 import type { User } from '@/stores/user'
+import { userFactory } from '@/stores/user.factories'
 import { useUserStore } from '@/stores/user'
+import { wrap } from '@/test-utils'
 
 let wrapper: VueWrapper<typeof ThreadDetailView>
+let authStore: ReturnType<typeof useAuthStore>
 let threadStore: ReturnType<typeof useThreadStore>
 let userStore: ReturnType<typeof useUserStore>
 
@@ -22,10 +26,10 @@ vi.mock('mande', () => ({
   mande: () => api,
 }))
 
-const threadId = vi.hoisted(() => 17)
+const postId = vi.hoisted(() => 17)
 
 const route = vi.hoisted(() => ({
-  params: { id: threadId },
+  params: { id: postId },
 }))
 
 vi.mock('vue-router', () => ({
@@ -39,39 +43,67 @@ let user: User
 beforeEach(async () => {
   wrapper = wrap(ThreadDetailView)
 
+  authStore = useAuthStore()
+
   user = userFactory()
   userStore = useUserStore()
   userStore.users = { [user.id]: user }
 
-  thread = threadFactory({ id: threadId, author_id: user.id })
+  thread = threadFactory({ id: postId, author_id: user.id })
   threadStore = useThreadStore()
-  threadStore.threads = { [threadId]: thread }
+  threadStore.threads = { [postId]: thread }
 })
 
-it('renders author username', () => {
-  expect(wrapper.text()).toContain(user.username)
+const itRendersThread = () => {
+  it('renders author username', () => {
+    expect(wrapper.text()).toContain(user.username)
+  })
+
+  it('renders post title', () => {
+    expect(wrapper.text()).toContain(thread.title)
+  })
+
+  it('renders post body', () => {
+    expect(wrapper.text()).toContain(thread.body)
+  })
+
+  it('is not loading when it has all data', () => {
+    expect(wrapper.text()).not.toContain('Loading...')
+  })
+
+  it('is loading when it does not have the thread', async () => {
+    threadStore.threads = {}
+    await wrapper.vm.$nextTick()
+    expect(wrapper.text()).toContain('Loading...')
+  })
+
+  it('is loading when it does not have the user', async () => {
+    userStore.users = {}
+    await wrapper.vm.$nextTick()
+    expect(wrapper.text()).toContain('Loading...')
+  })
+}
+
+describe('when the user is signed in', () => {
+  beforeEach(() => {
+    authStore.user = authUserFactory()
+  })
+
+  itRendersThread()
+
+  it('renders a reply form', () => {
+    expect(wrapper.findComponent(ReplyForm).exists()).toBe(true)
+  })
 })
 
-it('renders post title', () => {
-  expect(wrapper.text()).toContain(thread.title)
-})
+describe('when the user is signed out', () => {
+  beforeEach(() => {
+    authStore.user = null
+  })
 
-it('renders post body', () => {
-  expect(wrapper.text()).toContain(thread.body)
-})
+  itRendersThread()
 
-it('is not loading when it has all data', () => {
-  expect(wrapper.text()).not.toContain('Loading...')
-})
-
-it('is loading when it does not have the thread', async () => {
-  threadStore.threads = {}
-  await wrapper.vm.$nextTick()
-  expect(wrapper.text()).toContain('Loading...')
-})
-
-it('is loading when it does not have the user', async () => {
-  userStore.users = {}
-  await wrapper.vm.$nextTick()
-  expect(wrapper.text()).toContain('Loading...')
+  it('does not render a reply form', () => {
+    expect(wrapper.findComponent(ReplyForm).exists()).toBe(false)
+  })
 })

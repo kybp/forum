@@ -13,3 +13,13 @@ class PostFactory(factory.django.DjangoModelFactory):
     title: Any = factory.Faker("sentence")
     body: Any = factory.Faker("paragraph")
     date_posted: Any = factory.Faker("past_datetime")
+
+
+class ReplyFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.Reply
+
+    author: Any = factory.SubFactory(users_factories.UserFactory)
+    post: Any = factory.SubFactory(PostFactory)
+    body: Any = factory.Faker("paragraph")
+    date_posted: Any = factory.Faker("past_datetime")

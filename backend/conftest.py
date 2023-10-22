@@ -30,6 +30,11 @@ def post():
 
 
 @pytest.fixture
+def reply():
+    return threads_factories.ReplyFactory()
+
+
+@pytest.fixture
 def user_request(user: User, request: Request) -> Request:
     request.user = user
     return request

@@ -50,6 +50,20 @@ describe('auth store', () => {
     })
   })
 
+  describe('isSignedIn', () => {
+    it('is true when user is set', () => {
+      const auth = useAuthStore()
+      auth.user = userFactory()
+      expect(auth.isSignedIn).toBe(true)
+    })
+
+    it('is false when user is null', () => {
+      const auth = useAuthStore()
+      auth.user = null
+      expect(auth.isSignedIn).toBe(false)
+    })
+  })
+
   describe('register', () => {
     const params = registerPropsFactory()
 

@@ -4,7 +4,7 @@ from faker import Faker
 from rest_framework.test import APIClient
 
 from users.models import User
-from .models import Post
+from .models import Post, Reply
 
 fake = Faker()
 
@@ -13,6 +13,14 @@ fake = Faker()
 def create_post_props(user: User):
     return {
         "title": fake.sentence(),
+        "body": fake.paragraph(),
+    }
+
+
+@pytest.fixture
+def create_reply_props(post: Post):
+    return {
+        "post": post.id,
         "body": fake.paragraph(),
     }
 
@@ -68,3 +76,31 @@ def test_create_post_returns_400_when_invalid(
     del create_post_props["title"]
     response = user_client.post("/api/threads/posts/", create_post_props)
     assert response.status_code == 400
+
+
+@pytest.mark.django_db
+def test_create_reply_returns_200_when_valid(
+    user_client: APIClient, create_reply_props: dict
+):
+    response = user_client.post("/api/threads/replies/", create_reply_props)
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_create_reply_returns_400_when_invalid(
+    user_client: APIClient, create_reply_props: dict
+):
+    del create_reply_props["post"]
+    response = user_client.post("/api/threads/replies/", create_reply_props)
+    assert response.status_code == 400
+
+
+@pytest.mark.django_db
+def test_create_reply_assigns_request_user_as_author(
+    user_client: APIClient, user: User, create_reply_props: dict
+):
+    user_client.post("/api/threads/replies/", create_reply_props)
+
+    reply = Reply.objects.last()
+    assert reply is not None
+    assert reply.author_id == user.id

@@ -4,6 +4,7 @@ from faker import Faker
 from rest_framework.request import Request
 
 from users.models import User
+from .factories import ReplyFactory
 from .models import Post
 from .serializers import PostSerializer
 
@@ -27,6 +28,7 @@ def test_contains_expected_fields(post: Post):
         "title",
         "body",
         "date_posted",
+        "replies",
     }
 
 
@@ -85,3 +87,14 @@ def test_date_posted_is_populated_on_create(
     serializer.is_valid(raise_exception=True)
     post = serializer.save()
     assert type(post.date_posted) is datetime.datetime
+
+
+@pytest.mark.django_db
+def test_includes_replies(post: Post):
+    replies = [ReplyFactory(post=post), ReplyFactory(post=post)]
+
+    serializer = PostSerializer(post)
+
+    assert len(serializer.data["replies"]) == len(replies)
+    for reply in replies:
+        assert reply.id in serializer.data["replies"]
