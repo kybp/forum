@@ -2,6 +2,7 @@ import { VueWrapper } from '@vue/test-utils'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { RouterLink } from 'vue-router'
 
+import LoadingPlaceholder from '@/components/LoadingPlaceholder.vue'
 import ThreadList from '@/components/ThreadList.vue'
 import { useAuthStore } from '@/stores/auth'
 import { userFactory } from '@/stores/auth.factories'
@@ -25,7 +26,7 @@ describe('rendering', () => {
     it('is loading when the thread list is loading', async () => {
       threadStore.loadingThreadList = true
       await wrapper.vm.$nextTick()
-      expect(wrapper.text()).toContain('Loading...')
+      expect(wrapper.findComponent(LoadingPlaceholder).exists()).toBe(true)
     })
 
     it('renders a ThreadList when not loading', async () => {

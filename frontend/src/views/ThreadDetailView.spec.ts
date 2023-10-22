@@ -1,6 +1,7 @@
 import { VueWrapper } from '@vue/test-utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import LoadingPlaceholder from '@/components/LoadingPlaceholder.vue'
 import ReplyForm from '@/components/ReplyForm.vue'
 import ThreadDetailView from '@/views/ThreadDetailView.vue'
 import { useAuthStore } from '@/stores/auth'
@@ -68,19 +69,19 @@ const itRendersThread = () => {
   })
 
   it('is not loading when it has all data', () => {
-    expect(wrapper.text()).not.toContain('Loading...')
+    expect(wrapper.findComponent(LoadingPlaceholder).exists()).toBe(false)
   })
 
   it('is loading when it does not have the thread', async () => {
     threadStore.threads = {}
     await wrapper.vm.$nextTick()
-    expect(wrapper.text()).toContain('Loading...')
+    expect(wrapper.findComponent(LoadingPlaceholder).exists()).toBe(true)
   })
 
   it('is loading when it does not have the user', async () => {
     userStore.users = {}
     await wrapper.vm.$nextTick()
-    expect(wrapper.text()).toContain('Loading...')
+    expect(wrapper.findComponent(LoadingPlaceholder).exists()).toBe(true)
   })
 }
 

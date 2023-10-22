@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { RouterLink } from 'vue-router'
+import LoadingPlaceholder from '@/components/LoadingPlaceholder.vue'
 import ThreadList from '@/components/ThreadList.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useThreadStore } from '@/stores/thread'
@@ -20,7 +21,7 @@ const loading = computed(() => threadStore.loadingThreadList)
 <template>
   <main>
     <RouterLink v-if="user" to="/post">New Thread</RouterLink>
-    <div v-if="loading">Loading...</div>
+    <LoadingPlaceholder v-if="loading" />
     <ThreadList v-else :threads="threads" />
   </main>
 </template>

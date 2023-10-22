@@ -2,6 +2,7 @@
 import { computed, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
 
+import LoadingPlaceholder from '@/components/LoadingPlaceholder.vue'
 import ReplyForm from '@/components/ReplyForm.vue'
 import ReplyList from '@/components/ReplyList.vue'
 import { useAuthStore } from '@/stores/auth'
@@ -28,13 +29,13 @@ watchEffect(() => {
 </script>
 <template>
   <h1 v-if="thread" data-testid="title">{{ thread.title }}</h1>
-  <div v-else>Loading...</div>
+  <LoadingPlaceholder v-else />
 
   <div v-if="author" data-testid="author">{{ author.username }}</div>
-  <div v-else>Loading...</div>
+  <LoadingPlaceholder v-else />
 
   <div v-if="thread" data-testid="body">{{ thread.body }}</div>
-  <div v-else>Loading...</div>
+  <LoadingPlaceholder v-else />
 
   <ReplyForm v-if="authStore.isSignedIn" :post-id="postId" />
 
