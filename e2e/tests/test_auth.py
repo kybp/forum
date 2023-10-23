@@ -33,3 +33,12 @@ def test_signing_in_and_out(page: Page):
     expect(home_page.sign_out_button).to_be_visible()
     home_page.sign_out()
     expect(home_page.sign_out_button).to_be_hidden()
+
+
+def test_error_when_signing_in_with_bad_credentials(page: Page):
+    home_page = HomePage(page)
+
+    expect(home_page.field_error).to_be_hidden()
+    home_page.sign_in(password=f"{config.PASSWORD} and more")
+    expect(home_page.sign_out_button).to_be_hidden()
+    expect(home_page.field_error).to_be_visible()

@@ -25,6 +25,7 @@ export type RegisterProps = {
 type State = {
   user: User | null
   registerErrors: Errors | null
+  signInErrors: Errors | null
 }
 
 export const useAuthStore = defineStore({
@@ -32,6 +33,7 @@ export const useAuthStore = defineStore({
   state: (): State => ({
     user: JSON.parse(localStorage.getItem('user') ?? 'null'),
     registerErrors: null,
+    signInErrors: null,
   }),
   actions: {
     updateUser(user: User | null) {
@@ -47,7 +49,7 @@ export const useAuthStore = defineStore({
     async register(props: RegisterProps) {
       try {
         this.updateUser(await api.post('users/', props))
-        this.registerErrors = null
+        this.clearRegisterErrors()
       } catch (error: unknown) {
         if (!isMandeError(error)) throw error
 
@@ -62,7 +64,20 @@ export const useAuthStore = defineStore({
     },
 
     async signIn(props: SignInProps) {
-      this.updateUser(await api.post('users/token/', props))
+      try {
+        this.updateUser(await api.post('users/token/', props))
+        this.clearSignInErrors()
+      } catch (error: unknown) {
+        if (!isMandeError(error)) throw error
+
+        if (error.response.status === 400) {
+          this.signInErrors = error.body
+        }
+      }
+    },
+
+    clearSignInErrors() {
+      this.signInErrors = null
     },
 
     async signOut() {

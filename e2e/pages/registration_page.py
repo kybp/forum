@@ -2,11 +2,12 @@ from faker import Faker
 from playwright.sync_api import Page
 
 from e2e import config
+from .base_page import BasePage
 
 fake = Faker()
 
 
-class RegistrationPage:
+class RegistrationPage(BasePage):
     def __init__(self, page: Page):
         self.page = page
 
@@ -29,10 +30,6 @@ class RegistrationPage:
     @property
     def register_button(self):
         return self.form.get_by_role("button", name="Register")
-
-    @property
-    def field_error(self):
-        return self.form.get_by_role("alert")
 
     def register(self, username=config.UNUSED_USERNAME, email=None):
         if email is None:

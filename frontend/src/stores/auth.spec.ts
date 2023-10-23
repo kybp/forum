@@ -1,8 +1,8 @@
 import { createPinia, setActivePinia } from 'pinia'
 import type { Mocked } from 'vitest'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, test, vi } from 'vitest'
 
-import type { User } from '@/stores/auth'
+import type { SignInProps, User } from '@/stores/auth'
 import { useAuthStore } from '@/stores/auth'
 import {
   registerPropsFactory,
@@ -54,6 +54,11 @@ describe('auth store', () => {
     it('has no registration errors', () => {
       authStore = useAuthStore()
       expect(authStore.registerErrors).toBe(null)
+    })
+
+    it('has no sign-in errors', () => {
+      authStore = useAuthStore()
+      expect(authStore.signInErrors).toBe(null)
     })
   })
 
@@ -141,37 +146,87 @@ describe('auth store', () => {
     })
   })
 
+  test('clearRegisterErrors clears registerErrors', async () => {
+    authStore.registerErrors = { username: ['some error'] }
+
+    authStore.clearRegisterErrors()
+
+    expect(authStore.registerErrors).toBe(null)
+  })
+
   describe('signIn', () => {
+    let params: SignInProps
+
     beforeEach(() => {
       authStore = useAuthStore()
-    })
-    const params = signInPropsFactory()
-
-    it('posts to the token endpoint', async () => {
-      await authStore.signIn(params)
-      expect(api.post).toHaveBeenCalledWith('users/token/', params)
+      params = signInPropsFactory()
     })
 
-    it('saves the user in the store', async () => {
-      const user = userFactory()
-      api.post.mockResolvedValueOnce(user)
+    describe('when the request succeeds', () => {
+      let user: User
 
-      await authStore.signIn(params)
+      beforeEach(() => {
+        user = userFactory()
+        api.post.mockResolvedValueOnce(user)
+      })
 
-      expect(authStore.user).toEqual(user)
+      it('posts to the token endpoint', async () => {
+        await authStore.signIn(params)
+        expect(api.post).toHaveBeenCalledWith('users/token/', params)
+      })
+
+      it('saves the user in the store', async () => {
+        await authStore.signIn(params)
+        expect(authStore.user).toEqual(user)
+      })
+
+      it('saves the user in localStorage', async () => {
+        await authStore.signIn(params)
+        expect(localStorage.setItem).toHaveBeenCalledWith(
+          'user',
+          JSON.stringify(user),
+        )
+      })
+
+      it('clears sign-in errors', async () => {
+        authStore.signInErrors = { username: ['error error'] }
+        await authStore.signIn(params)
+        expect(authStore.signInErrors).toBe(null)
+      })
     })
 
-    it('saves the user in localStorage', async () => {
-      const user = userFactory()
-      api.post.mockResolvedValueOnce(user)
+    describe('when the request fails', () => {
+      let error: any
 
-      await authStore.signIn(params)
+      beforeEach(() => {
+        error = {
+          response: { status: 400 },
+          body: { username: ['a very serious error'] },
+        }
 
-      expect(localStorage.setItem).toHaveBeenCalledWith(
-        'user',
-        JSON.stringify(user),
-      )
+        api.post.mockRejectedValueOnce(error)
+      })
+
+      it('saves the returned errors in the store', async () => {
+        await authStore.signIn(params)
+
+        expect(authStore.signInErrors).toEqual(error.body)
+      })
+
+      it('does not set user', async () => {
+        await authStore.signIn(params)
+
+        expect(authStore.user).toBe(null)
+      })
     })
+  })
+
+  test('clearSignInErrors clears signInErrors', async () => {
+    authStore.signInErrors = { username: ['some error'] }
+
+    authStore.clearSignInErrors()
+
+    expect(authStore.signInErrors).toBe(null)
   })
 
   describe('signOut', () => {

@@ -2,51 +2,17 @@ from faker import Faker
 from playwright.sync_api import Page
 
 from e2e import config
+from .base_page import BasePage
 from .post_thread_page import PostThreadPage
 from .registration_page import RegistrationPage
 
 fake = Faker()
 
 
-class HomePage:
+class HomePage(BasePage):
     def __init__(self, page: Page):
         self.page = page
         self.page.goto(config.HOST)
-
-    def go_to_registration_page(self):
-        self.page.get_by_role("link", name="Register").click()
-        return RegistrationPage(self.page)
-
-    def go_to_home_page(self):
-        self.page.get_by_role("link", name="Home").click()
-
-    @property
-    def header(self):
-        return self.page.get_by_role("banner")
-
-    @property
-    def sign_in_button(self):
-        return self.header.get_by_role("button", name="Sign in")
-
-    @property
-    def sign_out_button(self):
-        return self.header.get_by_role("button", name="Sign out")
-
-    @property
-    def register_button(self):
-        return self.header.get_by_role("button", name="Register")
-
-    @property
-    def username_input(self):
-        return self.header.get_by_role("textbox", name="Username")
-
-    @property
-    def email_input(self):
-        return self.header.get_by_role("textbox", name="Email")
-
-    @property
-    def password_input(self):
-        return self.header.get_by_role("textbox", name="Password")
 
     @property
     def post_thread_button(self):
@@ -56,19 +22,11 @@ class HomePage:
         if email is None:
             email = fake.email()
 
-        registration_page = self.go_to_registration_page()
+        self.go_to_registration_page()
+        registration_page = RegistrationPage(self.page)
+
         username, password = registration_page.register(username, email)
         return [username, password]
-
-    def sign_in(self, username=config.USERNAME, password=config.PASSWORD):
-        self.username_input.fill(username)
-        self.password_input.fill(password)
-        self.sign_in_button.click()
-
-        return username
-
-    def sign_out(self):
-        self.sign_out_button.click()
 
     def post_thread(self, title: str = "title", body: str = "body"):
         self.post_thread_button.click()

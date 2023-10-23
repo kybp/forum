@@ -1,25 +1,57 @@
-import { VueWrapper } from '@vue/test-utils'
-import { beforeEach, expect, test } from 'vitest'
+import { VueWrapper, flushPromises } from '@vue/test-utils'
+import { beforeEach, describe, expect, it, test } from 'vitest'
+import waitForExpect from 'wait-for-expect'
 
 import SignInForm from '@/components/SignInForm.vue'
 import { useAuthStore } from '@/stores/auth'
 import { wrap } from '@/test-utils'
+import { Field } from 'vee-validate'
 
 let wrapper: VueWrapper<typeof SignInForm>
 let authStore: ReturnType<typeof useAuthStore>
+let usernameField: VueWrapper<any>
+let passwordField: VueWrapper<any>
 
-beforeEach(() => {
-  wrapper = wrap(SignInForm)
+beforeEach(async () => {
+  wrapper = wrap(SignInForm, {}, false)
   authStore = useAuthStore()
+  ;[usernameField, passwordField] = wrapper.findAllComponents(Field)
+
+  await usernameField.setValue('username')
+  await passwordField.setValue('password')
 })
 
-test('signIn calls authStore.signIn', async () => {
-  const username = 'username'
-  const password = 'password'
+describe('form', () => {
+  it('is valid when data is valid', async () => {
+    expect(wrapper.find('span[role="alert"]').exists()).toBe(false)
+  })
 
-  await wrapper.find('input[type="text"]').setValue(username)
-  await wrapper.find('input[type="password"]').setValue(password)
-  await wrapper.find('button[type="submit"]').trigger('click')
+  test('username is required', async () => {
+    await usernameField.setValue('')
+    await usernameField.trigger('change')
 
-  expect(authStore.signIn).toHaveBeenCalledWith({ username, password })
+    await flushPromises()
+    await waitForExpect(() => {
+      expect(wrapper.find('span[role="alert"]').exists()).toBe(true)
+    })
+  })
+
+  test('password is required', async () => {
+    await passwordField.setValue('')
+    await passwordField.trigger('change')
+
+    await flushPromises()
+    await waitForExpect(() => {
+      expect(wrapper.find('span[role="alert"]').exists()).toBe(true)
+    })
+  })
+
+  test('API errors are reported', async () => {
+    authStore.signInErrors = { username: ['some error'] }
+
+    await flushPromises()
+    await waitForExpect(() => {
+      expect(wrapper.find('span[role="alert"]').exists()).toBe(true)
+    })
+  })
 })
