@@ -1,8 +1,11 @@
+from faker import Faker
 from playwright.sync_api import Page
 
 from e2e import config
 from .post_thread_page import PostThreadPage
 from .registration_page import RegistrationPage
+
+fake = Faker()
 
 
 class HomePage:
@@ -49,9 +52,12 @@ class HomePage:
     def post_thread_button(self):
         return self.page.get_by_role("link", name="New Thread")
 
-    def register(self):
+    def register(self, username=config.UNUSED_USERNAME, email=None):
+        if email is None:
+            email = fake.email()
+
         registration_page = self.go_to_registration_page()
-        username, password = registration_page.register()
+        username, password = registration_page.register(username, email)
         return [username, password]
 
     def sign_in(self, username=config.USERNAME, password=config.PASSWORD):

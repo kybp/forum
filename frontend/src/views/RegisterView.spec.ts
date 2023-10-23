@@ -1,5 +1,8 @@
 import { VueWrapper } from '@vue/test-utils'
-import { beforeEach, expect, test } from 'vitest'
+import { beforeEach, describe, expect, test } from 'vitest'
+import flushPromises from 'flush-promises'
+import { Field, Form } from 'vee-validate'
+import waitForExpect from 'wait-for-expect'
 
 import RegisterView from '@/views/RegisterView.vue'
 import { useAuthStore } from '@/stores/auth'
@@ -9,19 +12,79 @@ let wrapper: VueWrapper<typeof RegisterView>
 let authStore: ReturnType<typeof useAuthStore>
 
 beforeEach(() => {
-  wrapper = wrap(RegisterView)
+  wrapper = wrap(RegisterView, {}, false)
   authStore = useAuthStore()
 })
 
-test('register calls authStore.register', async () => {
-  const username = 'username'
-  const email = 'foo@example.com'
-  const password = 'password'
+describe('form', () => {
+  let usernameField: VueWrapper<any>
+  let emailField: VueWrapper<any>
+  let passwordField: VueWrapper<any>
 
-  await wrapper.find('input[placeholder="Username"]').setValue(username)
-  await wrapper.find('input[placeholder="Email"]').setValue(email)
-  await wrapper.find('input[type="password"]').setValue(password)
-  await wrapper.find('button[type="submit"]').trigger('click')
+  beforeEach(async () => {
+    ;[usernameField, emailField, passwordField] =
+      wrapper.findAllComponents(Field)
 
-  expect(authStore.register).toHaveBeenCalledWith({ username, email, password })
+    await usernameField.setValue('username')
+    await emailField.setValue('email@example.com')
+    await passwordField.setValue('password')
+  })
+
+  test('form is valid when data is valid', async () => {
+    await wrapper.findComponent(Form).trigger('change')
+
+    await flushPromises()
+    await waitForExpect(() => {
+      expect(wrapper.find('span[role="alert"]').exists()).toBe(false)
+    })
+  })
+
+  test('username is required', async () => {
+    await usernameField.setValue('')
+    await usernameField.trigger('change')
+
+    await flushPromises()
+    await waitForExpect(() => {
+      expect(wrapper.find('span[role="alert"]').exists()).toBe(true)
+    })
+  })
+
+  test('email is required', async () => {
+    await emailField.setValue('')
+    await emailField.trigger('change')
+
+    await flushPromises()
+    await waitForExpect(() => {
+      expect(wrapper.find('span[role="alert"]').exists()).toBe(true)
+    })
+  })
+
+  test('email must be valid', async () => {
+    await emailField.setValue('a good email')
+    await emailField.trigger('change')
+
+    await flushPromises()
+    await waitForExpect(() => {
+      expect(wrapper.find('span[role="alert"]').exists()).toBe(true)
+    })
+  })
+
+  test('password is required', async () => {
+    await passwordField.setValue('')
+    await passwordField.trigger('change')
+
+    await flushPromises()
+    await waitForExpect(() => {
+      expect(wrapper.find('span[role="alert"]').exists()).toBe(true)
+    })
+  })
+
+  test('API errors are reported', async () => {
+    authStore.registerErrors = { username: ['some error'] }
+
+    await flushPromises()
+    await waitForExpect(() => {
+      expect(wrapper.find('span[role="alert"]').exists()).toBe(true)
+    })
+  })
 })

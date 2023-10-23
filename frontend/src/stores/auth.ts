@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { mande } from 'mande'
+import { isMandeError, type Errors } from './utils'
 
 const api = mande(import.meta.env.VITE_API_HOST)
 
@@ -23,12 +24,14 @@ export type RegisterProps = {
 
 type State = {
   user: User | null
+  registerErrors: Errors | null
 }
 
 export const useAuthStore = defineStore({
   id: 'auth',
   state: (): State => ({
     user: JSON.parse(localStorage.getItem('user') ?? 'null'),
+    registerErrors: null,
   }),
   actions: {
     updateUser(user: User | null) {
@@ -42,7 +45,20 @@ export const useAuthStore = defineStore({
     },
 
     async register(props: RegisterProps) {
-      this.updateUser(await api.post('users/', props))
+      try {
+        this.updateUser(await api.post('users/', props))
+        this.registerErrors = null
+      } catch (error: unknown) {
+        if (!isMandeError(error)) throw error
+
+        if (error.response.status === 400) {
+          this.registerErrors = error.body
+        }
+      }
+    },
+
+    clearRegisterErrors() {
+      this.registerErrors = null
     },
 
     async signIn(props: SignInProps) {
