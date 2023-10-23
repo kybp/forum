@@ -1,5 +1,5 @@
 import { VueWrapper } from '@vue/test-utils'
-import { beforeEach, expect, it } from 'vitest'
+import { expect, it } from 'vitest'
 import { RouterLink } from 'vue-router'
 
 import ThreadList from '@/components/ThreadList.vue'
@@ -8,24 +8,23 @@ import { wrap } from '@/test-utils'
 
 let wrapper: VueWrapper<typeof ThreadList>
 
-beforeEach(async () => {
-  wrapper = wrap(ThreadList)
-})
-
-it('links each thread', () => {
-  const threads = {
-    17: threadFactory({ id: 17 }),
-    23: threadFactory({ id: 23 }),
-  }
+it('links each thread when there are threads', () => {
+  const threads = [threadFactory({ id: 17 }), threadFactory({ id: 23 })]
 
   wrapper = wrap(ThreadList, { propsData: { threads } })
 
   const links = wrapper.findAllComponents(RouterLink)
 
-  expect(links.length).toEqual(Object.keys(threads).length)
+  expect(links.length).toEqual(threads.length)
 
-  links.forEach((link) => {
+  links.forEach((link: VueWrapper<any>) => {
     const href = `${link.vm.$props.to}`
     expect(href).toMatch(new RegExp('threads/\\d+$'))
   })
+})
+
+it('tells you to post when there are no threads', () => {
+  wrapper = wrap(ThreadList, { propsData: { threads: [] } })
+  expect(wrapper.find('.thread-list').exists()).toBe(false)
+  expect(wrapper.text()).toMatch(/post/i)
 })

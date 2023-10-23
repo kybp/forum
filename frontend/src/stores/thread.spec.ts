@@ -31,7 +31,7 @@ describe('thread store', () => {
 
   describe('initially', () => {
     it('has no threads', () => {
-      expect(useThreadStore().threads).toEqual({})
+      expect(useThreadStore().allThreads).toEqual({})
     })
 
     it('is not loading any individual threads', () => {
@@ -211,6 +211,29 @@ describe('thread store', () => {
       await threadStore.fetchThreadList()
 
       threads.forEach((t) => expect(threadStore.thread(t.id)).toEqual(t))
+    })
+  })
+
+  describe('threads', () => {
+    it('is sorted by date posted, descending', () => {
+      const earliest = threadFactory({
+        date_posted: new Date('2020-10-01').toISOString(),
+      })
+      const middle = threadFactory({
+        date_posted: new Date('2021-10-01').toISOString(),
+      })
+      const latest = threadFactory({
+        date_posted: new Date('2022-10-01').toISOString(),
+      })
+
+      const threadStore = useThreadStore()
+      threadStore.allThreads = {
+        [middle.id]: middle,
+        [earliest.id]: earliest,
+        [latest.id]: latest,
+      }
+
+      expect(threadStore.threads).toEqual([latest, middle, earliest])
     })
   })
 })

@@ -34,7 +34,7 @@ export type ReplyParams = {
 
 type State = {
   /** A map of post ID's to objects */
-  threads: Record<number, Thread>
+  allThreads: Record<number, Thread>
   /** The errors returned from the last submitted post, or `null` if none */
   postErrors: Errors | null
   /** A map of reply ID's to objects */
@@ -51,7 +51,7 @@ type State = {
 
 export const useThreadStore = defineStore('thread', {
   state: (): State => ({
-    threads: {},
+    allThreads: {},
     allReplies: {},
     repliesByPost: {},
     postErrors: null,
@@ -69,7 +69,7 @@ export const useThreadStore = defineStore('thread', {
           headers: { Authorization: `Token ${user.token}` },
         })
 
-        this.threads[thread.id] = thread
+        this.allThreads[thread.id] = thread
 
         this.postErrors = null
 
@@ -120,7 +120,7 @@ export const useThreadStore = defineStore('thread', {
       const thread: Thread = await api.get(`threads/posts/${id}/`)
       this.loading[id] = false
 
-      this.threads[id] = thread
+      this.allThreads[id] = thread
     },
     async fetchReplies(postId: number): Promise<void> {
       const replies: Reply[] = await api.get(`threads/posts/${postId}/replies`)
@@ -132,11 +132,16 @@ export const useThreadStore = defineStore('thread', {
       const threads: Thread[] = await api.get('threads/posts/')
       this.loadingThreadList = false
 
-      threads.forEach((thread) => (this.threads[thread.id] = thread))
+      threads.forEach((thread) => (this.allThreads[thread.id] = thread))
     },
   },
   getters: {
-    thread: (state: State) => (id: number) => state.threads[id],
+    thread: (state: State) => (id: number) => state.allThreads[id],
+    threads: (state: State) => {
+      return Object.values(state.allThreads).sort(
+        (x, y) => +new Date(y.date_posted) - +new Date(x.date_posted),
+      )
+    },
     replies: (state: State) => (postId: number) => {
       const ids = state.repliesByPost[postId] || []
 

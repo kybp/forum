@@ -30,18 +30,14 @@ describe('rendering', () => {
     })
 
     it('renders a ThreadList when not loading', async () => {
-      const threads = {
-        1: threadFactory({ id: 1 }),
-        2: threadFactory({ id: 2 }),
-        3: threadFactory({ id: 3 }),
-      }
+      const threads = { 1: threadFactory({ id: 1 }) }
 
-      threadStore.threads = threads
+      threadStore.allThreads = threads
       await wrapper.vm.$nextTick()
 
       const list = wrapper.findComponent(ThreadList)
       expect(list.exists()).toBe(true)
-      expect(list.vm.$props.threads).toEqual(threads)
+      expect(list.vm.$props.threads).toEqual([threads[1]])
     })
   }
 

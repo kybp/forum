@@ -52,7 +52,7 @@ beforeEach(async () => {
 
   thread = threadFactory({ id: postId, author: user.id })
   threadStore = useThreadStore()
-  threadStore.threads = { [postId]: thread }
+  threadStore.allThreads = { [postId]: thread }
 })
 
 const itRendersThread = () => {
@@ -73,7 +73,7 @@ const itRendersThread = () => {
   })
 
   it('is loading when it does not have the thread', async () => {
-    threadStore.threads = {}
+    threadStore.allThreads = {}
     await wrapper.vm.$nextTick()
     expect(wrapper.findComponent(LoadingPlaceholder).exists()).toBe(true)
   })
