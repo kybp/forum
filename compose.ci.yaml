@@ -1,0 +1,60 @@
+version: '3'
+
+services:
+  e2e:
+    image: ${DOCKERHUB_USERNAME}/e2e
+    ipc: host # Chrome can run out of memory without this
+    env_file:
+      - ./.env
+    environment:
+      E2E_HOST: http://frontend:3000
+    profiles:
+      - e2e
+    volumes:
+      - ./e2e:/usr/src/e2e
+    depends_on:
+      - frontend
+  frontend:
+    image: ${DOCKERHUB_USERNAME}/frontend
+    command: npm run dev
+    volumes:
+      - /usr/src/app/node_modules/
+      - ./frontend/:/usr/src/app/
+    ports:
+      - 3000:3000
+    env_file:
+      - ./.env
+    depends_on:
+      - backend
+  backend:
+    image: ${DOCKERHUB_USERNAME}/backend
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./backend/:/usr/src/app/
+    ports:
+      - 8000:8000
+    env_file:
+      - ./.env
+    environment:
+      SQL_HOST: db
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - ${SQL_PORT}:${SQL_PORT}
+    environment:
+      POSTGRES_USER: ${SQL_USER}
+      POSTGRES_PASSWORD: ${SQL_PASSWORD}
+      POSTGRES_DB: ${SQL_DATABASE}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:

@@ -1,3 +1,6 @@
 # Ignore cached files
 .pytest_cache/
 __pycache__/
+
+# Ignore test ouput
+test-results/

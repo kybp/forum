@@ -1,16 +1,22 @@
 #!/bin/sh -e
 
+if [ -z $CI ]; then
+    compose='docker compose'
+else
+    compose='docker compose -f compose.ci.yaml'
+fi
+
 frontend_run() {
-    docker compose run --rm frontend $*
+    $compose run --rm frontend $*
 }
 
 backend_run() {
-    docker compose run --rm backend $*
+    $compose run --rm backend $*
 }
 
 e2e_run() {
-    docker compose build e2e
-    docker compose run --rm e2e $*
+    $compose build e2e
+    $compose run --rm e2e $*
 }
 
 lint() {
@@ -51,7 +57,7 @@ debug_e2e() {
 }
 
 dev() {
-    docker compose up --build -d
+    $compose up --build -d
 }
 
 if [ $# -eq 0 ]; then
@@ -63,15 +69,17 @@ fi
 
 case $command in
     dev) dev ;;
-    restart) docker-compose down && dev ;;
+    restart) $compose down && dev ;;
     lint) lint ;;
     format) format ;;
     test) unit_test ;;
     migrate) backend_run python manage.py migrate ;;
+    pull) $compose pull && $compose pull e2e ;;
     e2e) e2e $* ;;
+    build-e2e) $compose build e2e ;;
     debug-e2e) debug_e2e $* ;;
-    stop) docker-compose down ;;
-    rm) docker-compose down -v ;;
+    stop) $compose down ;;
+    rm) $compose down -v ;;
     *)
         echo "$0: Unrecognised command (see script for options): $command" >&2
         exit 1
