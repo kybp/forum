@@ -1,19 +1,17 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
+import PostForm from '@/components/PostForm.vue'
 import { useThreadStore } from '@/stores/thread'
 
 const router = useRouter()
 const threadStore = useThreadStore()
 
-const title = ref('')
-const body = ref('')
+const { postErrors } = storeToRefs(threadStore)
 
-const postThread = async () => {
-  const thread = await threadStore.post({
-    title: title.value,
-    body: body.value,
-  })
+const postThread = async ({ title, body }: any) => {
+  const thread = await threadStore.post({ title, body })
+  if (!thread) return
 
   router.push({
     name: 'thread detail',
@@ -22,10 +20,5 @@ const postThread = async () => {
 }
 </script>
 <template>
-  <form @submit.prevent="postThread">
-    <h2>New Thread</h2>
-    <input type="text" placeholder="Title" v-model="title" />
-    <input type="text" placeholder="Body" v-model="body" />
-    <button type="submit">Submit</button>
-  </form>
+  <PostForm @submit="postThread" :errors="postErrors" />
 </template>

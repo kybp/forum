@@ -22,7 +22,7 @@ export type Reply = {
   date_posted: string
 }
 
-type PostThreadParams = {
+export type PostParams = {
   title: string
   body: string
 }
@@ -35,6 +35,8 @@ export type ReplyParams = {
 type State = {
   /** A map of post ID's to objects */
   threads: Record<number, Thread>
+  /** The errors returned from the last submitted post, or `null` if none */
+  postErrors: Errors | null
   /** A map of reply ID's to objects */
   allReplies: Record<number, Reply>
   /** A map of post ID's to arrays of reply ID's for that post */
@@ -52,22 +54,31 @@ export const useThreadStore = defineStore('thread', {
     threads: {},
     allReplies: {},
     repliesByPost: {},
+    postErrors: null,
     replyErrors: null,
     loading: {},
     loadingThreadList: false,
   }),
   actions: {
-    async post(params: PostThreadParams): Promise<Thread> {
+    async post(params: PostParams): Promise<Thread | undefined> {
       const { user } = useAuthStore()
       if (!user) throw new Error('Not signed in')
 
-      const thread: Thread = await api.post('threads/posts/', params, {
-        headers: { Authorization: `Token ${user.token}` },
-      })
+      try {
+        const thread: Thread = await api.post('threads/posts/', params, {
+          headers: { Authorization: `Token ${user.token}` },
+        })
 
-      this.threads[thread.id] = thread
+        this.threads[thread.id] = thread
 
-      return thread
+        this.postErrors = null
+
+        return thread
+      } catch (error: unknown) {
+        if (!isMandeError(error)) throw error
+
+        if (error.response.status === 400) this.postErrors = error.body
+      }
     },
     async reply(params: ReplyParams): Promise<void> {
       const { user } = useAuthStore()

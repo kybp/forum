@@ -1,10 +1,11 @@
 import { createPinia, setActivePinia } from 'pinia'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useThreadStore } from '@/stores/thread'
-import type { Reply, ReplyParams } from '@/stores/thread'
+import type { PostParams, Reply, ReplyParams } from '@/stores/thread'
 import { useAuthStore } from './auth'
 import { userFactory } from './auth.factories'
 import {
+  postParamsFactory,
   replyFactory,
   replyParamsFactory,
   threadFactory,
@@ -47,32 +48,58 @@ describe('thread store', () => {
   })
 
   describe('post', () => {
-    const params = { title: 'a title', body: 'a body' }
+    let threadStore: ReturnType<typeof useThreadStore>
+    let params: PostParams
 
     beforeEach(() => {
-      api.post.mockResolvedValue(threadFactory())
+      threadStore = useThreadStore()
+      params = postParamsFactory()
     })
 
-    it('posts to the new thread endpoint', async () => {
-      const threadStore = useThreadStore()
+    describe('when the request succeeds', () => {
+      beforeEach(() => {
+        api.post.mockResolvedValue(threadFactory())
+      })
 
-      await threadStore.post(params)
+      it('posts to the new thread endpoint', async () => {
+        const threadStore = useThreadStore()
 
-      expect(api.post).toHaveBeenCalledWith('threads/posts/', params, {
-        headers: { Authorization: `Token ${token}` },
+        await threadStore.post(params)
+
+        expect(api.post).toHaveBeenCalledWith('threads/posts/', params, {
+          headers: { Authorization: `Token ${token}` },
+        })
+      })
+
+      it('saves the returned thread in the store', async () => {
+        const createdThread = threadFactory()
+        api.post.mockResolvedValueOnce(createdThread)
+
+        await threadStore.post(params)
+
+        const threadInStore = threadStore.thread(createdThread.id)
+        expect(threadInStore.id).toEqual(createdThread.id)
+        expect(threadInStore.title).toEqual(createdThread.title)
+      })
+
+      it('clears postErrors', async () => {
+        threadStore.postErrors = { title: ['title error'] }
+        await threadStore.post(params)
+        expect(threadStore.postErrors).toBe(null)
       })
     })
 
-    it('saves the returned thread in the store', async () => {
-      const threadStore = useThreadStore()
-      const createdThread = threadFactory()
-      api.post.mockResolvedValueOnce(createdThread)
+    describe('when the request fails', () => {
+      let error: any
 
-      await threadStore.post(params)
+      beforeEach(() => {
+        error = { response: { status: 400 }, body: { body: ['error'] } }
+        api.post.mockRejectedValue(error)
+      })
 
-      const threadInStore = threadStore.thread(createdThread.id)
-      expect(threadInStore.id).toEqual(createdThread.id)
-      expect(threadInStore.title).toEqual(createdThread.title)
+      it('saves the returned errors in the store', async () => {
+        await threadStore.post(params)
+      })
     })
   })
 

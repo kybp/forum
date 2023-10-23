@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker'
 
-import type { Reply, ReplyParams, Thread } from '@/stores/thread'
+import type { PostParams, Reply, ReplyParams, Thread } from '@/stores/thread'
 import { makeId } from '@/test-utils'
 
 export const threadFactory = (props: Partial<Thread> = {}): Thread => ({
@@ -19,6 +19,14 @@ export const replyFactory = (props: Partial<Reply> = {}): Reply => ({
   post: makeId(),
   body: faker.lorem.paragraph(),
   date_posted: faker.date.anytime().toISOString(),
+  ...props,
+})
+
+export const postParamsFactory = (
+  props: Partial<PostParams> = {},
+): PostParams => ({
+  title: faker.lorem.sentence(),
+  body: faker.lorem.paragraph(),
   ...props,
 })
 
