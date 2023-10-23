@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watchEffect } from 'vue'
+import type { Ref } from 'vue'
+import { ErrorMessage, Field, Form } from 'vee-validate'
+import type { FormActions } from 'vee-validate'
+import { storeToRefs } from 'pinia'
+import * as yup from 'yup'
 import { useThreadStore } from '@/stores/thread'
 
 const props = defineProps({
@@ -11,20 +16,31 @@ const props = defineProps({
 
 const threadStore = useThreadStore()
 
-const body = ref('')
+const schema = yup.object({
+  body: yup.string().required(),
+})
 
-const reply = async () => {
+const form: Ref<any> = ref(null)
+
+const { replyErrors } = storeToRefs(threadStore)
+
+watchEffect(() => {
+  if (replyErrors.value) form.value?.setErrors(replyErrors.value)
+})
+
+const reply = async ({ body }: any, { resetForm }: FormActions<any>) => {
   await threadStore.reply({
     postId: props.postId,
-    body: body.value,
+    body,
   })
-
-  body.value = ''
+  resetForm()
 }
 </script>
 <template>
-  <form @submit.prevent="reply">
-    <textarea v-model="body" placeholder="Reply"></textarea>
+  <Form ref="form" @submit="reply" :validation-schema="schema">
+    <Field name="body" as="textarea" placeholder="Reply" />
+    <ErrorMessage name="body" />
+
     <button type="submit">Submit</button>
-  </form>
+  </Form>
 </template>

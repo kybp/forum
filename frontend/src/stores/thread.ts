@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { mande } from 'mande'
 import { useAuthStore } from './auth'
+import { isMandeError, type Errors } from './utils'
 
 const api = mande(import.meta.env.VITE_API_HOST)
 
@@ -26,7 +27,7 @@ type PostThreadParams = {
   body: string
 }
 
-type ReplyParams = {
+export type ReplyParams = {
   postId: number
   body: string
 }
@@ -38,6 +39,8 @@ type State = {
   allReplies: Record<number, Reply>
   /** A map of post ID's to arrays of reply ID's for that post */
   repliesByPost: Record<number, number[]>
+  /** The errors returned from the last submitted reply, or `null` if none */
+  replyErrors: Errors | null
   /** A map of post ID's to booleans indicating whether they're loading */
   loading: Record<number, boolean>
   /** Whether the list of threads is being fetched */
@@ -49,6 +52,7 @@ export const useThreadStore = defineStore('thread', {
     threads: {},
     allReplies: {},
     repliesByPost: {},
+    replyErrors: null,
     loading: {},
     loadingThreadList: false,
   }),
@@ -69,18 +73,25 @@ export const useThreadStore = defineStore('thread', {
       const { user } = useAuthStore()
       if (!user) throw new Error('Not signed in')
 
-      const reply: Reply = await api.post(
-        'threads/replies/',
-        {
-          post: params.postId,
-          body: params.body,
-        },
-        {
-          headers: { Authorization: `Token ${user.token}` },
-        },
-      )
+      try {
+        const reply: Reply = await api.post(
+          'threads/replies/',
+          {
+            post: params.postId,
+            body: params.body,
+          },
+          {
+            headers: { Authorization: `Token ${user.token}` },
+          },
+        )
 
-      this.saveReply(params.postId, reply)
+        this.replyErrors = null
+        this.saveReply(params.postId, reply)
+      } catch (error: unknown) {
+        if (!isMandeError(error)) throw error
+
+        if (error.response.status === 400) this.replyErrors = error.body
+      }
     },
     saveReply(postId: number, reply: Reply): void {
       this.allReplies[reply.id] = reply

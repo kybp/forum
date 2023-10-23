@@ -1,9 +1,14 @@
 import { createPinia, setActivePinia } from 'pinia'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useThreadStore } from '@/stores/thread'
+import type { Reply, ReplyParams } from '@/stores/thread'
 import { useAuthStore } from './auth'
 import { userFactory } from './auth.factories'
-import { threadFactory } from './thread.factories'
+import {
+  replyFactory,
+  replyParamsFactory,
+  threadFactory,
+} from './thread.factories'
 
 const api = vi.hoisted(() => ({
   get: vi.fn(),
@@ -35,6 +40,10 @@ describe('thread store', () => {
     it('is not loading the list of threads', () => {
       expect(useThreadStore().loadingThreadList).toBe(false)
     })
+
+    it('has no reply errors', () => {
+      expect(useThreadStore().replyErrors).toBe(null)
+    })
   })
 
   describe('post', () => {
@@ -64,6 +73,72 @@ describe('thread store', () => {
       const threadInStore = threadStore.thread(createdThread.id)
       expect(threadInStore.id).toEqual(createdThread.id)
       expect(threadInStore.title).toEqual(createdThread.title)
+    })
+  })
+
+  describe('reply', () => {
+    let threadStore: ReturnType<typeof useThreadStore>
+    let params: ReplyParams
+
+    beforeEach(() => {
+      threadStore = useThreadStore()
+      params = replyParamsFactory()
+    })
+
+    describe('when the request succeeds', () => {
+      let reply: Reply
+
+      beforeEach(() => {
+        reply = replyFactory({ post: params.postId })
+        api.post.mockResolvedValue(reply)
+      })
+
+      it('posts to the new reply endpoint', async () => {
+        await threadStore.reply(params)
+
+        const postParams: any = { ...params, post: params.postId }
+        delete postParams.postId
+        expect(api.post).toHaveBeenCalledWith('threads/replies/', postParams, {
+          headers: { Authorization: `Token ${token}` },
+        })
+      })
+
+      it('saves the reply in the store', async () => {
+        await threadStore.reply(params)
+
+        expect(threadStore.allReplies).toEqual({ [reply.id]: reply })
+        expect(threadStore.repliesByPost).toEqual({ [reply.post]: [reply.id] })
+        expect(threadStore.replies(reply.post)).toEqual([reply])
+      })
+
+      it('clears replyErrors', async () => {
+        threadStore.replyErrors = { body: ['an error'] }
+        await threadStore.reply(params)
+        expect(threadStore.replyErrors).toBe(null)
+      })
+    })
+
+    describe('when the request fails', () => {
+      let error: any
+
+      beforeEach(() => {
+        error = {
+          response: { status: 400 },
+          body: { username: ['some error'] },
+        }
+
+        api.post.mockRejectedValue(error)
+      })
+
+      it('saves the returned errors in the store', async () => {
+        await threadStore.reply(params)
+        expect(threadStore.replyErrors).toEqual(error.body)
+      })
+
+      it('does not save a reply in the store', async () => {
+        await threadStore.reply(params)
+        expect(threadStore.allReplies).toEqual({})
+      })
     })
   })
 

@@ -41,5 +41,8 @@ def test_replying_to_a_thread(page: Page):
     body = "A well thought-out response"
     thread_page.reply(body)
 
+    # Check that the input is cleared
+    expect(thread_page.reply_input).to_have_value("")
+    # Check that the reply is added to the page
     expect(thread_page.first_reply_author).to_have_text(username)
     expect(thread_page.first_reply_body).to_have_text(body)

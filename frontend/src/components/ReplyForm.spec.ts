@@ -1,36 +1,36 @@
-import { VueWrapper } from '@vue/test-utils'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { VueWrapper, flushPromises } from '@vue/test-utils'
+import { Field } from 'vee-validate'
+import { beforeEach, expect, it, test } from 'vitest'
+import waitForExpect from 'wait-for-expect'
 
 import ReplyForm from '@/components/ReplyForm.vue'
 import { useThreadStore } from '@/stores/thread'
 import { wrap } from '@/test-utils'
 
 let wrapper: VueWrapper<typeof ReplyForm>
-let threadStore: ReturnType<typeof useThreadStore>
+let bodyField: VueWrapper<any>
 
 const postId = 10
 
 beforeEach(async () => {
-  wrapper = wrap(ReplyForm, { propsData: { postId } })
-  threadStore = useThreadStore()
+  wrapper = wrap(ReplyForm, { propsData: { postId } }, false)
+  useThreadStore()
+
+  bodyField = wrapper.findComponent(Field)
+
+  await bodyField.setValue('some reply text')
 })
 
-describe('reply', () => {
-  it('calls threadStore.reply', async () => {
-    const body = 'lots of interesting text'
+it('is valid when data is valid', async () => {
+  expect(wrapper.find('span[role="alert"]').exists()).toBe(false)
+})
 
-    await wrapper.find('textarea').setValue(body)
-    await wrapper.find('form').trigger('submit')
+test('body is required', async () => {
+  await bodyField.setValue('')
+  await bodyField.trigger('change')
 
-    expect(threadStore.reply).toHaveBeenCalledWith({ postId, body })
-  })
-
-  it('clears the body input', async () => {
-    const body = 'some great body text'
-
-    await wrapper.find('textarea').setValue(body)
-    await wrapper.find('form').trigger('submit')
-
-    expect(wrapper.find('textarea').element.value).toEqual('')
+  await flushPromises()
+  await waitForExpect(() => {
+    expect(wrapper.find('span[role="alert"]').exists()).toBe(true)
   })
 })
