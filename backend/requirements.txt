@@ -16,6 +16,6 @@ pytest-django==4.5.2
 factory-boy==3.3.0
 
 # Use mypy for typechecking, and install type stubs for dependencies
-mypy==1.5.1
+mypy==1.6.1
 django-stubs==4.2.4
 djangorestframework-stubs==3.14.3
