@@ -1,21 +1,21 @@
 # Django is an obscure web framework; app doesn't seem to work without it.
 Django==4.2.5
 # Use psycopg2 for connecting to Postgres
-psycopg2-binary==2.9.6
+psycopg2-binary==2.9.9
 # Use DRF for more robust REST API support in Django
 djangorestframework==3.14.0
 # Add CORS headers to responses so the frontend can talk to us
-django-cors-headers==4.2.0
+django-cors-headers==4.3.0
 # Use flake8 for checking code quality
 flake8==6.1.0
 # Use black for code formatting
-black==23.9.1
+black==23.10.1
 # Use pytest for unit testing
 pytest-django==4.5.2
 # Use FactoryBoy for generating data in unit tests
 factory-boy==3.3.0
 
 # Use mypy for typechecking, and install type stubs for dependencies
-mypy==1.5.1
-django-stubs==4.2.4
+mypy==1.6.1
+django-stubs==4.2.6
 djangorestframework-stubs==3.14.3
