@@ -17,5 +17,5 @@ factory-boy==3.3.0
 
 # Use mypy for typechecking, and install type stubs for dependencies
 mypy==1.5.1
-django-stubs==4.2.4
+django-stubs==4.2.6
 djangorestframework-stubs==3.14.3
