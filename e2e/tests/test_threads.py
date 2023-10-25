@@ -46,3 +46,17 @@ def test_replying_to_a_thread(page: Page):
     # Check that the reply is added to the page
     expect(thread_page.first_reply_author).to_have_text(username)
     expect(thread_page.first_reply_body).to_have_text(body)
+
+
+def test_posts_and_replies_support_markdown(page: Page):
+    markdown = "# Header"
+    home_page = HomePage(page)
+
+    home_page.sign_in()
+    home_page.post_thread(body=markdown)
+    thread_page = ThreadDetailPage(page)
+
+    expect(thread_page.body.locator("h1")).to_be_visible()
+
+    thread_page.reply(markdown)
+    expect(thread_page.first_reply_body.locator("h1")).to_be_visible()
