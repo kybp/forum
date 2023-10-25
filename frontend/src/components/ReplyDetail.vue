@@ -17,11 +17,22 @@ const author = computed(() => userStore.user(props.reply.author))
 
 if (!author.value) userStore.fetchUser(props.reply.author)
 </script>
+
 <template>
   <div class="reply" :data-testid="dataTestid">
     <div v-if="author" data-testid="author">{{ author.username }}</div>
     <LoadingPlaceholder v-else />
 
-    <div data-testid="body">{{ reply.body }}</div>
+    <div class="body" data-testid="body">{{ reply.body }}</div>
   </div>
 </template>
+
+<style scoped>
+.reply {
+  display: block;
+}
+
+.reply .body {
+  display: block;
+}
+</style>

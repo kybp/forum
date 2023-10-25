@@ -21,32 +21,39 @@
   --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
 }
 
+:root {
+  --f-purple-1: #fff6ff;
+  --f-purple-2: #ffeaff;
+  --f-purple-3: #a375a3;
+  --f-purple-4: #603060;
+  --f-purple-5: #331333;
+
+  --f-pink-2: #fc7ee7;
+
+  --f-blue-3: #4588dc;
+  --f-blue-4: #044c8e;
+  --f-blue-5: #041c2e;
+
+  --f-red-1: #ffc0cf;
+  --f-red-3: #aa2222;
+
+  --f-green-3: #048822;
+}
+
 /* semantic color variables for this project */
 :root {
-  --color-background: var(--vt-c-white);
-  --color-background-soft: var(--vt-c-white-soft);
-  --color-background-mute: var(--vt-c-white-mute);
-
-  --color-border: var(--vt-c-divider-light-2);
-  --color-border-hover: var(--vt-c-divider-light-1);
-
-  --color-heading: var(--vt-c-text-light-1);
-  --color-text: var(--vt-c-text-light-1);
-
-  --section-gap: 160px;
+  --color-background: var(--f-purple-2);
+  --color-input-background: var(--f-purple-1);
+  --color-text: var(--f-blue-4);
+  --color-error: var(--f-red-3);
+  --color-error-background: var(--f-red-1);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-background: var(--vt-c-black);
-    --color-background-soft: var(--vt-c-black-soft);
-    --color-background-mute: var(--vt-c-black-mute);
-
-    --color-border: var(--vt-c-divider-dark-2);
-    --color-border-hover: var(--vt-c-divider-dark-1);
-
-    --color-heading: var(--vt-c-text-dark-1);
-    --color-text: var(--vt-c-text-dark-2);
+    --color-background: var(--f-purple-5);
+    --color-input-background: var(--f-purple-4);
+    --color-text: var(--f-blue-3);
   }
 }
 
@@ -82,4 +89,28 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+button {
+  margin: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: inherit;
+}
+
+button:enabled {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: default;
+}
+
+input {
+  border: 0;
+}
+
+div {
+  display: inline;
 }

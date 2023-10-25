@@ -11,9 +11,20 @@ const signOut = () => authStore.signOut()
 </script>
 
 <template>
-  <button v-if="user" @click="signOut">Sign out</button>
-  <div v-else>
-    <SignInForm />
-    <RouterLink to="/register">Register</RouterLink>
+  <div class="wrapper">
+    <button v-if="user" @click="signOut" class="button">Sign out</button>
+    <div v-else class="forms">
+      <SignInForm />
+      <RouterLink to="/register" class="button">Register</RouterLink>
+    </div>
   </div>
 </template>
+
+<style scoped>
+.wrapper,
+.forms {
+  display: flex;
+  height: 3rem;
+  align-items: flex-start;
+}
+</style>

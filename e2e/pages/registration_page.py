@@ -13,7 +13,7 @@ class RegistrationPage(BasePage):
 
     @property
     def form(self):
-        return self.page.locator("form").filter(has_text="Register")
+        return self.page.get_by_test_id("registration-form").locator("form")
 
     @property
     def username_input(self):

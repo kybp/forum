@@ -38,9 +38,37 @@ const reply = async ({ body }: any, { resetForm }: FormActions<any>) => {
 </script>
 <template>
   <Form ref="form" @submit="reply" :validation-schema="schema">
-    <Field name="body" as="textarea" placeholder="Reply" />
-    <ErrorMessage name="body" />
+    <div class="field">
+      <Field name="body" v-slot="{ field, errors }">
+        <textarea
+          v-bind="field"
+          placeholder="Reply"
+          :class="{ invalid: !!errors.length }"
+          rows="7"
+        ></textarea>
+      </Field>
+      <ErrorMessage name="body" />
+    </div>
 
-    <button type="submit">Submit</button>
+    <button type="submit" class="button">Submit</button>
   </Form>
 </template>
+
+<style scoped>
+form {
+  display: grid;
+  width: 60vw;
+}
+
+.field {
+  grid-column-start: 1;
+  grid-column-end: 3;
+}
+
+button[type='submit'] {
+  grid-column-start: 2;
+  grid-row-start: 2;
+  margin-top: 0.5rem;
+  justify-self: end;
+}
+</style>

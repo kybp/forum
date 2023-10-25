@@ -1,5 +1,4 @@
-import { VueWrapper, flushPromises } from '@vue/test-utils'
-import { Field } from 'vee-validate'
+import { DOMWrapper, VueWrapper, flushPromises } from '@vue/test-utils'
 import { beforeEach, expect, it, test } from 'vitest'
 import waitForExpect from 'wait-for-expect'
 
@@ -8,7 +7,7 @@ import { useThreadStore } from '@/stores/thread'
 import { wrap } from '@/test-utils'
 
 let wrapper: VueWrapper<typeof ReplyForm>
-let bodyField: VueWrapper<any>
+let bodyField: DOMWrapper<HTMLTextAreaElement>
 
 const postId = 10
 
@@ -16,7 +15,7 @@ beforeEach(async () => {
   wrapper = wrap(ReplyForm, { propsData: { postId } }, false)
   useThreadStore()
 
-  bodyField = wrapper.findComponent(Field)
+  bodyField = wrapper.find('textarea')
 
   await bodyField.setValue('some reply text')
 })

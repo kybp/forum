@@ -5,38 +5,23 @@ import UserControls from '@/components/UserControls.vue'
 
 <template>
   <header>
-    <div class="wrapper">
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-      </nav>
-      <UserControls />
-    </div>
+    <nav>
+      <RouterLink to="/">Home</RouterLink>
+    </nav>
+    <UserControls />
   </header>
 
   <RouterView />
 </template>
 
 <style scoped>
-nav {
+header {
   width: 100%;
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
 }
 
 nav a.router-link-exact-active {
   color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
 }
 </style>

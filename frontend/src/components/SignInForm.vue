@@ -28,14 +28,51 @@ const signIn = async ({ username, password }: any) => {
 
 <template>
   <Form ref="form" @submit="signIn" :validation-schema="schema">
-    <Field name="username" type="text" placeholder="Username" />
-    <ErrorMessage name="username" />
+    <div class="fields">
+      <div class="field">
+        <Field name="username" v-slot="{ field, errors }">
+          <input
+            v-bind="field"
+            type="text"
+            placeholder="Username"
+            :class="{ invalid: !!errors.length }"
+          />
+        </Field>
+        <ErrorMessage name="username" />
+      </div>
 
-    <Field name="password" type="password" placeholder="Password" />
-    <ErrorMessage name="password" />
+      <div class="field">
+        <Field name="password" v-slot="{ field, errors }">
+          <input
+            v-bind="field"
+            type="password"
+            placeholder="Password"
+            :class="{ invalid: !!errors.length }"
+          />
+        </Field>
+        <ErrorMessage name="password" />
+      </div>
 
-    <button type="submit">Sign in</button>
+      <ErrorMessage name="non_field_errors" />
+    </div>
 
-    <ErrorMessage name="non_field_errors" />
+    <button type="submit" class="button">Sign in</button>
   </Form>
 </template>
+
+<style scoped>
+form {
+  display: flex;
+  align-items: flex-start;
+}
+
+.fields {
+  display: flex;
+  margin-top: 0.3rem;
+}
+
+.field,
+button[type='submit'] {
+  margin-right: 0.5rem;
+}
+</style>

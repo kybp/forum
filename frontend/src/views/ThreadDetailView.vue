@@ -28,16 +28,43 @@ watchEffect(() => {
 })
 </script>
 <template>
-  <h1 v-if="thread" data-testid="title">{{ thread.title }}</h1>
+  <h1 class="title" v-if="thread" data-testid="title">{{ thread.title }}</h1>
   <LoadingPlaceholder v-else />
 
-  <div v-if="author" data-testid="author">{{ author.username }}</div>
+  <div class="author" v-if="author" data-testid="author">
+    {{ author.username }}
+  </div>
   <LoadingPlaceholder v-else />
 
-  <div v-if="thread" data-testid="body">{{ thread.body }}</div>
+  <div class="body" v-if="thread" data-testid="body">{{ thread.body }}</div>
   <LoadingPlaceholder v-else />
 
-  <ReplyForm v-if="authStore.isSignedIn" :post-id="postId" />
+  <ReplyForm class="reply-form" v-if="authStore.isSignedIn" :post-id="postId" />
 
   <ReplyList v-if="thread" :post-id="thread.id" />
 </template>
+
+<style scoped>
+.title {
+  line-height: normal;
+}
+
+.author {
+  font-size: 0.75rem;
+  padding-left: 2rem;
+}
+
+.author::before {
+  content: 'by ';
+}
+
+.body {
+  display: block;
+  margin: 1rem 0;
+  padding-left: 1rem;
+}
+
+.reply-form {
+  margin-bottom: 1rem;
+}
+</style>

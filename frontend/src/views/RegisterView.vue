@@ -32,16 +32,87 @@ const register = async ({ username, email, password }: any) => {
 <template>
   <h1>Register</h1>
 
-  <Form ref="form" @submit="register" :validation-schema="schema">
-    <Field name="username" type="text" placeholder="Username" />
-    <ErrorMessage name="username" />
+  <div class="wrapper" data-testid="registration-form">
+    <Form
+      ref="form"
+      class="form"
+      @submit="register"
+      :validation-schema="schema"
+    >
+      <label for="username">Username</label>
+      <div class="field">
+        <Field name="username" v-slot="{ field, errors }">
+          <input
+            id="username"
+            v-bind="field"
+            type="text"
+            placeholder="Username"
+            :class="{ invalid: !!errors.length }"
+          />
+        </Field>
+        <ErrorMessage name="username" />
+      </div>
 
-    <Field name="email" type="email" placeholder="Email" />
-    <ErrorMessage name="email" />
+      <label for="email">Email</label>
+      <div class="field">
+        <Field name="email" v-slot="{ field, errors }">
+          <input
+            id="email"
+            v-bind="field"
+            type="email"
+            placeholder="Email"
+            :class="{ invalid: !!errors.length }"
+          />
+        </Field>
+        <ErrorMessage name="email" />
+      </div>
 
-    <Field name="password" type="password" placeholder="Password" />
-    <ErrorMessage name="password" />
+      <label for="password">Password</label>
+      <div class="field">
+        <Field name="password" v-slot="{ field, errors }">
+          <input
+            id="password"
+            v-bind="field"
+            type="password"
+            placeholder="Password"
+            :class="{ invalid: !!errors.length }"
+          />
+        </Field>
+        <ErrorMessage name="password" />
+      </div>
 
-    <button type="submit">Register</button>
-  </Form>
+      <div class="actions">
+        <button type="submit" class="button">Register</button>
+      </div>
+    </Form>
+  </div>
 </template>
+
+<style scoped>
+.wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.form {
+  width: 30vw;
+  display: grid;
+  align-items: center;
+}
+
+label {
+  grid-column-start: 1;
+}
+
+.field {
+  grid-column-start: 2;
+  grid-column-end: 4;
+}
+
+.actions {
+  grid-column-start: 3;
+  grid-row-start: 4;
+  justify-self: end;
+}
+</style>

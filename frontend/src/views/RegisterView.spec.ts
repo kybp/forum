@@ -1,7 +1,6 @@
-import { VueWrapper } from '@vue/test-utils'
+import { DOMWrapper, VueWrapper } from '@vue/test-utils'
 import { beforeEach, describe, expect, test } from 'vitest'
 import flushPromises from 'flush-promises'
-import { Field, Form } from 'vee-validate'
 import waitForExpect from 'wait-for-expect'
 
 import RegisterView from '@/views/RegisterView.vue'
@@ -17,13 +16,12 @@ beforeEach(() => {
 })
 
 describe('form', () => {
-  let usernameField: VueWrapper<any>
-  let emailField: VueWrapper<any>
-  let passwordField: VueWrapper<any>
+  let usernameField: DOMWrapper<HTMLInputElement>
+  let emailField: DOMWrapper<HTMLInputElement>
+  let passwordField: DOMWrapper<HTMLInputElement>
 
   beforeEach(async () => {
-    ;[usernameField, emailField, passwordField] =
-      wrapper.findAllComponents(Field)
+    ;[usernameField, emailField, passwordField] = wrapper.findAll('input')
 
     await usernameField.setValue('username')
     await emailField.setValue('email@example.com')
@@ -31,8 +29,6 @@ describe('form', () => {
   })
 
   test('form is valid when data is valid', async () => {
-    await wrapper.findComponent(Form).trigger('change')
-
     await flushPromises()
     await waitForExpect(() => {
       expect(wrapper.find('span[role="alert"]').exists()).toBe(false)

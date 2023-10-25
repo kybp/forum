@@ -1,21 +1,20 @@
-import { VueWrapper, flushPromises } from '@vue/test-utils'
+import { DOMWrapper, VueWrapper, flushPromises } from '@vue/test-utils'
 import { beforeEach, describe, expect, it, test } from 'vitest'
 import waitForExpect from 'wait-for-expect'
 
 import SignInForm from '@/components/SignInForm.vue'
 import { useAuthStore } from '@/stores/auth'
 import { wrap } from '@/test-utils'
-import { Field } from 'vee-validate'
 
 let wrapper: VueWrapper<typeof SignInForm>
 let authStore: ReturnType<typeof useAuthStore>
-let usernameField: VueWrapper<any>
-let passwordField: VueWrapper<any>
+let usernameField: DOMWrapper<HTMLInputElement>
+let passwordField: DOMWrapper<HTMLInputElement>
 
 beforeEach(async () => {
   wrapper = wrap(SignInForm, {}, false)
   authStore = useAuthStore()
-  ;[usernameField, passwordField] = wrapper.findAllComponents(Field)
+  ;[usernameField, passwordField] = wrapper.findAll('input')
 
   await usernameField.setValue('username')
   await passwordField.setValue('password')
