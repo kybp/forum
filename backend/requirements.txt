@@ -5,7 +5,7 @@ psycopg2-binary==2.9.6
 # Use DRF for more robust REST API support in Django
 djangorestframework==3.14.0
 # Add CORS headers to responses so the frontend can talk to us
-django-cors-headers==4.2.0
+django-cors-headers==4.3.0
 # Use flake8 for checking code quality
 flake8==6.1.0
 # Use black for code formatting
