@@ -2,6 +2,7 @@ import { VueWrapper } from '@vue/test-utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import LoadingPlaceholder from '@/components/LoadingPlaceholder.vue'
+import PostBody from '@/components/PostBody.vue'
 import ReplyForm from '@/components/ReplyForm.vue'
 import ThreadDetailView from '@/views/ThreadDetailView.vue'
 import { useAuthStore } from '@/stores/auth'
@@ -65,7 +66,10 @@ const itRendersThread = () => {
   })
 
   it('renders post body', () => {
-    expect(wrapper.text()).toContain(thread.body)
+    const body = wrapper.findComponent(PostBody)
+
+    expect(body.exists()).toBe(true)
+    expect(body.vm.$props.value).toEqual(thread.body)
   })
 
   it('is not loading when it has all data', () => {

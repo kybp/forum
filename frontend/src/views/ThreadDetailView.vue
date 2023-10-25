@@ -2,6 +2,7 @@
 import { computed, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
 
+import PostBody from '@/components/PostBody.vue'
 import LoadingPlaceholder from '@/components/LoadingPlaceholder.vue'
 import ReplyForm from '@/components/ReplyForm.vue'
 import ReplyList from '@/components/ReplyList.vue'
@@ -36,7 +37,12 @@ watchEffect(() => {
   </div>
   <LoadingPlaceholder v-else />
 
-  <div class="body" v-if="thread" data-testid="body">{{ thread.body }}</div>
+  <PostBody
+    v-if="thread"
+    :value="thread.body"
+    class="body"
+    data-testid="body"
+  />
   <LoadingPlaceholder v-else />
 
   <ReplyForm class="reply-form" v-if="authStore.isSignedIn" :post-id="postId" />

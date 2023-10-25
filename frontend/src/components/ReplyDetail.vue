@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import PostBody from '@/components/PostBody.vue'
 import LoadingPlaceholder from '@/components/LoadingPlaceholder.vue'
 import { useUserStore } from '@/stores/user'
 
@@ -23,7 +24,7 @@ if (!author.value) userStore.fetchUser(props.reply.author)
     <div v-if="author" data-testid="author">{{ author.username }}</div>
     <LoadingPlaceholder v-else />
 
-    <div class="body" data-testid="body">{{ reply.body }}</div>
+    <PostBody :value="reply.body" class="body" data-testid="body" />
   </div>
 </template>
 
