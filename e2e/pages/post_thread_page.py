@@ -7,7 +7,7 @@ class PostThreadPage:
 
     @property
     def form(self):
-        return self.page.locator("form").filter(has_text="New Thread")
+        return self.page.get_by_test_id("post-form").locator("form")
 
     @property
     def title_input(self):

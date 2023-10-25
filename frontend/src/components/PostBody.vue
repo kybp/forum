@@ -18,4 +18,16 @@ const markdown = new MarkdownIt()
 .body >>> img {
   max-width: 80vw;
 }
+
+.body >>> * + p {
+  margin-top: 1rem;
+}
+
+.body >>> * + ol {
+  margin-top: 1rem;
+}
+
+.body >>> * + ul {
+  margin-top: 1rem;
+}
 </style>
