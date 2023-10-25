@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import { ref, watchEffect } from 'vue'
+import { ref, watch, watchEffect } from 'vue'
 import type { Ref } from 'vue'
+import { useRoute } from 'vue-router'
 import { ErrorMessage, Field, Form } from 'vee-validate'
 import { storeToRefs } from 'pinia'
 import * as yup from 'yup'
 import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()
+
+const route = useRoute()
 
 const schema = yup.object({
   username: yup.string().required(),
@@ -20,6 +23,13 @@ const { signInErrors } = storeToRefs(authStore)
 watchEffect(() => {
   if (signInErrors.value) form.value?.setErrors(signInErrors.value)
 })
+
+watch(
+  () => route.path,
+  () => {
+    if (form.value) form.value.resetForm({ values: form.value.getValues() })
+  },
+)
 
 const signIn = async ({ username, password }: any) => {
   await authStore.signIn({ username, password })

@@ -1,10 +1,14 @@
 import { DOMWrapper, VueWrapper, flushPromises } from '@vue/test-utils'
-import { beforeEach, describe, expect, it, test } from 'vitest'
+import { beforeEach, describe, expect, it, test, vi } from 'vitest'
 import waitForExpect from 'wait-for-expect'
 
 import SignInForm from '@/components/SignInForm.vue'
 import { useAuthStore } from '@/stores/auth'
 import { wrap } from '@/test-utils'
+
+vi.mock('vue-router', () => ({
+  useRoute: () => ({ path: '' }),
+}))
 
 let wrapper: VueWrapper<typeof SignInForm>
 let authStore: ReturnType<typeof useAuthStore>
