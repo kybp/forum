@@ -12,6 +12,9 @@ const schema = yup.object({
   username: yup.string().required(),
   email: yup.string().email().required(),
   password: yup.string().min(8).required(),
+  passwordConfirmation: yup
+    .string()
+    .oneOf([yup.ref('password'), undefined], 'passwords must match'),
 })
 
 const form: Ref<any> = ref(null)
@@ -38,12 +41,12 @@ const register = async ({ username, email, password }: any) => {
       class="form"
       @submit="register"
       :validation-schema="schema"
+      v-slot="{ errors, meta }"
     >
       <label for="username">Username</label>
       <div class="field">
         <Field name="username" v-slot="{ field, errors }">
           <input
-            id="username"
             v-bind="field"
             type="text"
             placeholder="Username"
@@ -57,7 +60,6 @@ const register = async ({ username, email, password }: any) => {
       <div class="field">
         <Field name="email" v-slot="{ field, errors }">
           <input
-            id="email"
             v-bind="field"
             type="email"
             placeholder="Email"
@@ -71,7 +73,6 @@ const register = async ({ username, email, password }: any) => {
       <div class="field">
         <Field name="password" v-slot="{ field, errors }">
           <input
-            id="password"
             v-bind="field"
             type="password"
             placeholder="Password"
@@ -81,8 +82,27 @@ const register = async ({ username, email, password }: any) => {
         <ErrorMessage name="password" />
       </div>
 
+      <label for="passwordConfirmation">Password (again)</label>
+      <div class="field">
+        <Field name="passwordConfirmation" v-slot="{ field, errors }">
+          <input
+            v-bind="field"
+            type="password"
+            placeholder="Password"
+            :class="{ invalid: !!errors.length }"
+          />
+        </Field>
+        <ErrorMessage name="passwordConfirmation" />
+      </div>
+
       <div class="actions">
-        <button type="submit" class="button">Register</button>
+        <button
+          type="submit"
+          class="button"
+          :disabled="meta.touched && !!Object.keys(errors).length"
+        >
+          Register
+        </button>
       </div>
     </Form>
   </div>
@@ -112,7 +132,7 @@ label {
 
 .actions {
   grid-column-start: 3;
-  grid-row-start: 4;
+  grid-row-start: 5;
   justify-self: end;
 }
 </style>

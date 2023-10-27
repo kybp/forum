@@ -19,9 +19,11 @@ describe('form', () => {
   let usernameField: DOMWrapper<HTMLInputElement>
   let emailField: DOMWrapper<HTMLInputElement>
   let passwordField: DOMWrapper<HTMLInputElement>
+  let passwordCofirmationField: DOMWrapper<HTMLInputElement>
 
   beforeEach(async () => {
-    ;[usernameField, emailField, passwordField] = wrapper.findAll('input')
+    ;[usernameField, emailField, passwordField, passwordCofirmationField] =
+      wrapper.findAll('input')
 
     await usernameField.setValue('username')
     await emailField.setValue('email@example.com')
@@ -37,7 +39,6 @@ describe('form', () => {
 
   test('username is required', async () => {
     await usernameField.setValue('')
-    await usernameField.trigger('change')
 
     await flushPromises()
     await waitForExpect(() => {
@@ -47,7 +48,6 @@ describe('form', () => {
 
   test('email is required', async () => {
     await emailField.setValue('')
-    await emailField.trigger('change')
 
     await flushPromises()
     await waitForExpect(() => {
@@ -57,7 +57,6 @@ describe('form', () => {
 
   test('email must be valid', async () => {
     await emailField.setValue('a good email')
-    await emailField.trigger('change')
 
     await flushPromises()
     await waitForExpect(() => {
@@ -67,7 +66,16 @@ describe('form', () => {
 
   test('password is required', async () => {
     await passwordField.setValue('')
-    await passwordField.trigger('change')
+
+    await flushPromises()
+    await waitForExpect(() => {
+      expect(wrapper.find('span[role="alert"]').exists()).toBe(true)
+    })
+  })
+
+  test('password confirmation must match password', async () => {
+    await passwordField.setValue('some password')
+    await passwordCofirmationField.setValue('a different password')
 
     await flushPromises()
     await waitForExpect(() => {

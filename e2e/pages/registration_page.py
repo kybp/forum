@@ -25,7 +25,11 @@ class RegistrationPage(BasePage):
 
     @property
     def password_input(self):
-        return self.form.get_by_placeholder("Password")
+        return self.form.get_by_placeholder("Password").nth(0)
+
+    @property
+    def password_confirmation_input(self):
+        return self.form.get_by_placeholder("Password").nth(1)
 
     @property
     def register_button(self):
@@ -40,6 +44,7 @@ class RegistrationPage(BasePage):
         self.username_input.fill(username)
         self.email_input.fill(email)
         self.password_input.fill(config.PASSWORD)
+        self.password_confirmation_input.fill(config.PASSWORD)
         self.register_button.click()
 
         return [username, config.PASSWORD]
