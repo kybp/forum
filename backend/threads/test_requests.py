@@ -20,7 +20,6 @@ def create_post_props(user: User):
 @pytest.fixture
 def create_reply_props(post: Post):
     return {
-        "post": post.id,
         "body": fake.paragraph(),
     }
 
@@ -91,27 +90,51 @@ def test_create_post_assigns_request_user_as_author(
 
 @pytest.mark.django_db
 def test_create_reply_returns_201_when_valid(
-    user_client: APIClient, create_reply_props: dict
+    user_client: APIClient, create_reply_props: dict, post: Post
 ):
-    response = user_client.post("/api/threads/replies/", create_reply_props)
+    response = user_client.post(
+        f"/api/threads/posts/{post.id}/replies/", create_reply_props
+    )
     assert response.status_code == 201
 
 
 @pytest.mark.django_db
 def test_create_reply_returns_400_when_invalid(
-    user_client: APIClient, create_reply_props: dict
+    user_client: APIClient, create_reply_props: dict, post: Post
 ):
-    del create_reply_props["post"]
-    response = user_client.post("/api/threads/replies/", create_reply_props)
+    del create_reply_props["body"]
+    response = user_client.post(
+        f"/api/threads/posts/{post.id}/replies/", create_reply_props
+    )
     assert response.status_code == 400
 
 
 @pytest.mark.django_db
-def test_create_reply_assigns_request_user_as_author(
-    user_client: APIClient, user: User, create_reply_props: dict
+def test_create_reply_returns_404_when_post_does_not_exist(
+    user_client: APIClient, create_reply_props: dict, post: Post
 ):
-    user_client.post("/api/threads/replies/", create_reply_props)
+    post_id = post.id
+    post.delete()
+    response = user_client.post(
+        f"/api/threads/posts/{post_id}/replies/", create_reply_props
+    )
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_create_reply_assigns_request_user_as_author(
+    user_client: APIClient, user: User, create_reply_props: dict, post: Post
+):
+    user_client.post(
+        f"/api/threads/posts/{post.id}/replies/", create_reply_props
+    )
 
     reply = Reply.objects.last()
     assert reply is not None
     assert reply.author_id == user.id
+
+
+@pytest.mark.django_db
+def test_get_post_replies_returns_200(client: Client, post: Post):
+    response = client.get(f"/api/threads/posts/{post.id}/replies/")
+    assert response.status_code == 200

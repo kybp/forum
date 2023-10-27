@@ -86,9 +86,8 @@ export const useThreadStore = defineStore('thread', {
 
       try {
         const reply: Reply = await api.post(
-          'threads/replies/',
+          `threads/posts/${params.postId}/replies/`,
           {
-            post: params.postId,
             body: params.body,
           },
           {

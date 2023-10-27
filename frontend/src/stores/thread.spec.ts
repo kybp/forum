@@ -123,9 +123,10 @@ describe('thread store', () => {
       it('posts to the new reply endpoint', async () => {
         await threadStore.reply(params)
 
-        const postParams: any = { ...params, post: params.postId }
+        const path = `threads/posts/${params.postId}/replies/`
+        const postParams: any = { ...params }
         delete postParams.postId
-        expect(api.post).toHaveBeenCalledWith('threads/replies/', postParams, {
+        expect(api.post).toHaveBeenCalledWith(path, postParams, {
           headers: { Authorization: `Token ${token}` },
         })
       })

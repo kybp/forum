@@ -1,19 +1,15 @@
-from django.urls import path
+from django.urls import include, path
+from rest_framework_nested import routers
 
 from threads import views
 
+router = routers.SimpleRouter()
+router.register("posts", views.PostViewSet)
+
+posts_router = routers.NestedSimpleRouter(router, "posts", lookup="post")
+posts_router.register("replies", views.ReplyViewSet)
 
 urlpatterns = [
-    path(
-        "posts/",
-        views.PostViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
-    ),
-    path("posts/<int:pk>/", views.PostViewSet.as_view({"get": "retrieve"})),
-    path("posts/<int:pk>/replies", views.GetPostReplies.as_view()),
-    path("replies/", views.ReplyViewSet.as_view({"post": "create"})),
+    path("", include(router.urls)),
+    path("", include(posts_router.urls)),
 ]

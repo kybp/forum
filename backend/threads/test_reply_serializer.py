@@ -36,22 +36,6 @@ def test_is_valid_when_valid(reply_props: dict):
 
 
 @pytest.mark.django_db
-def test_post_is_required(reply_props: dict):
-    del reply_props["post"]
-    serializer = ReplySerializer(data=reply_props)
-    assert not serializer.is_valid()
-    assert "post" in serializer.errors
-
-
-@pytest.mark.django_db
-def test_post_must_exist(reply_props: dict, post: Post):
-    post.delete()
-    serializer = ReplySerializer(data=reply_props)
-    assert not serializer.is_valid()
-    assert "post" in serializer.errors
-
-
-@pytest.mark.django_db
 def test_body_is_required(reply_props: dict):
     del reply_props["body"]
     serializer = ReplySerializer(data=reply_props)

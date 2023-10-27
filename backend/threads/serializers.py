@@ -9,9 +9,7 @@ User = get_user_model()
 
 class ReplySerializer(serializers.ModelSerializer):
     author: Any = serializers.PrimaryKeyRelatedField(read_only=True)
-    post: Any = serializers.PrimaryKeyRelatedField(
-        required=True, queryset=Post.objects.all()
-    )
+    post: Any = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Reply
