@@ -1,4 +1,5 @@
 from playwright.sync_api import Page
+from typing import Iterable
 
 
 class PostThreadPage:
@@ -18,10 +19,25 @@ class PostThreadPage:
         return self.form.get_by_role("textbox", name="Body")
 
     @property
+    def last_tag_input(self):
+        return self.page.get_by_role("textbox", name="Tag").last
+
+    @property
+    def add_tag_button(self):
+        return self.page.get_by_role("button", name="+")
+
+    @property
     def submit_button(self):
         return self.form.get_by_role("button", name="Submit")
 
-    def post_thread(self, title: str, body: str):
+    def add_tags(self, tags: Iterable[str]):
+        self.add_tag_button.click()
+        for tag in tags:
+            self.last_tag_input.fill(tag)
+            self.add_tag_button.click()
+
+    def post_thread(self, title: str, body: str, tags: Iterable[str]):
         self.title_input.fill(title)
         self.body_input.fill(body)
+        self.add_tags(tags)
         self.submit_button.click()

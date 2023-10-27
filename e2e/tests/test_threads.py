@@ -11,12 +11,15 @@ def test_posting_a_thread(page: Page):
     username = home_page.sign_in()
     expect(home_page.post_thread_button).to_be_visible()
     title, body = "some title", "some body"
-    home_page.post_thread(title, body)
+    tags = "good", "better"
+    home_page.post_thread(title, body, tags)
     thread_page = ThreadDetailPage(page)
 
     expect(thread_page.author).to_have_text(username)
     expect(thread_page.title).to_have_text(title)
     expect(thread_page.body).to_have_text(body)
+    expect(thread_page.tags).to_contain_text(tags[0])
+    expect(thread_page.tags).to_contain_text(tags[1])
 
 
 def test_created_threads_appear_in_list(page: Page):
@@ -24,8 +27,13 @@ def test_created_threads_appear_in_list(page: Page):
 
     home_page.sign_in()
     title = "a great title"
-    home_page.post_thread(title=title)
+    tags = "cool", "tags"
+    home_page.post_thread(title=title, tags=tags)
     home_page.go_to_home_page()
+
+    expect(home_page.newest_thread_title).to_have_text(title)
+    expect(home_page.newest_thread_tags).to_contain_text(tags[0])
+    expect(home_page.newest_thread_tags).to_contain_text(tags[1])
 
     home_page.open_thread(title)
     expect(ThreadDetailPage(page).title).to_have_text(title)

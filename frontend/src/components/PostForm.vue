@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref, watchEffect, type Ref } from 'vue'
-import { ErrorMessage, Field, Form } from 'vee-validate'
+import { ErrorMessage, Field, FieldArray, Form } from 'vee-validate'
 import PostBody from '@/components/PostBody.vue'
+import PostTag from '@/components/PostTag.vue'
 import type { Errors } from '@/stores/utils'
 import * as yup from 'yup'
 
@@ -16,6 +17,7 @@ const emit = defineEmits(['submit'])
 const schema = yup.object({
   title: yup.string().required(),
   body: yup.string(),
+  tags: yup.array().of(yup.string()),
 })
 
 const form: Ref<any> = ref(null)
@@ -27,8 +29,8 @@ watchEffect(() => {
   }
 })
 
-const postThread = async ({ title, body }: any) => {
-  emit('submit', { title, body })
+const postThread = async ({ title, body, tags }: any) => {
+  emit('submit', { title, body, tags })
 }
 
 const title = ref('')
@@ -48,6 +50,22 @@ const body = ref('')
           />
         </Field>
         <ErrorMessage name="title" />
+      </div>
+
+      <div class="field tags">
+        Tags:
+
+        <FieldArray name="tags" v-slot="{ fields, push, remove }">
+          <div class="tag" v-for="(field, i) in fields" :key="field.key">
+            <Field :name="`tags[${i}]`" v-slot="{ field }">
+              <PostTag v-bind="field" editable @delete="remove(i)" />
+            </Field>
+          </div>
+
+          <button type="button" class="button add-tag" @click="push('')">
+            +
+          </button>
+        </FieldArray>
       </div>
 
       <div class="field body">
@@ -96,6 +114,22 @@ form {
 .field.title {
   margin-top: 1rem;
   margin-bottom: 0.5rem;
+}
+
+.field.tags {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.field.tags .tag {
+  margin-top: 0.1rem;
+  margin-bottom: 0.1rem;
+}
+
+.button.add-tag {
+  margin-left: 0.5rem;
+  align-self: flex-start;
 }
 
 button[type='submit'] {

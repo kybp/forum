@@ -5,7 +5,7 @@ from rest_framework import mixins, views, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from .models import Post, Reaction, Reply
+from .models import Post, Reaction, Reply, Tag
 from .serializers import PostSerializer, ReactionSerializer, ReplySerializer
 
 
@@ -23,8 +23,17 @@ class PostViewSet(
             return []
         return [IsAuthenticated()]
 
-    def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
+    def _create_tags(self, post: Post, tags: list[str]):
+        for tag in set(tag.strip() for tag in tags if tag.strip()):
+            Tag.objects.create(post=post, name=tag)
+
+    def create(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        post = serializer.save(author=self.request.user)
+        self._create_tags(post, request.data["tags"])
+
+        return Response(serializer.data, status=201)
 
     def retrieve(self, request, pk):
         post = get_object_or_404(self.queryset.filter(pk=pk))

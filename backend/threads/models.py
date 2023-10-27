@@ -67,6 +67,15 @@ class Post(models.Model):
     reactions = GenericRelation(Reaction)
 
 
+class Tag(models.Model):
+    """A user-facing, semantic category a post can be placed in."""
+
+    name = models.CharField(null=False, blank=False)
+    post = models.ForeignKey(
+        Post, on_delete=models.CASCADE, related_name="tags"
+    )
+
+
 class Reply(models.Model):
     """A reply to a Post."""
 

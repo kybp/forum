@@ -3,6 +3,7 @@ import { computed, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
 
 import PostBody from '@/components/PostBody.vue'
+import PostTag from '@/components/PostTag.vue'
 import LoadingPlaceholder from '@/components/LoadingPlaceholder.vue'
 import ReactionList from '@/components/ReactionList.vue'
 import ReplyForm from '@/components/ReplyForm.vue'
@@ -46,7 +47,15 @@ watchEffect(() => {
   />
   <LoadingPlaceholder v-else />
 
-  <ReactionList class="reaction-list" v-if="thread" :thread="thread" />
+  <div class="extras">
+    <ul v-if="thread" class="tags" data-testid="tags">
+      <li v-for="tag in thread.tags" :key="tag">
+        <PostTag :value="tag" />
+      </li>
+    </ul>
+
+    <ReactionList class="reaction-list" v-if="thread" :thread="thread" />
+  </div>
 
   <ReplyForm class="reply-form" v-if="authStore.isSignedIn" :post-id="postId" />
 
@@ -73,8 +82,28 @@ watchEffect(() => {
   padding-left: 1rem;
 }
 
+.tags {
+  display: flex;
+  width: 100%;
+}
+
+ul.tags {
+  padding: 0;
+  margin-bottom: 0.5rem;
+}
+
+.tags li {
+  list-style: none;
+}
+
+.extras {
+  display: flex;
+  width: 60vw;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
 .reaction-list {
-  margin-bottom: 2rem;
   margin-left: 2rem;
 }
 

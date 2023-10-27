@@ -24,6 +24,7 @@ export type Thread = {
   replies: number[]
   reactions: Reaction[]
   user_reaction_type: ReactionType | null
+  tags: string[]
 }
 
 export type Reply = {
@@ -37,6 +38,7 @@ export type Reply = {
 export type PostParams = {
   title: string
   body: string
+  tags: string[]
 }
 
 export type ReplyParams = {

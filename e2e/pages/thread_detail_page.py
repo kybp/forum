@@ -20,6 +20,10 @@ class ThreadDetailPage(BasePage):
         return self.page.get_by_test_id("body")
 
     @property
+    def tags(self):
+        return self.page.get_by_test_id("tags")
+
+    @property
     def first_reply(self):
         return self.page.get_by_test_id("reply-0")
 

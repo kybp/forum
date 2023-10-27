@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import LoadingPlaceholder from '@/components/LoadingPlaceholder.vue'
 import PostBody from '@/components/PostBody.vue'
+import PostTag from '@/components/PostTag.vue'
 import ReplyForm from '@/components/ReplyForm.vue'
 import ThreadDetailView from '@/views/ThreadDetailView.vue'
 import { useAuthStore } from '@/stores/auth'
@@ -70,6 +71,16 @@ const itRendersThread = () => {
 
     expect(body.exists()).toBe(true)
     expect(body.vm.$props.value).toEqual(thread.body)
+  })
+
+  it('renders tags', () => {
+    const tags = wrapper.findAllComponents(PostTag)
+
+    expect(tags.length).toEqual(thread.tags.length)
+    expect(new Set(tags.map((t) => t.props().value))).toEqual(
+      new Set(thread.tags),
+    )
+    tags.forEach((t) => expect(t.props().editable).toBe(false))
   })
 
   it('is not loading when it has all data', () => {

@@ -25,6 +25,7 @@ export const threadFactory = (props: Partial<Thread> = {}): Thread => ({
   replies: [],
   reactions: [],
   user_reaction_type: 'like',
+  tags: [faker.animal.cat()],
   ...props,
 })
 
@@ -42,6 +43,7 @@ export const postParamsFactory = (
 ): PostParams => ({
   title: faker.lorem.sentence(),
   body: faker.lorem.paragraph(),
+  tags: [faker.animal.bird()],
   ...props,
 })
 

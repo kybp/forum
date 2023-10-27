@@ -3,7 +3,7 @@ import pytest
 from faker import Faker
 
 from users.models import User
-from .factories import ReactionFactory, ReplyFactory
+from .factories import ReactionFactory, ReplyFactory, TagFactory
 from .models import Post
 from .serializers import PostSerializer, ReactionSerializer
 
@@ -16,6 +16,7 @@ def post_props(user: User):
         "author": user.id,
         "title": fake.sentence(),
         "body": fake.paragraph(),
+        "tags": [fake.word()],
     }
 
 
@@ -29,6 +30,7 @@ def test_contains_expected_fields(post: Post):
         "date_posted",
         "replies",
         "reactions",
+        "tags",
     }
 
 
@@ -90,3 +92,10 @@ def test_includes_reactions_as_objects(post: Post):
     assert len(returned) == len(reactions)
     for reaction, returned_reaction in zip(reactions, returned):
         assert returned_reaction == ReactionSerializer(reaction).data
+
+
+@pytest.mark.django_db
+def test_includes_tags_as_strings(post: Post):
+    tags = [TagFactory(post=post), TagFactory(post=post)]
+    serializer = PostSerializer(post)
+    assert serializer.data["tags"] == [tag.name for tag in tags]

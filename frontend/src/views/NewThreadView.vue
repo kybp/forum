@@ -9,8 +9,8 @@ const threadStore = useThreadStore()
 
 const { postErrors } = storeToRefs(threadStore)
 
-const postThread = async ({ title, body }: any) => {
-  const thread = await threadStore.post({ title, body })
+const postThread = async ({ title, body, tags }: any) => {
+  const thread = await threadStore.post({ title, body, tags })
   if (!thread) return
 
   router.push({

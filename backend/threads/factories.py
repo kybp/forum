@@ -34,3 +34,11 @@ class ReactionFactory(factory.django.DjangoModelFactory):
 
     content: Any = factory.SubFactory(PostFactory)
     user: Any = factory.SubFactory(users_factories.UserFactory)
+
+
+class TagFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.Tag
+
+    post: Any = factory.SubFactory(PostFactory)
+    name: Any = factory.Faker("word")

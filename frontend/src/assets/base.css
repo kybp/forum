@@ -47,6 +47,10 @@
   --color-text: var(--f-blue-4);
   --color-error: var(--f-red-3);
   --color-error-background: var(--f-red-1);
+  --color-background-programming-tag: #00ab32;
+  --color-background-music-tag: blue;
+  --color-background-photos-tag: yellow;
+  --color-background-tag-default: teal;
 }
 
 @media (prefers-color-scheme: dark) {

@@ -38,6 +38,10 @@ class PostSerializer(serializers.ModelSerializer):
 
     reactions: Any = ReactionSerializer(many=True, read_only=True)
 
+    tags: Any = serializers.SlugRelatedField(
+        many=True, read_only=True, slug_field="name"
+    )
+
     class Meta:
         model = Post
         fields = [
@@ -48,4 +52,5 @@ class PostSerializer(serializers.ModelSerializer):
             "date_posted",
             "replies",
             "reactions",
+            "tags",
         ]

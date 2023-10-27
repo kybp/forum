@@ -53,6 +53,7 @@ ul {
 
 li {
   list-style: none;
+  display: flex;
 }
 
 li + li {
