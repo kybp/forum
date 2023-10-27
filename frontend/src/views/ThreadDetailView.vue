@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 
 import PostBody from '@/components/PostBody.vue'
 import LoadingPlaceholder from '@/components/LoadingPlaceholder.vue'
+import ReactionList from '@/components/ReactionList.vue'
 import ReplyForm from '@/components/ReplyForm.vue'
 import ReplyList from '@/components/ReplyList.vue'
 import { useAuthStore } from '@/stores/auth'
@@ -45,6 +46,8 @@ watchEffect(() => {
   />
   <LoadingPlaceholder v-else />
 
+  <ReactionList class="reaction-list" v-if="thread" :thread="thread" />
+
   <ReplyForm class="reply-form" v-if="authStore.isSignedIn" :post-id="postId" />
 
   <ReplyList v-if="thread" :post-id="thread.id" />
@@ -68,6 +71,11 @@ watchEffect(() => {
   display: block;
   margin: 1rem 0;
   padding-left: 1rem;
+}
+
+.reaction-list {
+  margin-bottom: 2rem;
+  margin-left: 2rem;
 }
 
 .reply-form {

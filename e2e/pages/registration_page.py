@@ -31,9 +31,12 @@ class RegistrationPage(BasePage):
     def register_button(self):
         return self.form.get_by_role("button", name="Register")
 
-    def register(self, username=config.UNUSED_USERNAME, email=None):
+    def register(self, username=None, email=None):
+        if username is None:
+            username = fake.email()
         if email is None:
             email = fake.email()
+
         self.username_input.fill(username)
         self.email_input.fill(email)
         self.password_input.fill(config.PASSWORD)

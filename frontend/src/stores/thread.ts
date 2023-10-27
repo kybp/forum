@@ -5,6 +5,16 @@ import { isMandeError, type Errors } from './utils'
 
 const api = mande(import.meta.env.VITE_API_HOST)
 
+export const reactionTypes = ['like', 'laugh', 'confused'] as const
+
+export type ReactionType = (typeof reactionTypes)[number]
+
+export type Reaction = {
+  user: number
+  content: number
+  type: ReactionType
+}
+
 export type Thread = {
   id: number
   author: number
@@ -12,6 +22,8 @@ export type Thread = {
   body: string
   date_posted: string
   replies: number[]
+  reactions: Reaction[]
+  user_reaction_type: ReactionType | null
 }
 
 export type Reply = {
@@ -132,6 +144,36 @@ export const useThreadStore = defineStore('thread', {
       this.loadingThreadList = false
 
       threads.forEach((thread) => (this.allThreads[thread.id] = thread))
+    },
+    async toggleThreadReaction(
+      { id, user_reaction_type }: Thread,
+      type: ReactionType,
+    ) {
+      const { user } = useAuthStore()
+      if (!user) throw new Error('Not signed in')
+
+      const headers = {
+        headers: { Authorization: `Token ${user.token}` },
+      }
+
+      const thread = this.allThreads[id]
+
+      if (user_reaction_type && user_reaction_type === type) {
+        await api.delete(`threads/posts/${id}/reactions/${type}`, headers)
+        thread.user_reaction_type = null
+        thread.reactions = thread.reactions.filter((r) => r.user !== user.id)
+      } else {
+        await api.post(`threads/posts/${id}/reactions/`, { type }, headers)
+        thread.user_reaction_type = type
+
+        if (user_reaction_type) {
+          const reaction = thread.reactions.find((r) => r.user === user.id)
+          if (!reaction) throw new Error('Reaction not found')
+          reaction.type = type
+        } else {
+          thread.reactions.push({ user: user.id, content: id, type })
+        }
+      }
     },
   },
   getters: {

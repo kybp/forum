@@ -1,7 +1,9 @@
 from playwright.sync_api import Page
 
+from .base_page import BasePage
 
-class ThreadDetailPage:
+
+class ThreadDetailPage(BasePage):
     def __init__(self, page: Page):
         self.page = page
 
@@ -36,6 +38,21 @@ class ThreadDetailPage:
     @property
     def submit_reply_button(self):
         return self.page.get_by_role("button", name="Submit")
+
+    @property
+    def likes(self):
+        return self.page.get_by_test_id("likes")
+
+    @property
+    def like_button(self):
+        return self.page.get_by_role("button", name="👍")
+
+    def like_thread(self):
+        self.like_button.click()
+
+    def unlike_thread(self):
+        # It's just a toggle for now
+        self.like_thread()
 
     def reply(self, body: str = "some response message"):
         self.reply_input.fill(body)

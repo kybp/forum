@@ -60,3 +60,27 @@ def test_posts_and_replies_support_markdown(page: Page):
 
     thread_page.reply(markdown)
     expect(thread_page.first_reply_body.locator("h1")).to_be_visible()
+
+
+def test_liking_a_post(page: Page):
+    home_page = HomePage(page)
+
+    home_page.sign_in()
+    title = "a great title"
+    home_page.post_thread(title=title)
+    thread_page = ThreadDetailPage(page)
+
+    # You can't like your own post
+    expect(thread_page.like_button).to_be_disabled()
+
+    # Sign in as other user
+    thread_page.sign_out()
+    thread_page.go_to_home_page()
+    home_page.register()
+    home_page.go_to_home_page()
+    home_page.open_thread(title=title)
+
+    thread_page.like_thread()
+    expect(thread_page.likes).to_have_text("1")
+    thread_page.unlike_thread()
+    expect(thread_page.likes).to_have_text("")

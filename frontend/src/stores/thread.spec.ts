@@ -1,19 +1,23 @@
 import { createPinia, setActivePinia } from 'pinia'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useThreadStore } from '@/stores/thread'
-import type { PostParams, Reply, ReplyParams } from '@/stores/thread'
+import type { PostParams, Reply, ReplyParams, Thread } from '@/stores/thread'
 import { useAuthStore } from './auth'
+import type { User } from './auth'
 import { userFactory } from './auth.factories'
 import {
   postParamsFactory,
+  reactionFactory,
   replyFactory,
   replyParamsFactory,
   threadFactory,
 } from './thread.factories'
+import { makeId } from '@/test-utils'
 
 const api = vi.hoisted(() => ({
   get: vi.fn(),
   post: vi.fn(),
+  delete: vi.fn(),
 }))
 
 vi.mock('mande', () => ({
@@ -22,11 +26,14 @@ vi.mock('mande', () => ({
 
 const token = 'x123'
 
+let user: User
+
 describe('thread store', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
     const authStore = useAuthStore()
-    authStore.user = userFactory({ token })
+    user = userFactory({ token })
+    authStore.user = user
   })
 
   describe('initially', () => {
@@ -212,6 +219,136 @@ describe('thread store', () => {
       await threadStore.fetchThreadList()
 
       threads.forEach((t) => expect(threadStore.thread(t.id)).toEqual(t))
+    })
+  })
+
+  describe('toggleThreadReaction', () => {
+    let threadStore: ReturnType<typeof useThreadStore>
+    let thread: Thread
+
+    describe('when the user has reacted this way to the thread before', () => {
+      beforeEach(() => {
+        threadStore = useThreadStore()
+        const threadId = makeId()
+        thread = threadFactory({
+          id: threadId,
+          user_reaction_type: 'like',
+          reactions: [reactionFactory({ user: user.id, content: threadId })],
+        })
+        threadStore.allThreads = { [thread.id]: thread }
+      })
+
+      it('calls the delete endpoint', async () => {
+        const reactionType = thread.user_reaction_type!
+
+        await threadStore.toggleThreadReaction(thread, reactionType)
+
+        expect(api.delete).toHaveBeenCalledWith(
+          `threads/posts/${thread.id}/reactions/${reactionType}`,
+          {
+            headers: { Authorization: `Token ${token}` },
+          },
+        )
+      })
+
+      it('unsets user_reaction_type for the thread', async () => {
+        await threadStore.toggleThreadReaction(
+          thread,
+          thread.user_reaction_type!,
+        )
+
+        expect(threadStore.thread(thread.id).user_reaction_type).toBeNull()
+      })
+
+      it('removes the reaction from the thread.reactions', async () => {
+        await threadStore.toggleThreadReaction(
+          thread,
+          thread.user_reaction_type!,
+        )
+
+        expect(threadStore.thread(thread.id).reactions).toEqual([])
+      })
+    })
+
+    describe('when the user has reacted differently to the thread before', () => {
+      const reactionType = 'laugh'
+
+      beforeEach(() => {
+        threadStore = useThreadStore()
+        const threadId = makeId()
+        thread = threadFactory({
+          id: threadId,
+          user_reaction_type: 'like',
+          reactions: [reactionFactory({ user: user.id, content: threadId })],
+        })
+        threadStore.allThreads = { [thread.id]: thread }
+      })
+
+      it('calls the create endpoint', async () => {
+        await threadStore.toggleThreadReaction(thread, reactionType)
+
+        expect(api.post).toHaveBeenCalledWith(
+          `threads/posts/${thread.id}/reactions/`,
+          { type: reactionType },
+          { headers: { Authorization: `Token ${token}` } },
+        )
+      })
+
+      it('sets user_reaction_type for the thread', async () => {
+        await threadStore.toggleThreadReaction(thread, reactionType)
+
+        expect(threadStore.thread(thread.id).user_reaction_type).toEqual(
+          reactionType,
+        )
+      })
+
+      it('updates the reaction in thread.reactions', async () => {
+        await threadStore.toggleThreadReaction(thread, reactionType)
+
+        expect(threadStore.thread(thread.id).reactions).toEqual([
+          { user: user.id, type: reactionType, content: thread.id },
+        ])
+      })
+    })
+
+    describe('when the user has not reacted to the thread before', () => {
+      beforeEach(() => {
+        threadStore = useThreadStore()
+        thread = threadFactory({ user_reaction_type: null, reactions: [] })
+        threadStore.allThreads = { [thread.id]: thread }
+      })
+
+      it('calls the create endpoint', async () => {
+        const reactionType = 'like'
+
+        await threadStore.toggleThreadReaction(thread, reactionType)
+
+        expect(api.post).toHaveBeenCalledWith(
+          `threads/posts/${thread.id}/reactions/`,
+          { type: reactionType },
+          { headers: { Authorization: `Token ${token}` } },
+        )
+      })
+
+      it('sets user_reaction_type for the thread', async () => {
+        const reactionType = 'like'
+
+        await threadStore.toggleThreadReaction(thread, reactionType)
+
+        expect(threadStore.thread(thread.id).user_reaction_type).toEqual(
+          reactionType,
+        )
+      })
+
+      it('adds the reaction to thread.reactions', async () => {
+        const reactionType = 'like'
+
+        await threadStore.toggleThreadReaction(thread, reactionType)
+
+        expect(threadStore.thread(thread.id).reactions).toEqual([
+          { user: user.id, type: reactionType, content: thread.id },
+        ])
+      })
     })
   })
 

@@ -3,9 +3,9 @@ import pytest
 from faker import Faker
 
 from users.models import User
-from .factories import ReplyFactory
+from .factories import ReactionFactory, ReplyFactory
 from .models import Post
-from .serializers import PostSerializer
+from .serializers import PostSerializer, ReactionSerializer
 
 fake = Faker()
 
@@ -28,6 +28,7 @@ def test_contains_expected_fields(post: Post):
         "body",
         "date_posted",
         "replies",
+        "reactions",
     }
 
 
@@ -69,7 +70,7 @@ def test_date_posted_is_populated_on_create(post_props: dict, user: User):
 
 
 @pytest.mark.django_db
-def test_includes_replies(post: Post):
+def test_includes_replies_as_ids(post: Post):
     replies = [ReplyFactory(post=post), ReplyFactory(post=post)]
 
     serializer = PostSerializer(post)
@@ -77,3 +78,15 @@ def test_includes_replies(post: Post):
     assert len(serializer.data["replies"]) == len(replies)
     for reply in replies:
         assert reply.id in serializer.data["replies"]
+
+
+@pytest.mark.django_db
+def test_includes_reactions_as_objects(post: Post):
+    reactions = [ReactionFactory(content=post), ReactionFactory(content=post)]
+
+    serializer = PostSerializer(post)
+    returned = serializer.data["reactions"]
+
+    assert len(returned) == len(reactions)
+    for reaction, returned_reaction in zip(reactions, returned):
+        assert returned_reaction == ReactionSerializer(reaction).data

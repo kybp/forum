@@ -18,7 +18,9 @@ class HomePage(BasePage):
     def post_thread_button(self):
         return self.page.get_by_role("link", name="New Thread")
 
-    def register(self, username=config.UNUSED_USERNAME, email=None):
+    def register(self, username=None, email=None):
+        if username is None:
+            username = fake.email()
         if email is None:
             email = fake.email()
 

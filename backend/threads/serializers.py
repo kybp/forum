@@ -2,9 +2,22 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from typing import Any
 
-from .models import Post, Reply
+from .models import Post, Reaction, Reply
 
 User = get_user_model()
+
+
+class ReactionSerializer(serializers.ModelSerializer):
+    user: Any = serializers.PrimaryKeyRelatedField(read_only=True)
+    content: Any = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = Reaction
+        fields = [
+            "user",
+            "type",
+            "content",
+        ]
 
 
 class ReplySerializer(serializers.ModelSerializer):
@@ -23,6 +36,8 @@ class PostSerializer(serializers.ModelSerializer):
         many=True, read_only=True
     )
 
+    reactions: Any = ReactionSerializer(many=True, read_only=True)
+
     class Meta:
         model = Post
         fields = [
@@ -32,4 +47,5 @@ class PostSerializer(serializers.ModelSerializer):
             "body",
             "date_posted",
             "replies",
+            "reactions",
         ]

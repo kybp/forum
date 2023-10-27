@@ -23,3 +23,14 @@ class ReplyFactory(factory.django.DjangoModelFactory):
     post: Any = factory.SubFactory(PostFactory)
     body: Any = factory.Faker("paragraph")
     date_posted: Any = factory.Faker("past_datetime")
+
+
+class ReactionFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.Reaction
+
+    class Params:
+        type = "like"
+
+    content: Any = factory.SubFactory(PostFactory)
+    user: Any = factory.SubFactory(users_factories.UserFactory)

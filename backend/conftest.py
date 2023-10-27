@@ -34,6 +34,11 @@ def reply():
 
 
 @pytest.fixture
+def reaction():
+    return threads_factories.ReactionFactory()
+
+
+@pytest.fixture
 def user_client(user: User) -> APIClient:
     token, _created = Token.objects.get_or_create(user=user)
     client = APIClient()

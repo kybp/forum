@@ -81,10 +81,10 @@ span[role='alert'] {
   line-height: normal;
 }
 
-.button:hover {
+.button:enabled:hover {
   background-color: var(--f-pink-2);
 }
 
-.button:active {
+.button:enabled:active {
   filter: brightness(85%);
 }

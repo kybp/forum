@@ -1,7 +1,20 @@
 import { faker } from '@faker-js/faker'
 
-import type { PostParams, Reply, ReplyParams, Thread } from '@/stores/thread'
+import type {
+  PostParams,
+  Reaction,
+  Reply,
+  ReplyParams,
+  Thread,
+} from '@/stores/thread'
 import { makeId } from '@/test-utils'
+
+export const reactionFactory = (props: Partial<Reaction> = {}): Reaction => ({
+  user: makeId(),
+  content: makeId(),
+  type: 'like',
+  ...props,
+})
 
 export const threadFactory = (props: Partial<Thread> = {}): Thread => ({
   id: makeId(),
@@ -10,6 +23,8 @@ export const threadFactory = (props: Partial<Thread> = {}): Thread => ({
   body: faker.lorem.paragraph(),
   date_posted: faker.date.anytime().toISOString(),
   replies: [],
+  reactions: [],
+  user_reaction_type: 'like',
   ...props,
 })
 
