@@ -30,7 +30,7 @@ watchEffect(() => {
 })
 
 const postThread = async ({ title, body, tags }: any) => {
-  emit('submit', { title, body, tags })
+  emit('submit', { title, body, tags: tags ?? [] })
 }
 
 const title = ref('')

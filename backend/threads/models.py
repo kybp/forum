@@ -9,6 +9,10 @@ from django.db import models
 User = get_user_model()
 
 
+def truncate(string: str, n: int) -> str:
+    return (string[:n] + "...") if len(string) > n else string
+
+
 class Reaction(models.Model):
     """A user's response to some content."""
 
@@ -45,6 +49,10 @@ class Reaction(models.Model):
             )
         ]
 
+    def __str__(self):
+        content = truncate(str(self.content), 250)
+        return f"{self.user.username} -- {self.type}: {content}"
+
 
 class Post(models.Model):
     """A forum post."""
@@ -54,12 +62,9 @@ class Post(models.Model):
     body = models.TextField(null=False, blank=True)
     date_posted = models.DateTimeField(auto_now_add=True)
 
-    def _truncate(self, string: str, n: int) -> str:
-        return (string[:n] + "...") if len(string) > n else string
-
     def __str__(self):
-        title = self._truncate(self.title, 50)
-        body = self._truncate(self.body, 200)
+        title = truncate(self.title, 50)
+        body = truncate(self.body, 200)
         separator = " --- " if body else ""
 
         return f"{title}{separator}{body}"
@@ -75,6 +80,9 @@ class Tag(models.Model):
         Post, on_delete=models.CASCADE, related_name="tags"
     )
 
+    def __str__(self):
+        return f"{self.name} -- {self.post.title}"
+
 
 class Reply(models.Model):
     """A reply to a Post."""
@@ -85,3 +93,6 @@ class Reply(models.Model):
     )
     body = models.TextField(null=False, blank=False)
     date_posted = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.author.username}: {truncate(self.body, 250)}"

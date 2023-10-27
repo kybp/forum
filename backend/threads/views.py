@@ -2,7 +2,10 @@ from django.contrib.contenttypes.models import ContentType
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from rest_framework import mixins, views, viewsets
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import (
+    IsAuthenticated,
+    IsAuthenticatedOrReadOnly,
+)
 from rest_framework.response import Response
 
 from .models import Post, Reaction, Reply, Tag
@@ -17,11 +20,7 @@ class PostViewSet(
 ):
     queryset = Post.objects.all().prefetch_related("replies")
     serializer_class = PostSerializer
-
-    def get_permissions(self):
-        if self.action in ["list", "retrieve"]:
-            return []
-        return [IsAuthenticated()]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def _create_tags(self, post: Post, tags: list[str]):
         for tag in set(tag.strip() for tag in tags if tag.strip()):
@@ -53,14 +52,10 @@ class ReplyViewSet(
 ):
     queryset = Reply.objects.all()
     serializer_class = ReplySerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
         return Reply.objects.filter(post=self.kwargs["post_pk"])
-
-    def get_permissions(self):
-        if self.action in ["list"]:
-            return []
-        return [IsAuthenticated()]
 
     def perform_create(self, serializer):
         post_id = int(self.kwargs["post_pk"])
