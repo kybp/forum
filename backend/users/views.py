@@ -1,15 +1,21 @@
-from rest_framework import viewsets
+from rest_framework import mixins, viewsets
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 
+from users import policies
 from .models import User
 from .serializers import UserSerializer
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet,
+):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [policies.UserAccessPolicy]
 
     def create(self, request):
         serializer = UserSerializer(data=request.data)

@@ -48,7 +48,7 @@ export const useAuthStore = defineStore({
 
     async register(props: RegisterProps) {
       try {
-        this.updateUser(await api.post('users/', props))
+        this.updateUser(await api.post('users/accounts/', props))
         this.clearRegisterErrors()
       } catch (error: unknown) {
         if (!isMandeError(error)) throw error

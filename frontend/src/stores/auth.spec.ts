@@ -87,7 +87,7 @@ describe('auth store', () => {
 
     it('posts to the registration endpoint', async () => {
       await authStore.register(params)
-      expect(api.post).toHaveBeenCalledWith('users/', params)
+      expect(api.post).toHaveBeenCalledWith('users/accounts/', params)
     })
 
     describe('when the request succeeds', () => {

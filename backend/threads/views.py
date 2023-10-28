@@ -4,12 +4,10 @@ from django.contrib.contenttypes.models import ContentType
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from rest_framework import mixins, views, viewsets
-from rest_framework.permissions import (
-    IsAuthenticated,
-    IsAuthenticatedOrReadOnly,
-)
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from threads import policies
 from .models import Post, Reaction, Reply, Tag
 from .serializers import PostSerializer, ReactionSerializer, ReplySerializer
 
@@ -22,7 +20,7 @@ class PostViewSet(
 ):
     queryset = Post.objects.all().prefetch_related("replies")
     serializer_class = PostSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [policies.PostAccessPolicy]
 
     def get_queryset(self):
         queryset = Post.objects.all().prefetch_related("replies")
@@ -65,7 +63,7 @@ class ReplyViewSet(
 ):
     queryset = Reply.objects.all()
     serializer_class = ReplySerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [policies.ReplyAccessPolicy]
 
     def get_queryset(self):
         return Reply.objects.filter(post=self.kwargs["post_pk"])
@@ -85,7 +83,7 @@ class PostReactionViewSet(
 ):
     queryset = Reaction.objects.all()
     serializer_class = ReactionSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [policies.PostReactionAccessPolicy]
 
     def perform_create(self, serializer):
         post_id = int(self.kwargs["post_pk"])

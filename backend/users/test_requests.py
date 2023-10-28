@@ -18,7 +18,7 @@ def register_props():
 
 @pytest.mark.django_db
 def test_register_returns_200(client: Client, register_props: dict):
-    response = client.post("/api/users/", register_props)
+    response = client.post("/api/users/accounts/", register_props)
     assert response.status_code == 200
 
 
@@ -27,7 +27,7 @@ def test_register_returns_400_when_invalid(
     client: Client, register_props: dict
 ):
     del register_props["username"]
-    response = client.post("/api/users/", register_props)
+    response = client.post("/api/users/accounts/", register_props)
     assert response.status_code == 400
 
 
@@ -61,5 +61,5 @@ def test_sign_in_returns_400_if_no_such_user(client: Client, user: User):
 
 @pytest.mark.django_db
 def test_get_user_returns_200(client: Client, user: User):
-    response = client.get(f"/api/users/{user.id}/")
+    response = client.get(f"/api/users/accounts/{user.id}/")
     assert response.status_code == 200
