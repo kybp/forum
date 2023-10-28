@@ -66,7 +66,10 @@ const signIn = async ({ username, password }: any) => {
       <ErrorMessage name="non_field_errors" />
     </div>
 
-    <button type="submit" class="button">Sign in</button>
+    <div class="actions">
+      <button type="submit" class="button">Sign in</button>
+      <RouterLink to="/register" class="button">Register</RouterLink>
+    </div>
   </Form>
 </template>
 
@@ -74,6 +77,7 @@ const signIn = async ({ username, password }: any) => {
 form {
   display: flex;
   align-items: flex-start;
+  height: 3rem;
 }
 
 .fields {
@@ -81,8 +85,35 @@ form {
   margin-top: 0.3rem;
 }
 
-.field,
-button[type='submit'] {
-  margin-right: 0.5rem;
+.fields + .actions {
+  margin-left: 0.5rem;
+}
+
+.field + .field,
+button[type='submit'] + * {
+  margin-left: 0.5rem;
+}
+
+@media (--small-viewport) {
+  form {
+    display: grid;
+    margin-bottom: 3rem;
+  }
+
+  .fields {
+    grid-row-start: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .field {
+    max-width: 9rem;
+    margin-right: 0;
+  }
+
+  .actions {
+    grid-row-start: 2;
+    display: flex;
+    justify-content: end;
+  }
 }
 </style>

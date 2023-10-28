@@ -1,6 +1,5 @@
 import { VueWrapper } from '@vue/test-utils'
 import { beforeEach, describe, expect, it, test } from 'vitest'
-import { RouterLink } from 'vue-router'
 
 import SignInForm from '@/components/SignInForm.vue'
 import UserControls from '@/components/UserControls.vue'
@@ -29,10 +28,6 @@ describe('rendering', () => {
     it('does not render a sign-in form', () => {
       expect(wrapper.findComponent(SignInForm).exists()).toBe(false)
     })
-
-    it('does not link to the registration page', () => {
-      expect(wrapper.findComponent(RouterLink).exists()).toBe(false)
-    })
   })
 
   describe('when the user is signed out', () => {
@@ -46,12 +41,6 @@ describe('rendering', () => {
 
     it('renders a sign-in form', () => {
       expect(wrapper.findComponent(SignInForm).exists()).toBe(true)
-    })
-
-    it('links to the registration page', () => {
-      const link = wrapper.findComponent(RouterLink)
-
-      expect(link.props().to).toEqual('/register')
     })
   })
 })

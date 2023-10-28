@@ -121,6 +121,35 @@ const register = async ({ username, email, password }: any) => {
   align-items: center;
 }
 
+@media (--large-viewport) {
+  .form {
+    width: 40vw;
+  }
+}
+
+@media (--medium-viewport) {
+  .form {
+    width: 60vw;
+  }
+}
+
+@media (--small-viewport) {
+  .form {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    width: 100%;
+  }
+
+  .field {
+    margin-bottom: 1rem;
+  }
+
+  .actions {
+    align-self: end;
+  }
+}
+
 label {
   grid-column-start: 1;
 }

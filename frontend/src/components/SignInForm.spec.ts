@@ -6,9 +6,14 @@ import SignInForm from '@/components/SignInForm.vue'
 import { useAuthStore } from '@/stores/auth'
 import { wrap } from '@/test-utils'
 
-vi.mock('vue-router', () => ({
-  useRoute: () => ({ path: '' }),
-}))
+vi.mock('vue-router', async () => {
+  const actual: any = await vi.importActual('vue-router')
+
+  return {
+    useRoute: () => ({ path: '' }),
+    RouterLink: actual.RouterLink,
+  }
+})
 
 let wrapper: VueWrapper<typeof SignInForm>
 let authStore: ReturnType<typeof useAuthStore>
