@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
+import CompletingInput from './CompletingInput.vue'
 
 type Props = {
   value?: string
@@ -11,28 +12,32 @@ withDefaults(defineProps<Props>(), {
   editable: false,
 })
 
-const emit = defineEmits(['input', 'delete'])
+const emit = defineEmits(['change', 'delete'])
+
+const specialTags = ['programming', 'music', 'photos']
 
 const tagClass = (tag: string) => {
-  const specialClass = {
-    programming: 'programming',
-    music: 'music',
-    photos: 'photos',
-  }[tag]
+  const specialClasses = Object.fromEntries(specialTags.map((x) => [x, x]))
+  const specialClass = specialClasses[tag]
 
   return specialClass ?? 'default'
 }
 
 const inputValue = ref('')
 
-const emitInput = () => {
-  emit('input', inputValue.value)
-}
+watch(
+  () => inputValue.value,
+  () => emit('change', inputValue.value),
+)
 </script>
 
 <template>
   <div v-if="editable" :class="`tag input ${tagClass(inputValue)}`">
-    <input v-model="inputValue" @input="emitInput" placeholder="Tag" />
+    <CompletingInput
+      v-model="inputValue"
+      :choices="specialTags"
+      placeholder="Tag"
+    />
     <button @click="$emit('delete')">X</button>
   </div>
   <div v-else :class="`tag ${tagClass(value)}`">
