@@ -29,13 +29,7 @@ defineProps<Props>()
 </template>
 
 <style scoped>
-ul {
-  padding: 0;
-}
-
 li {
-  margin: 0;
-  list-style: none;
   display: flex;
   flex-direction: row;
   align-items: center;

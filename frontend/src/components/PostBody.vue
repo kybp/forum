@@ -23,11 +23,21 @@ const markdown = new MarkdownIt()
   margin-top: 1rem;
 }
 
+.body >>> ul,
+.body >>> ol {
+  padding-left: 2rem;
+}
+
+.body >>> * + ul,
 .body >>> * + ol {
   margin-top: 1rem;
 }
 
-.body >>> * + ul {
-  margin-top: 1rem;
+.body >>> ul li {
+  list-style: inside;
+}
+
+.body >>> ol {
+  list-style-type: decimal;
 }
 </style>

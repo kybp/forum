@@ -47,12 +47,10 @@ const canReact = computed(
 
 <style scoped>
 ul {
-  padding: 0;
   display: flex;
 }
 
 li {
-  list-style: none;
   display: flex;
 }
 

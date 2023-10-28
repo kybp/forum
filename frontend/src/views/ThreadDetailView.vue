@@ -88,12 +88,7 @@ watchEffect(() => {
 }
 
 ul.tags {
-  padding: 0;
   margin-bottom: 0.5rem;
-}
-
-.tags li {
-  list-style: none;
 }
 
 .extras {
