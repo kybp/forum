@@ -23,16 +23,8 @@ see them.
 
 You can also run the tests with a graphical inspector, but this
 doesn't work when running inside Docker Desktop, so you will need to
-install Python v3.8+ locally. Then, to install the e2e project in a
-virtual environment:
-
-```sh
-python -m venv env
-. env/bin/activate
-python -m pip install -r e2e/requirements.txt
-playwright install
-deactivate
-```
+install Python v3.8+ locally. Then you can `./run install-local-e2e`
+to install the e2e project in a virtual environment.
 
 After this, change `VITE_API_HOST` in your `.env` according to the
 instructions. Remember to change it back and restart the app if you
