@@ -86,7 +86,6 @@ def test_liking_a_post(page: Page):
     thread_page.sign_out()
     thread_page.go_to_home_page()
     home_page.register()
-    home_page.go_to_home_page()
     home_page.open_thread(title=title)
 
     thread_page.like_thread()
@@ -104,7 +103,6 @@ def test_thread_filtering(page: Page):
     home_page.sign_out()
 
     home_page.register()
-    home_page.go_to_home_page()
     other_author_title = "my title"
     home_page.post_thread(title=other_author_title)
     home_page.go_to_home_page()
@@ -119,7 +117,6 @@ def test_viewing_thread_by_deleted_user(page: Page):
     home_page = HomePage(page)
 
     _, password = home_page.register()
-    home_page.go_to_home_page()
     home_page.post_thread()
     home_page.go_to_account_page()
     AccountPage(page).delete_account(password=password)

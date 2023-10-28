@@ -2,11 +2,13 @@
 import { ErrorMessage, Form, Field } from 'vee-validate'
 import { ref, watchEffect } from 'vue'
 import type { Ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import * as yup from 'yup'
 import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()
+const router = useRouter()
 
 const schema = yup.object({
   username: yup.string().required(),
@@ -29,6 +31,7 @@ const register = async ({ username, email, password }: any) => {
   await authStore.clearRegisterErrors()
   form.value?.validate()
   await authStore.register({ username, email, password })
+  if (!authStore.registerErrors) router.push({ name: 'home' })
 }
 </script>
 
