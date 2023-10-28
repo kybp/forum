@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker'
 
 import type {
+  ThreadFilters,
   PostParams,
   Reaction,
   Reply,
@@ -35,6 +36,14 @@ export const replyFactory = (props: Partial<Reply> = {}): Reply => ({
   post: makeId(),
   body: faker.lorem.paragraph(),
   date_posted: faker.date.anytime().toISOString(),
+  ...props,
+})
+
+export const threadFiltersFactory = (
+  props: Partial<ThreadFilters> = {},
+): ThreadFilters => ({
+  authors: [],
+  tags: [],
   ...props,
 })
 

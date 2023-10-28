@@ -1,6 +1,8 @@
 from playwright.sync_api import Page
 from typing import Iterable
 
+from .thread_detail_page import ThreadDetailPage
+
 
 class PostThreadPage:
     def __init__(self, page: Page):
@@ -41,3 +43,6 @@ class PostThreadPage:
         self.body_input.fill(body)
         self.add_tags(tags)
         self.submit_button.click()
+
+        thread_detail_page = ThreadDetailPage(self.page)
+        thread_detail_page.author.wait_for()

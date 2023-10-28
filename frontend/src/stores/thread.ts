@@ -35,6 +35,11 @@ export type Reply = {
   date_posted: string
 }
 
+export type ThreadFilters = {
+  authors: number[]
+  tags: string[]
+}
+
 export type PostParams = {
   title: string
   body: string
@@ -49,6 +54,8 @@ export type ReplyParams = {
 type State = {
   /** A map of post ID's to objects */
   allThreads: Record<number, Thread>
+  /** The filters to apply when getting the list of threads */
+  threadFilters: ThreadFilters | null
   /** The errors returned from the last submitted post, or `null` if none */
   postErrors: Errors | null
   /** A map of reply ID's to objects */
@@ -66,6 +73,7 @@ type State = {
 export const useThreadStore = defineStore('thread', {
   state: (): State => ({
     allThreads: {},
+    threadFilters: null,
     allReplies: {},
     repliesByPost: {},
     postErrors: null,
@@ -77,11 +85,12 @@ export const useThreadStore = defineStore('thread', {
     async post(params: PostParams): Promise<Thread | undefined> {
       const { user } = useAuthStore()
       if (!user) throw new Error('Not signed in')
+      const options = {
+        headers: { Authorization: `Token ${user.token}` },
+      }
 
       try {
-        const thread: Thread = await api.post('threads/posts/', params, {
-          headers: { Authorization: `Token ${user.token}` },
-        })
+        const thread: Thread = await api.post('threads/posts/', params, options)
 
         this.allThreads[thread.id] = thread
 
@@ -97,6 +106,9 @@ export const useThreadStore = defineStore('thread', {
     async reply(params: ReplyParams): Promise<void> {
       const { user } = useAuthStore()
       if (!user) throw new Error('Not signed in')
+      const options = {
+        headers: { Authorization: `Token ${user.token}` },
+      }
 
       try {
         const reply: Reply = await api.post(
@@ -104,9 +116,7 @@ export const useThreadStore = defineStore('thread', {
           {
             body: params.body,
           },
-          {
-            headers: { Authorization: `Token ${user.token}` },
-          },
+          options,
         )
 
         this.replyErrors = null
@@ -141,11 +151,37 @@ export const useThreadStore = defineStore('thread', {
       replies.forEach((reply) => this.saveReply(postId, reply))
     },
     async fetchThreadList(): Promise<void> {
+      if (this.threadFilters === null) await this.fetchThreadFilters()
+
+      let query: string
+      if (!this.threadFilters) {
+        query = ''
+      } else {
+        const queryBindings = [
+          ...this.threadFilters.authors.map(
+            (a) => `author=${encodeURIComponent(a)}`,
+          ),
+          ...this.threadFilters.tags.map((t) => `tag=${encodeURIComponent(t)}`),
+        ]
+        if (queryBindings.length === 0) query = ''
+        else query = '?' + queryBindings.join('&')
+      }
+
       this.loadingThreadList = true
-      const threads: Thread[] = await api.get('threads/posts/')
+      const threads: Thread[] = await api.get(`threads/posts/${query}`)
       this.loadingThreadList = false
 
       threads.forEach((thread) => (this.allThreads[thread.id] = thread))
+    },
+    async fetchThreadFilters(): Promise<void> {
+      const { user } = useAuthStore()
+      const headers = user
+        ? {
+            headers: { Authorization: `Token ${user.token}` },
+          }
+        : {}
+
+      this.threadFilters = await api.get('threads/filters/', headers)
     },
     async toggleThreadReaction(
       { id, user_reaction_type }: Thread,
@@ -153,19 +189,18 @@ export const useThreadStore = defineStore('thread', {
     ) {
       const { user } = useAuthStore()
       if (!user) throw new Error('Not signed in')
-
-      const headers = {
+      const options = {
         headers: { Authorization: `Token ${user.token}` },
       }
 
       const thread = this.allThreads[id]
 
       if (user_reaction_type && user_reaction_type === type) {
-        await api.delete(`threads/posts/${id}/reactions/${type}`, headers)
+        await api.delete(`threads/posts/${id}/reactions/${type}`, options)
         thread.user_reaction_type = null
         thread.reactions = thread.reactions.filter((r) => r.user !== user.id)
       } else {
-        await api.post(`threads/posts/${id}/reactions/`, { type }, headers)
+        await api.post(`threads/posts/${id}/reactions/`, { type }, options)
         thread.user_reaction_type = type
 
         if (user_reaction_type) {

@@ -1,7 +1,14 @@
 import { createPinia, setActivePinia } from 'pinia'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import type { Options } from 'mande'
 import { useThreadStore } from '@/stores/thread'
-import type { PostParams, Reply, ReplyParams, Thread } from '@/stores/thread'
+import type {
+  PostParams,
+  Reply,
+  ReplyParams,
+  Thread,
+  ThreadFilters,
+} from '@/stores/thread'
 import { useAuthStore } from './auth'
 import type { User } from './auth'
 import { userFactory } from './auth.factories'
@@ -11,6 +18,7 @@ import {
   replyFactory,
   replyParamsFactory,
   threadFactory,
+  threadFiltersFactory,
 } from './thread.factories'
 import { makeId } from '@/test-utils'
 
@@ -26,12 +34,17 @@ vi.mock('mande', () => ({
 
 const token = 'x123'
 
+let authStore: ReturnType<typeof useAuthStore>
+let authHeaders: Options
 let user: User
 
 describe('thread store', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
-    const authStore = useAuthStore()
+    authStore = useAuthStore()
+    authHeaders = {
+      headers: { Authorization: `Token ${token}` },
+    }
     user = userFactory({ token })
     authStore.user = user
   })
@@ -73,9 +86,11 @@ describe('thread store', () => {
 
         await threadStore.post(params)
 
-        expect(api.post).toHaveBeenCalledWith('threads/posts/', params, {
-          headers: { Authorization: `Token ${token}` },
-        })
+        expect(api.post).toHaveBeenCalledWith(
+          'threads/posts/',
+          params,
+          authHeaders,
+        )
       })
 
       it('saves the returned thread in the store', async () => {
@@ -133,9 +148,7 @@ describe('thread store', () => {
         const path = `threads/posts/${params.postId}/replies/`
         const postParams: any = { ...params }
         delete postParams.postId
-        expect(api.post).toHaveBeenCalledWith(path, postParams, {
-          headers: { Authorization: `Token ${token}` },
-        })
+        expect(api.post).toHaveBeenCalledWith(path, postParams, authHeaders)
       })
 
       it('saves the reply in the store', async () => {
@@ -203,16 +216,41 @@ describe('thread store', () => {
       api.get.mockResolvedValue([])
     })
 
+    it('fetches filters when they are null', async () => {
+      const threadStore = useThreadStore()
+      threadStore.threadFilters = null
+      api.get.mockResolvedValueOnce(threadFiltersFactory())
+
+      await threadStore.fetchThreadList()
+
+      expect(api.get).toHaveBeenCalledWith('threads/filters/', authHeaders)
+    })
+
     it('makes a GET request to the endpoint', async () => {
       const threadStore = useThreadStore()
+      threadStore.threadFilters = threadFiltersFactory()
 
       await threadStore.fetchThreadList()
 
       expect(api.get).toHaveBeenCalledWith('threads/posts/')
     })
 
+    it('sends filters as query params present', async () => {
+      const threadStore = useThreadStore()
+      threadStore.threadFilters = {
+        authors: [9, 3],
+        tags: ['eleven', 'ten twenty'],
+      }
+
+      await threadStore.fetchThreadList()
+
+      const query = '?author=9&author=3&tag=eleven&tag=ten%20twenty'
+      expect(api.get).toHaveBeenCalledWith(`threads/posts/${query}`)
+    })
+
     it('saves all the returned threads', async () => {
       const threadStore = useThreadStore()
+      threadStore.threadFilters = threadFiltersFactory()
       const threads = [threadFactory(), threadFactory()]
       api.get.mockResolvedValueOnce(threads)
 
@@ -245,9 +283,7 @@ describe('thread store', () => {
 
         expect(api.delete).toHaveBeenCalledWith(
           `threads/posts/${thread.id}/reactions/${reactionType}`,
-          {
-            headers: { Authorization: `Token ${token}` },
-          },
+          authHeaders,
         )
       })
 
@@ -290,7 +326,7 @@ describe('thread store', () => {
         expect(api.post).toHaveBeenCalledWith(
           `threads/posts/${thread.id}/reactions/`,
           { type: reactionType },
-          { headers: { Authorization: `Token ${token}` } },
+          authHeaders,
         )
       })
 
@@ -326,7 +362,7 @@ describe('thread store', () => {
         expect(api.post).toHaveBeenCalledWith(
           `threads/posts/${thread.id}/reactions/`,
           { type: reactionType },
-          { headers: { Authorization: `Token ${token}` } },
+          authHeaders,
         )
       })
 
@@ -349,6 +385,33 @@ describe('thread store', () => {
           { user: user.id, type: reactionType, content: thread.id },
         ])
       })
+    })
+  })
+
+  describe('fetchFilters', () => {
+    let threadStore: ReturnType<typeof useThreadStore>
+    let filters: ThreadFilters
+
+    beforeEach(() => {
+      threadStore = useThreadStore()
+      filters = threadFiltersFactory()
+      api.get.mockResolvedValue(filters)
+    })
+
+    it('makes a GET request to the endpoint', async () => {
+      authStore.user = null
+      await threadStore.fetchThreadFilters()
+      expect(api.get).toHaveBeenCalledWith('threads/filters/', {})
+    })
+
+    it('includes auth headers when signed in', async () => {
+      await threadStore.fetchThreadFilters()
+      expect(api.get).toHaveBeenCalledWith('threads/filters/', authHeaders)
+    })
+
+    it('saves the returned filters', async () => {
+      await threadStore.fetchThreadFilters()
+      expect(threadStore.threadFilters).toEqual(filters)
     })
   })
 

@@ -17,4 +17,5 @@ urlpatterns = [
         "posts/<int:pk>/reactions/<slug:type>/",
         views.DeletePostReaction.as_view(),
     ),
+    path("filters/", views.GetFilters.as_view()),
 ]

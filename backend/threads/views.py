@@ -1,3 +1,5 @@
+import os
+from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.http import Http404
 from django.shortcuts import get_object_or_404
@@ -21,6 +23,17 @@ class PostViewSet(
     queryset = Post.objects.all().prefetch_related("replies")
     serializer_class = PostSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        queryset = Post.objects.all().prefetch_related("replies")
+
+        if authors := self.request.query_params.getlist("author"):
+            queryset = queryset.filter(author__id__in=authors)
+
+        if tags := self.request.query_params.getlist("tag"):
+            queryset = queryset.filter(tags__name__in=tags)
+
+        return queryset
 
     def _create_tags(self, post: Post, tags: list[str]):
         for tag in set(tag.strip() for tag in tags if tag.strip()):
@@ -91,3 +104,16 @@ class DeletePostReaction(views.APIView):
         ).delete()
 
         return Response(status=204)
+
+
+class GetFilters(views.APIView):
+    def get(self, request):
+        filters = {"authors": [], "tags": []}
+
+        if not request.user.is_authenticated:
+            email = os.environ["DEFAULT_AUTHOR_EMAIL"]
+            author = get_user_model().objects.filter(email=email).first()
+            if author:
+                filters["authors"].append(author.id)
+
+        return Response(filters)
