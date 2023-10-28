@@ -28,11 +28,15 @@ const toggleReaction = (type: ReactionType) => {
 const canReact = computed(
   () => user.value && props.thread.author !== user.value.id,
 )
+
+const availableReactionTypes = computed(() =>
+  reactionTypes.filter((t) => canReact.value || reactions.value[t] > 0),
+)
 </script>
 
 <template>
   <ul>
-    <li v-for="type in reactionTypes" :key="type">
+    <li v-for="type in availableReactionTypes" :key="type">
       <button
         @click="toggleReaction(type)"
         :disabled="!canReact"

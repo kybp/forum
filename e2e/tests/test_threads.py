@@ -79,7 +79,7 @@ def test_liking_a_post(page: Page):
     thread_page = ThreadDetailPage(page)
 
     # You can't like your own post
-    expect(thread_page.like_button).to_be_disabled()
+    expect(thread_page.like_button).to_be_hidden()
 
     # Sign in as other user
     thread_page.sign_out()
