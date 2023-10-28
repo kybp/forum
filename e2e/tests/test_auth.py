@@ -1,6 +1,7 @@
 from playwright.sync_api import Page, expect
 
 from e2e import config
+from e2e.pages.account_page import AccountPage
 from e2e.pages.home_page import HomePage
 from e2e.pages.registration_page import RegistrationPage
 
@@ -60,3 +61,18 @@ def test_sign_in_errors_are_cleared_when_navigating_to_new_page(page: Page):
 
     home_page.go_to_home_page()
     expect(home_page.field_error).to_be_hidden()
+
+
+def test_deleting_account(page: Page):
+    home_page = HomePage(page)
+
+    username, password = home_page.register()
+    home_page.go_to_account_page()
+    account_page = AccountPage(page)
+
+    account_page.delete_account(password=password)
+
+    expect(home_page.sign_in_button).to_be_visible()
+    home_page.sign_in(username=username, password=password)
+    expect(home_page.sign_in_button).to_be_visible()
+    expect(home_page.field_error).to_be_visible()

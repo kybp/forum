@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { mande } from 'mande'
 import { isMandeError, type Errors } from './utils'
+import { useUserStore } from './user'
 
 const api = mande(import.meta.env.VITE_API_HOST)
 
@@ -81,6 +82,20 @@ export const useAuthStore = defineStore({
     },
 
     async signOut() {
+      this.updateUser(null)
+    },
+
+    async deleteAccount() {
+      const userStore = useUserStore()
+      if (!this.user) throw new Error('Not signed in')
+
+      const options = {
+        headers: { Authorization: `Token ${this.user.token}` },
+      }
+
+      await api.delete(`users/accounts/${this.user.id}/`, options)
+      await userStore.fetchUser(this.user.id)
+
       this.updateUser(null)
     },
   },

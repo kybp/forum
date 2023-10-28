@@ -23,3 +23,17 @@ class UserSerializer(serializers.ModelSerializer):
             "email",
             "password",
         )
+
+    def to_representation(self, user):
+        result = super().to_representation(user)
+
+        if not user.is_active:
+            result["username"] = "[deleted]"
+
+        return result
+
+    def validate_username(self, username):
+        reserved_names = {"[deleted]"}
+
+        if username not in reserved_names:
+            return username

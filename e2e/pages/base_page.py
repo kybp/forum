@@ -12,6 +12,9 @@ class BasePage:
     def go_to_home_page(self):
         self.page.get_by_role("link", name="Home").click()
 
+    def go_to_account_page(self):
+        self.page.get_by_test_id("account-link").click()
+
     @property
     def header(self):
         return self.page.get_by_role("banner")

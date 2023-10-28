@@ -10,6 +10,7 @@ from .serializers import UserSerializer
 
 class UserViewSet(
     mixins.CreateModelMixin,
+    mixins.DestroyModelMixin,
     mixins.RetrieveModelMixin,
     viewsets.GenericViewSet,
 ):
@@ -30,10 +31,26 @@ class UserViewSet(
             }
         )
 
+    def perform_destroy(self, user):
+        user.is_active = False
+        user.save()
+        Token.objects.filter(user=user).delete()
+
 
 class ObtainAuthTokenView(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         user = self._get_user(request)
+
+        if not user.is_active:
+            return Response(
+                {
+                    "non_field_errors": [
+                        "Unable to log in with provided credentials."
+                    ],
+                },
+                status=400,
+            )
+
         serializer = UserSerializer(user)
         token, _created = Token.objects.get_or_create(user=user)
 

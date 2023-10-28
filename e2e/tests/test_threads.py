@@ -1,5 +1,6 @@
 from playwright.sync_api import Page, expect
 
+from e2e.pages.account_page import AccountPage
 from e2e.pages.home_page import HomePage
 from e2e.pages.thread_detail_page import ThreadDetailPage
 
@@ -112,3 +113,19 @@ def test_thread_filtering(page: Page):
     page.reload()
 
     expect(home_page.newest_thread_title).to_have_text(default_author_title)
+
+
+def test_viewing_thread_by_deleted_user(page: Page):
+    home_page = HomePage(page)
+
+    _, password = home_page.register()
+    home_page.go_to_home_page()
+    home_page.post_thread()
+    home_page.go_to_account_page()
+    AccountPage(page).delete_account(password=password)
+
+    home_page.sign_in()
+    home_page.go_to_home_page()
+    home_page.open_thread(home_page.newest_thread_title.text_content())
+
+    expect(ThreadDetailPage(page).author).to_have_text("[deleted]")

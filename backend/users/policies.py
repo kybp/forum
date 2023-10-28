@@ -13,4 +13,13 @@ class UserAccessPolicy(AccessPolicy):
             "principal": "*",
             "effect": "allow",
         },
+        {
+            "action": ["destroy"],
+            "principal": "authenticated",
+            "effect": "allow",
+            "condition": "is_self",
+        },
     ]
+
+    def is_self(self, request, view, action) -> bool:
+        return request.user == view.get_object()

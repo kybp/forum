@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
+import { RouterLink } from 'vue-router'
 import SignInForm from '@/components/SignInForm.vue'
 import { useAuthStore } from '@/stores/auth'
 
@@ -11,6 +12,9 @@ const signOut = () => authStore.signOut()
 
 <template>
   <div class="wrapper">
+    <RouterLink v-if="user" to="/account" data-testid="account-link">
+      {{ user.username }}
+    </RouterLink>
     <button v-if="user" @click="signOut" class="button">Sign out</button>
     <div v-else class="forms">
       <SignInForm />

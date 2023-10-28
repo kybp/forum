@@ -15,6 +15,11 @@ const router = createRouter({
       component: () => import('../views/RegisterView.vue'),
     },
     {
+      path: '/account',
+      name: 'account',
+      component: () => import('../views/AccountView.vue'),
+    },
+    {
       path: '/post',
       name: 'post',
       component: () => import('../views/NewThreadView.vue'),

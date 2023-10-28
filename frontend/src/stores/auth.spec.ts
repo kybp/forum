@@ -9,6 +9,7 @@ import {
   signInPropsFactory,
 } from '@/stores/auth.factories'
 import { userFactory } from '@/stores/auth.factories'
+import { useUserStore } from '@/stores/user'
 
 const localStorage: Mocked<Storage> = {
   length: 0,
@@ -22,6 +23,7 @@ vi.stubGlobal('localStorage', localStorage)
 
 const api = vi.hoisted(() => ({
   post: vi.fn(),
+  delete: vi.fn(),
 }))
 
 vi.mock('mande', () => ({
@@ -30,9 +32,12 @@ vi.mock('mande', () => ({
 
 describe('auth store', () => {
   let authStore: ReturnType<typeof useAuthStore>
+  let userStore: ReturnType<typeof useUserStore>
 
   beforeEach(() => {
     setActivePinia(createPinia())
+    userStore = useUserStore()
+    vi.spyOn(userStore, 'fetchUser').mockResolvedValue()
   })
 
   describe('initially', () => {
@@ -236,15 +241,42 @@ describe('auth store', () => {
 
     it('clears the user from the store', async () => {
       authStore.user = userFactory()
-
       await authStore.signOut()
-
       expect(authStore.user).toEqual(null)
     })
 
     it('clears the user from localStorage', async () => {
       await authStore.signOut()
       expect(localStorage.removeItem).toHaveBeenCalledWith('user')
+    })
+  })
+
+  describe('deleteAccount', () => {
+    beforeEach(() => {
+      authStore.user = userFactory()
+    })
+
+    it('sends a delete request to the endpoint', async () => {
+      const { id, token } = authStore.user!
+      await authStore.deleteAccount()
+      expect(api.delete).toHaveBeenCalledWith(`users/accounts/${id}/`, {
+        headers: { Authorization: `Token ${token}` },
+      })
+    })
+
+    it('clears the user from the store', async () => {
+      await authStore.deleteAccount()
+      expect(authStore.user).toBeNull()
+    })
+
+    it('clears the user from localStorage', async () => {
+      await authStore.deleteAccount()
+      expect(localStorage.removeItem).toHaveBeenCalledWith('user')
+    })
+
+    it('throws an error if not signed in', async () => {
+      authStore.user = null
+      await expect(authStore.deleteAccount()).rejects.toThrowError()
     })
   })
 })
