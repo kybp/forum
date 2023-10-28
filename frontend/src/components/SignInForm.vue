@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, watchEffect } from 'vue'
 import type { Ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, RouterLink } from 'vue-router'
 import { ErrorMessage, Field, Form } from 'vee-validate'
 import { storeToRefs } from 'pinia'
 import * as yup from 'yup'

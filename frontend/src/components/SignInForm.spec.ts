@@ -1,3 +1,4 @@
+import { h } from 'vue'
 import { DOMWrapper, VueWrapper, flushPromises } from '@vue/test-utils'
 import { beforeEach, describe, expect, it, test, vi } from 'vitest'
 import waitForExpect from 'wait-for-expect'
@@ -6,14 +7,10 @@ import SignInForm from '@/components/SignInForm.vue'
 import { useAuthStore } from '@/stores/auth'
 import { wrap } from '@/test-utils'
 
-vi.mock('vue-router', async () => {
-  const actual: any = await vi.importActual('vue-router')
-
-  return {
-    useRoute: () => ({ path: '' }),
-    RouterLink: actual.RouterLink,
-  }
-})
+vi.mock('vue-router', async () => ({
+  useRoute: () => ({ path: '' }),
+  RouterLink: () => h('span'),
+}))
 
 let wrapper: VueWrapper<typeof SignInForm>
 let authStore: ReturnType<typeof useAuthStore>
