@@ -1,6 +1,7 @@
-import { defineStore } from 'pinia'
 import { mande } from 'mande'
-import { useAuthStore } from './auth'
+import { defineStore, storeToRefs } from 'pinia'
+import { computed, ref } from 'vue'
+import { useAuthOptions, useAuthStore } from './auth'
 import { isMandeError, type Errors } from './utils'
 
 const api = mande(import.meta.env.VITE_API_HOST)
@@ -51,179 +52,200 @@ export type ReplyParams = {
   body: string
 }
 
-type State = {
+export const useThreadStore = defineStore('thread', () => {
   /** A map of post ID's to objects */
-  allThreads: Record<number, Thread>
+  const allThreads = ref<Record<number, Thread>>({})
+
   /** The filters to apply when getting the list of threads */
-  threadFilters: ThreadFilters | null
-  /** The errors returned from the last submitted post, or `null` if none */
-  postErrors: Errors | null
+  const threadFilters = ref<ThreadFilters | null>(null)
+
   /** A map of reply ID's to objects */
-  allReplies: Record<number, Reply>
+  const allReplies = ref<Record<number, Reply>>({})
+
   /** A map of post ID's to arrays of reply ID's for that post */
-  repliesByPost: Record<number, number[]>
+  const repliesByPost = ref<Record<number, number[]>>({})
+
+  /** The errors returned from the last submitted post, or `null` if none */
+  const postErrors = ref<Errors | null>(null)
+
   /** The errors returned from the last submitted reply, or `null` if none */
-  replyErrors: Errors | null
+  const replyErrors = ref<Errors | null>(null)
+
   /** A map of post ID's to booleans indicating whether they're loading */
-  loading: Record<number, boolean>
+  const loading = ref<Record<number, boolean>>({})
+
   /** Whether the list of threads is being fetched */
-  loadingThreadList: boolean
-}
+  const loadingThreadList = ref(false)
 
-export const useThreadStore = defineStore('thread', {
-  state: (): State => ({
-    allThreads: {},
-    threadFilters: null,
-    allReplies: {},
-    repliesByPost: {},
-    postErrors: null,
-    replyErrors: null,
-    loading: {},
-    loadingThreadList: false,
-  }),
-  actions: {
-    async post(params: PostParams): Promise<Thread | undefined> {
-      const { user } = useAuthStore()
-      if (!user) throw new Error('Not signed in')
-      const options = {
-        headers: { Authorization: `Token ${user.token}` },
-      }
+  const authStore = useAuthStore()
+  const { user } = storeToRefs(authStore)
 
-      try {
-        const thread: Thread = await api.post('threads/posts/', params, options)
-
-        this.allThreads[thread.id] = thread
-
-        this.postErrors = null
-
-        return thread
-      } catch (error: unknown) {
-        if (!isMandeError(error)) throw error
-
-        if (error.response.status === 400) this.postErrors = error.body
-      }
-    },
-    async reply(params: ReplyParams): Promise<void> {
-      const { user } = useAuthStore()
-      if (!user) throw new Error('Not signed in')
-      const options = {
-        headers: { Authorization: `Token ${user.token}` },
-      }
-
-      try {
-        const reply: Reply = await api.post(
-          `threads/posts/${params.postId}/replies/`,
-          {
-            body: params.body,
-          },
-          options,
-        )
-
-        this.replyErrors = null
-        this.saveReply(params.postId, reply)
-      } catch (error: unknown) {
-        if (!isMandeError(error)) throw error
-
-        if (error.response.status === 400) this.replyErrors = error.body
-      }
-    },
-    saveReply(postId: number, reply: Reply): void {
-      this.allReplies[reply.id] = reply
-
-      if (!this.repliesByPost[postId]) {
-        this.repliesByPost[postId] = [reply.id]
-      } else {
-        this.repliesByPost[postId].push(reply.id)
-      }
-    },
-    async fetchThread(id: number): Promise<void> {
-      if (this.loading[id]) return
-
-      this.loading[id] = true
-      const thread: Thread = await api.get(`threads/posts/${id}/`)
-      this.loading[id] = false
-
-      this.allThreads[id] = thread
-    },
-    async fetchReplies(postId: number): Promise<void> {
-      const replies: Reply[] = await api.get(`threads/posts/${postId}/replies`)
-
-      replies.forEach((reply) => this.saveReply(postId, reply))
-    },
-    async fetchThreadList(): Promise<void> {
-      if (this.threadFilters === null) await this.fetchThreadFilters()
-
-      let query: string
-      if (!this.threadFilters) {
-        query = ''
-      } else {
-        const queryBindings = [
-          ...this.threadFilters.authors.map(
-            (a) => `author=${encodeURIComponent(a)}`,
-          ),
-          ...this.threadFilters.tags.map((t) => `tag=${encodeURIComponent(t)}`),
-        ]
-        if (queryBindings.length === 0) query = ''
-        else query = '?' + queryBindings.join('&')
-      }
-
-      this.loadingThreadList = true
-      const threads: Thread[] = await api.get(`threads/posts/${query}`)
-      this.loadingThreadList = false
-
-      threads.forEach((thread) => (this.allThreads[thread.id] = thread))
-    },
-    async fetchThreadFilters(): Promise<void> {
-      const { user } = useAuthStore()
-      const headers = user
-        ? {
-            headers: { Authorization: `Token ${user.token}` },
-          }
-        : {}
-
-      this.threadFilters = await api.get('threads/filters/', headers)
-    },
-    async toggleThreadReaction(
-      { id, user_reaction_type }: Thread,
-      type: ReactionType,
-    ) {
-      const { user } = useAuthStore()
-      if (!user) throw new Error('Not signed in')
-      const options = {
-        headers: { Authorization: `Token ${user.token}` },
-      }
-
-      const thread = this.allThreads[id]
-
-      if (user_reaction_type && user_reaction_type === type) {
-        await api.delete(`threads/posts/${id}/reactions/${type}`, options)
-        thread.user_reaction_type = null
-        thread.reactions = thread.reactions.filter((r) => r.user !== user.id)
-      } else {
-        await api.post(`threads/posts/${id}/reactions/`, { type }, options)
-        thread.user_reaction_type = type
-
-        if (user_reaction_type) {
-          const reaction = thread.reactions.find((r) => r.user === user.id)
-          if (!reaction) throw new Error('Reaction not found')
-          reaction.type = type
-        } else {
-          thread.reactions.push({ user: user.id, content: id, type })
-        }
-      }
-    },
-  },
-  getters: {
-    thread: (state: State) => (id: number) => state.allThreads[id],
-    threads: (state: State) => {
-      return Object.values(state.allThreads).sort(
-        (x, y) => +new Date(y.date_posted) - +new Date(x.date_posted),
+  const post = async (params: PostParams): Promise<Thread | undefined> => {
+    try {
+      const thread: Thread = await api.post(
+        'threads/posts/',
+        params,
+        useAuthOptions(),
       )
-    },
-    replies: (state: State) => (postId: number) => {
-      const ids = state.repliesByPost[postId] || []
 
-      return ids.map((id) => state.allReplies[id])
-    },
-  },
+      allThreads.value[thread.id] = thread
+
+      postErrors.value = null
+
+      return thread
+    } catch (error: unknown) {
+      if (!isMandeError(error)) throw error
+
+      if (error.response.status === 400) postErrors.value = error.body
+    }
+  }
+
+  const reply = async (params: ReplyParams): Promise<void> => {
+    try {
+      const reply: Reply = await api.post(
+        `threads/posts/${params.postId}/replies/`,
+        {
+          body: params.body,
+        },
+        useAuthOptions(),
+      )
+
+      replyErrors.value = null
+      saveReply(params.postId, reply)
+    } catch (error: unknown) {
+      if (!isMandeError(error)) throw error
+
+      if (error.response.status === 400) replyErrors.value = error.body
+    }
+  }
+
+  const saveReply = (postId: number, reply: Reply): void => {
+    allReplies.value[reply.id] = reply
+
+    if (!repliesByPost.value[postId]) {
+      repliesByPost.value[postId] = [reply.id]
+    } else {
+      repliesByPost.value[postId].push(reply.id)
+    }
+  }
+
+  const fetchThread = async (id: number): Promise<void> => {
+    if (loading.value[id]) return
+
+    loading.value[id] = true
+    const thread: Thread = await api.get(`threads/posts/${id}/`)
+    loading.value[id] = false
+
+    allThreads.value[id] = thread
+  }
+
+  const fetchReplies = async (postId: number): Promise<void> => {
+    const replies: Reply[] = await api.get(`threads/posts/${postId}/replies`)
+
+    replies.forEach((reply) => saveReply(postId, reply))
+  }
+
+  const fetchThreadList = async (): Promise<void> => {
+    if (threadFilters.value === null) await fetchThreadFilters()
+
+    let query: string
+    if (!threadFilters.value) {
+      query = ''
+    } else {
+      const queryBindings = [
+        ...threadFilters.value.authors.map(
+          (a) => `author=${encodeURIComponent(a)}`,
+        ),
+        ...threadFilters.value.tags.map((t) => `tag=${encodeURIComponent(t)}`),
+      ]
+      if (queryBindings.length === 0) query = ''
+      else query = '?' + queryBindings.join('&')
+    }
+
+    loadingThreadList.value = true
+    const threads: Thread[] = await api.get(`threads/posts/${query}`)
+    loadingThreadList.value = false
+
+    threads.forEach((thread) => (allThreads.value[thread.id] = thread))
+  }
+
+  const fetchThreadFilters = async (): Promise<void> => {
+    threadFilters.value = await api.get(
+      'threads/filters/',
+      useAuthOptions({ notSignedInOkay: true }),
+    )
+  }
+
+  const toggleThreadReaction = async (
+    { id, user_reaction_type }: Thread,
+    type: ReactionType,
+  ) => {
+    if (user.value === null) throw new Error('Not signed in')
+    const userId = user.value.id
+
+    const options = useAuthOptions()
+    const thread = allThreads.value[id]
+
+    if (user_reaction_type && user_reaction_type === type) {
+      await api.delete(`threads/posts/${id}/reactions/${type}`, options)
+      thread.user_reaction_type = null
+      thread.reactions = thread.reactions.filter((r) => r.user !== userId)
+    } else {
+      await api.post(`threads/posts/${id}/reactions/`, { type }, options)
+      thread.user_reaction_type = type
+
+      if (user_reaction_type) {
+        const reaction = thread.reactions.find((r) => r.user === userId)
+        if (!reaction) throw new Error('Reaction not found')
+        reaction.type = type
+      } else {
+        thread.reactions.push({ user: userId, content: id, type })
+      }
+    }
+  }
+
+  const thread = (id: number): Thread | undefined => allThreads.value[id]
+
+  const threads = computed(() => {
+    return Object.values(allThreads.value).sort(
+      (x, y) => +new Date(y.date_posted) - +new Date(x.date_posted),
+    )
+  })
+
+  const replies = (postId: number) => {
+    const ids = repliesByPost.value[postId] || []
+
+    return ids.map((id) => allReplies.value[id])
+  }
+
+  return {
+    allThreads,
+    threadFilters,
+    allReplies,
+    repliesByPost,
+
+    // Getters
+    thread,
+    threads,
+    replies,
+
+    // Fetching
+    fetchThread,
+    fetchThreadList,
+    fetchReplies,
+    fetchThreadFilters,
+    loading,
+    loadingThreadList,
+
+    // Post
+    post,
+    postErrors,
+
+    // Reply
+    reply,
+    replyErrors,
+
+    // Toggle Reaction
+    toggleThreadReaction,
+  }
 })

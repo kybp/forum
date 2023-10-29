@@ -50,11 +50,11 @@ beforeEach(async () => {
 
   user = userFactory()
   userStore = useUserStore()
-  userStore.users = { [user.id]: user }
+  userStore.user = () => user
 
   thread = threadFactory({ id: postId, author: user.id })
   threadStore = useThreadStore()
-  threadStore.allThreads = { [postId]: thread }
+  threadStore.thread = () => thread
 })
 
 const itRendersThread = () => {
@@ -88,13 +88,13 @@ const itRendersThread = () => {
   })
 
   it('is loading when it does not have the thread', async () => {
-    threadStore.allThreads = {}
+    threadStore.thread = () => undefined
     await wrapper.vm.$nextTick()
     expect(wrapper.findComponent(LoadingPlaceholder).exists()).toBe(true)
   })
 
   it('is loading when it does not have the user', async () => {
-    userStore.users = {}
+    userStore.user = () => undefined
     await wrapper.vm.$nextTick()
     expect(wrapper.findComponent(LoadingPlaceholder).exists()).toBe(true)
   })

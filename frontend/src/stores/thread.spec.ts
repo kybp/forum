@@ -99,7 +99,7 @@ describe('thread store', () => {
 
         await threadStore.post(params)
 
-        const threadInStore = threadStore.thread(createdThread.id)
+        const threadInStore = threadStore.thread(createdThread.id)!
         expect(threadInStore.id).toEqual(createdThread.id)
         expect(threadInStore.title).toEqual(createdThread.title)
       })
@@ -293,7 +293,7 @@ describe('thread store', () => {
           thread.user_reaction_type!,
         )
 
-        expect(threadStore.thread(thread.id).user_reaction_type).toBeNull()
+        expect(threadStore.thread(thread.id)!.user_reaction_type).toBeNull()
       })
 
       it('removes the reaction from the thread.reactions', async () => {
@@ -302,7 +302,7 @@ describe('thread store', () => {
           thread.user_reaction_type!,
         )
 
-        expect(threadStore.thread(thread.id).reactions).toEqual([])
+        expect(threadStore.thread(thread.id)!.reactions).toEqual([])
       })
     })
 
@@ -333,7 +333,7 @@ describe('thread store', () => {
       it('sets user_reaction_type for the thread', async () => {
         await threadStore.toggleThreadReaction(thread, reactionType)
 
-        expect(threadStore.thread(thread.id).user_reaction_type).toEqual(
+        expect(threadStore.thread(thread.id)!.user_reaction_type).toEqual(
           reactionType,
         )
       })
@@ -341,7 +341,7 @@ describe('thread store', () => {
       it('updates the reaction in thread.reactions', async () => {
         await threadStore.toggleThreadReaction(thread, reactionType)
 
-        expect(threadStore.thread(thread.id).reactions).toEqual([
+        expect(threadStore.thread(thread.id)!.reactions).toEqual([
           { user: user.id, type: reactionType, content: thread.id },
         ])
       })
@@ -371,7 +371,7 @@ describe('thread store', () => {
 
         await threadStore.toggleThreadReaction(thread, reactionType)
 
-        expect(threadStore.thread(thread.id).user_reaction_type).toEqual(
+        expect(threadStore.thread(thread.id)!.user_reaction_type).toEqual(
           reactionType,
         )
       })
@@ -381,7 +381,7 @@ describe('thread store', () => {
 
         await threadStore.toggleThreadReaction(thread, reactionType)
 
-        expect(threadStore.thread(thread.id).reactions).toEqual([
+        expect(threadStore.thread(thread.id)!.reactions).toEqual([
           { user: user.id, type: reactionType, content: thread.id },
         ])
       })

@@ -20,9 +20,7 @@ beforeEach(async () => {
 
 it('renders a ReplyDetail for each thread reply', async () => {
   const replies = [replyFactory(), replyFactory()]
-
-  threadStore.repliesByPost = { [postId]: replies.map((r) => r.id) }
-  threadStore.allReplies = Object.fromEntries(replies.map((r) => [r.id, r]))
+  threadStore.replies = () => replies
 
   await wrapper.vm.$nextTick()
 
