@@ -1,11 +1,15 @@
 import { DOMWrapper, VueWrapper } from '@vue/test-utils'
-import { beforeEach, describe, expect, test } from 'vitest'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
 import flushPromises from 'flush-promises'
 import waitForExpect from 'wait-for-expect'
 
 import RegisterView from '@/views/RegisterView.vue'
 import { useAuthStore } from '@/stores/auth'
 import { wrap } from '@/test-utils'
+
+vi.mock('vue-router', () => ({
+  useRouter: () => {},
+}))
 
 let wrapper: VueWrapper<typeof RegisterView>
 let authStore: ReturnType<typeof useAuthStore>
