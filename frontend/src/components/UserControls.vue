@@ -21,3 +21,10 @@ const signOut = () => authStore.signOut()
     </div>
   </div>
 </template>
+
+<style scoped>
+.wrapper {
+  display: flex;
+  gap: 0.5rem;
+}
+</style>

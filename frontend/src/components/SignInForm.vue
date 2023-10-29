@@ -85,7 +85,7 @@ const signIn = async ({ username, password }: any) => {
 form {
   display: flex;
   align-items: flex-start;
-  height: 3rem;
+  height: 2rem;
 }
 
 .fields {

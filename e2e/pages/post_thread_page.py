@@ -15,7 +15,7 @@ class PostThreadPage(BasePage):
 
     @property
     def form(self):
-        return self.page.get_by_test_id("post-form").locator("form")
+        return self.page.get_by_test_id("post-form")
 
     @property
     def title_input(self):
@@ -32,6 +32,14 @@ class PostThreadPage(BasePage):
     @property
     def add_tag_button(self):
         return self.page.get_by_role("button", name="+")
+
+    @property
+    def preview(self):
+        return self.page.get_by_test_id("preview")
+
+    @property
+    def toggle_preview_button(self):
+        return self.page.get_by_role("button", name="Preview")
 
     @property
     def submit_button(self):
@@ -51,3 +59,6 @@ class PostThreadPage(BasePage):
 
         thread_detail_page = ThreadDetailPage(self.page)
         thread_detail_page.author.wait_for()
+
+    def toggle_preview(self):
+        self.toggle_preview_button.click()

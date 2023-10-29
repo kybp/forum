@@ -78,7 +78,7 @@ watchEffect(() => {
 
 .body {
   display: block;
-  margin: 1rem 0;
+  margin: 1.5rem 0;
   padding-left: 1rem;
 }
 

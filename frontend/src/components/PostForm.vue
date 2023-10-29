@@ -29,6 +29,8 @@ watchEffect(() => {
   }
 })
 
+const isMobilePreviewOpen = ref(false)
+
 const postThread = async ({ title, body, tags }: any) => {
   emit('submit', { title, body, tags: tags ?? [] })
 }
@@ -39,8 +41,14 @@ const body = ref('')
 <template>
   <h1>New Thread</h1>
 
-  <div class="wrapper" data-testid="post-form">
-    <Form ref="form" @submit="postThread" :validation-schema="schema">
+  <Form
+    ref="form"
+    @submit="postThread"
+    :validation-schema="schema"
+    :class="{ 'mobile-preview': isMobilePreviewOpen }"
+    data-testid="post-form"
+  >
+    <div class="fields">
       <div class="field title">
         <Field name="title" v-model="title" v-slot="{ field, errors }">
           <input
@@ -79,32 +87,87 @@ const body = ref('')
         </Field>
         <ErrorMessage name="body" />
       </div>
+    </div>
 
-      <button type="submit" class="button">Submit</button>
-    </Form>
+    <div class="actions">
+      <button
+        class="button toggle-mobile-preview"
+        type="button"
+        @click="isMobilePreviewOpen = !isMobilePreviewOpen"
+      >
+        Preview
+      </button>
+      <button type="submit" class="button" @click="isMobilePreviewOpen = false">
+        Submit
+      </button>
+    </div>
 
-    <div class="preview">
+    <div class="preview" data-testid="preview">
       <h1 class="title">{{ title }}</h1>
 
       <PostBody :value="body" class="body" />
     </div>
-  </div>
+  </Form>
 </template>
 
 <style scoped>
-.wrapper {
-  display: flex;
-  justify-content: space-between;
+form {
+  display: grid;
+  width: 90%;
+  margin-left: 1rem;
+  grid-template-columns: 50% 50%;
+  column-gap: 2rem;
+  row-gap: 0.5em;
 }
 
-form {
+.fields {
   display: flex;
   flex-direction: column;
-  width: 50%;
+  gap: 0.5rem;
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.actions {
+  grid-column: 1;
+  grid-row: 2;
+  justify-self: end;
 }
 
 .preview {
-  width: 48%; /* Leave a gap between the form and preview. */
+  grid-column: 2;
+  grid-row: 1;
+}
+
+button.toggle-mobile-preview {
+  display: none;
+}
+
+@media (--small-viewport) {
+  .fields {
+    grid-column: span 2;
+  }
+
+  .actions {
+    grid-column: span 2;
+  }
+
+  button.toggle-mobile-preview {
+    display: inline-block;
+  }
+
+  .mobile-preview .fields {
+    display: none;
+  }
+
+  .preview {
+    display: none;
+  }
+
+  .mobile-preview .preview {
+    display: inline-block;
+    grid-column: span 2;
+  }
 }
 
 .field {
@@ -113,7 +176,6 @@ form {
 
 .field.title {
   margin-top: 1rem;
-  margin-bottom: 0.5rem;
 }
 
 .field.tags {
@@ -132,8 +194,7 @@ form {
   align-self: flex-start;
 }
 
-button[type='submit'] {
-  margin-top: 1rem;
-  align-self: end;
+.actions button + button {
+  margin-left: 0.5rem;
 }
 </style>

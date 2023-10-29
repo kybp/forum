@@ -2,6 +2,7 @@ from playwright.sync_api import Page, expect
 
 from e2e.pages.account_page import AccountPage
 from e2e.pages.home_page import HomePage
+from e2e.pages.post_thread_page import PostThreadPage
 from e2e.pages.thread_detail_page import ThreadDetailPage
 
 
@@ -69,6 +70,41 @@ def test_posts_and_replies_support_markdown(page: Page):
 
     thread_page.reply(markdown)
     expect(thread_page.first_reply_body.locator("h1")).to_be_visible()
+
+
+def test_post_markdown_preview(page: Page):
+    home_page = HomePage(page)
+
+    home_page.sign_in()
+    home_page.post_thread_button.click()
+    post_thread_page = PostThreadPage(page)
+
+    post_thread_page.body_input.fill("# Header")
+
+    expect(post_thread_page.preview).to_be_visible()
+    markdown = post_thread_page.preview.get_by_role("heading", name="Header")
+    expect(markdown).to_be_visible()
+
+
+def test_post_markdown_preview_is_a_toggle_on_mobile(page: Page):
+    page.set_viewport_size({"width": 400, "height": 500})
+    home_page = HomePage(page)
+
+    home_page.sign_in()
+    home_page.post_thread_button.click()
+    post_thread_page = PostThreadPage(page)
+
+    post_thread_page.body_input.fill("# Header")
+    expect(post_thread_page.preview).to_be_hidden()
+    post_thread_page.toggle_preview()
+
+    # Preview is visible
+    expect(post_thread_page.preview).to_be_visible()
+    markdown = post_thread_page.preview.get_by_role("heading", name="Header")
+    expect(markdown).to_be_visible()
+
+    # Form is not visible
+    expect(post_thread_page.body_input).to_be_hidden()
 
 
 def test_liking_a_post(page: Page):
