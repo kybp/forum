@@ -16,6 +16,8 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+STATIC_ROOT = BASE_DIR.joinpath("static")
+
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
 DEBUG = bool(os.environ.get("DEBUG", default=0))
@@ -86,6 +88,10 @@ DATABASES = {
 
 
 # Configure CORS
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:8000",
+]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",

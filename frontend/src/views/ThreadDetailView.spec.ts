@@ -25,8 +25,10 @@ const api = vi.hoisted(() => ({
   post: vi.fn(),
 }))
 
-vi.mock('mande', () => ({
-  mande: () => api,
+vi.mock('axios', () => ({
+  default: {
+    create: () => api,
+  },
 }))
 
 const postId = vi.hoisted(() => 17)

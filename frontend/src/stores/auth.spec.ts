@@ -1,6 +1,7 @@
 import { createPinia, setActivePinia } from 'pinia'
 import type { Mocked } from 'vitest'
 import { beforeEach, describe, expect, it, test, vi } from 'vitest'
+import type { AxiosResponse } from 'axios'
 
 import type { SignInProps, User } from '@/stores/auth'
 import { useAuthStore } from '@/stores/auth'
@@ -26,8 +27,11 @@ const api = vi.hoisted(() => ({
   delete: vi.fn(),
 }))
 
-vi.mock('mande', () => ({
-  mande: () => api,
+vi.mock('axios', () => ({
+  default: {
+    create: () => api,
+  },
+  isAxiosError: () => true,
 }))
 
 describe('auth store', () => {
@@ -100,7 +104,7 @@ describe('auth store', () => {
 
       beforeEach(() => {
         user = userFactory()
-        api.post.mockResolvedValueOnce(user)
+        api.post.mockResolvedValueOnce({ data: user })
       })
 
       it('saves the user in the store', async () => {
@@ -126,12 +130,11 @@ describe('auth store', () => {
     })
 
     describe('when the request fails', () => {
-      let error: any
+      let error: { response: Partial<AxiosResponse> }
 
       beforeEach(() => {
         error = {
-          response: { status: 400 },
-          body: { username: ['some error'] },
+          response: { status: 400, data: { username: ['some error'] } },
         }
 
         api.post.mockRejectedValueOnce(error)
@@ -140,7 +143,7 @@ describe('auth store', () => {
       it('saves the returned errors in the store', async () => {
         await authStore.register(params)
 
-        expect(authStore.registerErrors).toEqual(error.body)
+        expect(authStore.registerErrors).toEqual(error.response.data)
       })
 
       it('does not set user', async () => {
@@ -172,7 +175,7 @@ describe('auth store', () => {
 
       beforeEach(() => {
         user = userFactory()
-        api.post.mockResolvedValueOnce(user)
+        api.post.mockResolvedValueOnce({ data: user })
       })
 
       it('posts to the token endpoint', async () => {
@@ -201,12 +204,14 @@ describe('auth store', () => {
     })
 
     describe('when the request fails', () => {
-      let error: any
+      let error: { response: Partial<AxiosResponse> }
 
       beforeEach(() => {
         error = {
-          response: { status: 400 },
-          body: { username: ['a very serious error'] },
+          response: {
+            status: 400,
+            data: { username: ['a very serious error'] },
+          },
         }
 
         api.post.mockRejectedValueOnce(error)
@@ -215,7 +220,7 @@ describe('auth store', () => {
       it('saves the returned errors in the store', async () => {
         await authStore.signIn(params)
 
-        expect(authStore.signInErrors).toEqual(error.body)
+        expect(authStore.signInErrors).toEqual(error.response.data)
       })
 
       it('does not set user', async () => {

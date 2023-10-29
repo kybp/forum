@@ -1,8 +1,10 @@
-import { mande } from 'mande'
+import axios from 'axios'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
-const api = mande(import.meta.env.VITE_API_HOST)
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_HOST,
+})
 
 export type User = {
   id: number
@@ -19,7 +21,8 @@ export const useUserStore = defineStore('user', () => {
     if (loading.value[id]) return
 
     loading.value[id] = true
-    const user: User = await api.get(`users/accounts/${id}`)
+    const response = await api.get(`users/accounts/${id}`)
+    const user: User = response.data
     loading.value[id] = false
 
     users.value[user.id] = user

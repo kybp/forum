@@ -1,0 +1,22 @@
+FROM node:20-alpine as build
+
+ARG VITE_API_HOST
+ENV VITE_API_HOST $VITE_API_HOST
+
+WORKDIR /usr/src/app
+
+# Install dependencies before copying the rest of the app, so that
+# this step can be cached.
+COPY package.json ./
+RUN npm install
+
+# Copy the rest of the project.
+COPY . ./
+
+# Make a production build
+RUN npm run build
+
+# Run in a separate stage that isn't bloated with our dependencies
+FROM nginx:1.25-alpine
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /usr/src/app/dist/ /usr/src/app/dist/

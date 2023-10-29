@@ -1,6 +1,6 @@
 import { createPinia, setActivePinia } from 'pinia'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import type { Options } from 'mande'
+import type { AxiosResponse } from 'axios'
 import { useThreadStore } from '@/stores/thread'
 import type {
   PostParams,
@@ -28,14 +28,17 @@ const api = vi.hoisted(() => ({
   delete: vi.fn(),
 }))
 
-vi.mock('mande', () => ({
-  mande: () => api,
+vi.mock('axios', () => ({
+  default: {
+    create: () => api,
+  },
+  isAxiosError: () => true,
 }))
 
 const token = 'x123'
 
 let authStore: ReturnType<typeof useAuthStore>
-let authHeaders: Options
+let authHeaders: any
 let user: User
 
 describe('thread store', () => {
@@ -78,7 +81,7 @@ describe('thread store', () => {
 
     describe('when the request succeeds', () => {
       beforeEach(() => {
-        api.post.mockResolvedValue(threadFactory())
+        api.post.mockResolvedValue({ data: threadFactory() })
       })
 
       it('posts to the new thread endpoint', async () => {
@@ -95,7 +98,7 @@ describe('thread store', () => {
 
       it('saves the returned thread in the store', async () => {
         const createdThread = threadFactory()
-        api.post.mockResolvedValueOnce(createdThread)
+        api.post.mockResolvedValueOnce({ data: createdThread })
 
         await threadStore.post(params)
 
@@ -112,10 +115,10 @@ describe('thread store', () => {
     })
 
     describe('when the request fails', () => {
-      let error: any
+      let error: { response: Partial<AxiosResponse> }
 
       beforeEach(() => {
-        error = { response: { status: 400 }, body: { body: ['error'] } }
+        error = { response: { status: 400, data: { body: ['error'] } } }
         api.post.mockRejectedValue(error)
       })
 
@@ -139,7 +142,7 @@ describe('thread store', () => {
 
       beforeEach(() => {
         reply = replyFactory({ post: params.postId })
-        api.post.mockResolvedValue(reply)
+        api.post.mockResolvedValue({ data: reply })
       })
 
       it('posts to the new reply endpoint', async () => {
@@ -167,12 +170,11 @@ describe('thread store', () => {
     })
 
     describe('when the request fails', () => {
-      let error: any
+      let error: { response: Partial<AxiosResponse> }
 
       beforeEach(() => {
         error = {
-          response: { status: 400 },
-          body: { username: ['some error'] },
+          response: { status: 400, data: { username: ['some error'] } },
         }
 
         api.post.mockRejectedValue(error)
@@ -180,7 +182,7 @@ describe('thread store', () => {
 
       it('saves the returned errors in the store', async () => {
         await threadStore.reply(params)
-        expect(threadStore.replyErrors).toEqual(error.body)
+        expect(threadStore.replyErrors).toEqual(error.response.data)
       })
 
       it('does not save a reply in the store', async () => {
@@ -191,6 +193,10 @@ describe('thread store', () => {
   })
 
   describe('fetchThread', () => {
+    beforeEach(() => {
+      api.get.mockResolvedValue({ data: threadFactory() })
+    })
+
     it('makes a GET request to the endpoint', async () => {
       const threadStore = useThreadStore()
       const id = 12
@@ -203,7 +209,7 @@ describe('thread store', () => {
     it('saves the fetched thread', async () => {
       const threadStore = useThreadStore()
       const fetchedThread = threadFactory()
-      api.get.mockResolvedValueOnce(fetchedThread)
+      api.get.mockResolvedValueOnce({ data: fetchedThread })
 
       await threadStore.fetchThread(fetchedThread.id)
 
@@ -213,13 +219,13 @@ describe('thread store', () => {
 
   describe('fetchThreadList', () => {
     beforeEach(() => {
-      api.get.mockResolvedValue([])
+      api.get.mockResolvedValue({ data: [] })
     })
 
     it('fetches filters when they are null', async () => {
       const threadStore = useThreadStore()
       threadStore.threadFilters = null
-      api.get.mockResolvedValueOnce(threadFiltersFactory())
+      api.get.mockResolvedValueOnce({ data: threadFiltersFactory() })
 
       await threadStore.fetchThreadList()
 
@@ -252,7 +258,7 @@ describe('thread store', () => {
       const threadStore = useThreadStore()
       threadStore.threadFilters = threadFiltersFactory()
       const threads = [threadFactory(), threadFactory()]
-      api.get.mockResolvedValueOnce(threads)
+      api.get.mockResolvedValueOnce({ data: threads })
 
       await threadStore.fetchThreadList()
 
@@ -395,7 +401,7 @@ describe('thread store', () => {
     beforeEach(() => {
       threadStore = useThreadStore()
       filters = threadFiltersFactory()
-      api.get.mockResolvedValue(filters)
+      api.get.mockResolvedValue({ data: filters })
     })
 
     it('makes a GET request to the endpoint', async () => {

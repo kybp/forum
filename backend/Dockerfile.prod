@@ -1,0 +1,26 @@
+FROM python:3.11.4-slim-buster as build
+
+WORKDIR /usr/src/app
+
+# Unbuffered IO
+ENV PYTHONUNBUFFERED 1
+
+# Install dependencies before copying the rest of the app, so that
+# this step can be cached.
+RUN pip install --upgrade pip
+COPY ./requirements.prod.txt ./
+
+# Save wheels so we can have a smaller final stage
+RUN pip wheel --no-cache-dir --wheel-dir /usr/src/app/wheels -r requirements.prod.txt
+
+FROM python:3.11.4-slim-buster
+COPY --from=build /usr/src/app/wheels/ /wheels/
+RUN pip install --upgrade pip
+RUN pip install --no-cache /wheels/*
+
+WORKDIR /usr/src/app/
+
+# Copy the rest of the project.
+COPY . ./
+
+RUN python manage.py collectstatic --no-input --clear

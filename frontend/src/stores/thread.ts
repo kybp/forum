@@ -1,10 +1,10 @@
-import { mande } from 'mande'
+import axios, { isAxiosError } from 'axios'
 import { defineStore, storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 import { useAuthOptions, useAuthStore } from './auth'
-import { isMandeError, type Errors } from './utils'
+import { type Errors } from './utils'
 
-const api = mande(import.meta.env.VITE_API_HOST)
+const api = axios.create({ baseURL: import.meta.env.VITE_API_HOST })
 
 export const reactionTypes = ['like', 'laugh', 'confused'] as const
 
@@ -82,11 +82,12 @@ export const useThreadStore = defineStore('thread', () => {
 
   const post = async (params: PostParams): Promise<Thread | undefined> => {
     try {
-      const thread: Thread = await api.post(
+      const response = await api.post(
         'threads/posts/',
         params,
         useAuthOptions(),
       )
+      const thread: Thread = response.data
 
       allThreads.value[thread.id] = thread
 
@@ -94,28 +95,31 @@ export const useThreadStore = defineStore('thread', () => {
 
       return thread
     } catch (error: unknown) {
-      if (!isMandeError(error)) throw error
+      if (!isAxiosError(error)) throw error
 
-      if (error.response.status === 400) postErrors.value = error.body
+      if (error.response?.status === 400) postErrors.value = error.response.data
     }
   }
 
   const reply = async (params: ReplyParams): Promise<void> => {
     try {
-      const reply: Reply = await api.post(
+      const response = await api.post(
         `threads/posts/${params.postId}/replies/`,
         {
           body: params.body,
         },
         useAuthOptions(),
       )
+      const reply: Reply = response.data
 
       replyErrors.value = null
       saveReply(params.postId, reply)
     } catch (error: unknown) {
-      if (!isMandeError(error)) throw error
+      if (!isAxiosError(error)) throw error
 
-      if (error.response.status === 400) replyErrors.value = error.body
+      if (error.response?.status === 400) {
+        replyErrors.value = error.response.data
+      }
     }
   }
 
@@ -133,14 +137,16 @@ export const useThreadStore = defineStore('thread', () => {
     if (loading.value[id]) return
 
     loading.value[id] = true
-    const thread: Thread = await api.get(`threads/posts/${id}/`)
+    const response = await api.get(`threads/posts/${id}/`)
+    const thread: Thread = response.data
     loading.value[id] = false
 
     allThreads.value[id] = thread
   }
 
   const fetchReplies = async (postId: number): Promise<void> => {
-    const replies: Reply[] = await api.get(`threads/posts/${postId}/replies`)
+    const response = await api.get(`threads/posts/${postId}/replies`)
+    const replies: Reply[] = response.data
 
     replies.forEach((reply) => saveReply(postId, reply))
   }
@@ -163,17 +169,19 @@ export const useThreadStore = defineStore('thread', () => {
     }
 
     loadingThreadList.value = true
-    const threads: Thread[] = await api.get(`threads/posts/${query}`)
+    const response = await api.get(`threads/posts/${query}`)
+    const threads: Thread[] = response.data
     loadingThreadList.value = false
 
     threads.forEach((thread) => (allThreads.value[thread.id] = thread))
   }
 
   const fetchThreadFilters = async (): Promise<void> => {
-    threadFilters.value = await api.get(
+    const response = await api.get(
       'threads/filters/',
       useAuthOptions({ notSignedInOkay: true }),
     )
+    threadFilters.value = response.data
   }
 
   const toggleThreadReaction = async (

@@ -68,6 +68,10 @@ dev() {
     $compose up --build -d
 }
 
+preview() {
+    $compose -f compose.prod.yaml up --build
+}
+
 if [ $# -eq 0 ]; then
     command=dev
 else
@@ -76,17 +80,18 @@ else
 fi
 
 case $command in
-    dev) dev ;;
-    restart) $compose down && dev ;;
-    lint) lint ;;
-    format) format ;;
-    test) unit_test ;;
-    migrate) backend_run python manage.py migrate ;;
-    pull) $compose pull && $compose pull e2e ;;
-    e2e) e2e $* ;;
-    build-e2e) $compose build e2e ;;
-    install-local-e2e) install_local_e2e ;;
-    debug-e2e) debug_e2e $* ;;
+    dev) dev ;; # Start the app in dev mode
+    preview) preview ;; # Run a prod build
+    restart) $compose down && dev ;; # Restart dev Docker containers
+    lint) lint ;; # Check code for quality issues
+    format) format ;; # Format source code
+    test) unit_test ;; # Run unit tests
+    migrate) backend_run python manage.py migrate ;; # Run database migrations
+    pull) $compose pull && $compose pull e2e ;; # Pull Docker images
+    e2e) e2e $* ;; # Run e2e specs
+    build-e2e) $compose build e2e ;; # Build Docker image for e2e specs
+    install-local-e2e) install_local_e2e ;; # Install e2e outside of Docker
+    debug-e2e) debug_e2e $* ;; # Run local e2e with the Playwright Inspector
     stop) $compose down ;;
     rm) $compose down -v ;;
     *)

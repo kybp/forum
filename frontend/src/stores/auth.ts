@@ -1,10 +1,10 @@
-import { mande } from 'mande'
+import axios, { isAxiosError } from 'axios'
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { isMandeError, type Errors } from './utils'
+import type { Errors } from './utils'
 import { useUserStore } from './user'
 
-const api = mande(import.meta.env.VITE_API_HOST)
+const api = axios.create({ baseURL: import.meta.env.VITE_API_HOST })
 
 export type User = {
   id: number
@@ -57,13 +57,14 @@ export const useAuthStore = defineStore('auth', () => {
 
   const register = async (props: RegisterProps) => {
     try {
-      updateUser(await api.post('users/accounts/', props))
+      const response = await api.post('users/accounts/', props)
+      updateUser(response.data)
       clearRegisterErrors()
     } catch (error: unknown) {
-      if (!isMandeError(error)) throw error
+      if (!isAxiosError(error)) throw error
 
-      if (error.response.status === 400) {
-        registerErrors.value = error.body
+      if (error.response?.status === 400) {
+        registerErrors.value = error.response.data
       }
     }
   }
@@ -76,13 +77,14 @@ export const useAuthStore = defineStore('auth', () => {
 
   const signIn = async (props: SignInProps) => {
     try {
-      updateUser(await api.post('users/token/', props))
+      const response = await api.post('users/token/', props)
+      updateUser(response.data)
       clearSignInErrors()
     } catch (error: unknown) {
-      if (!isMandeError(error)) throw error
+      if (!isAxiosError(error)) throw error
 
-      if (error.response.status === 400) {
-        signInErrors.value = error.body
+      if (error.response?.status === 400) {
+        signInErrors.value = error.response.data
       }
     }
   }
