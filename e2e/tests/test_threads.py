@@ -108,7 +108,6 @@ def test_thread_filtering(page: Page):
     home_page.go_to_home_page()
 
     home_page.sign_out()
-    page.reload()
 
     expect(home_page.newest_thread_title).to_have_text(default_author_title)
 
