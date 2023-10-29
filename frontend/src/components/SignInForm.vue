@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, watchEffect } from 'vue'
 import type { Ref } from 'vue'
-import { useRoute, RouterLink } from 'vue-router'
+import { useRoute, useRouter, RouterLink } from 'vue-router'
 import { ErrorMessage, Field, Form } from 'vee-validate'
 import { storeToRefs } from 'pinia'
 import * as yup from 'yup'
@@ -10,6 +10,7 @@ import { useAuthStore } from '@/stores/auth'
 const authStore = useAuthStore()
 
 const route = useRoute()
+const router = useRouter()
 
 const schema = yup.object({
   username: yup.string().required(),
@@ -33,6 +34,13 @@ watch(
 
 const signIn = async ({ username, password }: any) => {
   await authStore.signIn({ username, password })
+
+  if (!authStore.signInErrors) {
+    const next = route.redirectedFrom
+      ? { path: route.redirectedFrom.fullPath }
+      : { name: 'home' }
+    router.push(next)
+  }
 }
 </script>
 

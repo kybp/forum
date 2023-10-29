@@ -16,6 +16,10 @@ class BasePage:
         self.page.get_by_test_id("account-link").click()
 
     @property
+    def unauthorised(self):
+        return self.page.get_by_text("you need an account")
+
+    @property
     def header(self):
         return self.page.get_by_role("banner")
 

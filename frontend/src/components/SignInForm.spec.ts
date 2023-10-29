@@ -9,6 +9,7 @@ import { wrap } from '@/test-utils'
 
 vi.mock('vue-router', async () => ({
   useRoute: () => ({ path: '' }),
+  useRouter: vi.fn(),
   RouterLink: () => h('span'),
 }))
 

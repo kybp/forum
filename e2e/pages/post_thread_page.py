@@ -1,12 +1,17 @@
 from playwright.sync_api import Page
 from typing import Iterable
 
+from e2e import config
+from .base_page import BasePage
 from .thread_detail_page import ThreadDetailPage
 
 
-class PostThreadPage:
+class PostThreadPage(BasePage):
     def __init__(self, page: Page):
         self.page = page
+
+    def navigate(self):
+        self.page.goto(f"{config.HOST}/post")
 
     @property
     def form(self):

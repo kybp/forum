@@ -3,6 +3,7 @@ from playwright.sync_api import Page, expect
 from e2e import config
 from e2e.pages.account_page import AccountPage
 from e2e.pages.home_page import HomePage
+from e2e.pages.post_thread_page import PostThreadPage
 from e2e.pages.registration_page import RegistrationPage
 
 
@@ -43,6 +44,14 @@ def test_error_when_signing_in_with_bad_credentials(page: Page):
     home_page.sign_in(password=f"{config.PASSWORD} and more")
     expect(home_page.sign_out_button).to_be_hidden()
     expect(home_page.field_error).to_be_visible()
+
+
+def test_redirected_back_after_sign_in(page: Page):
+    post_thread_page = PostThreadPage(page)
+    post_thread_page.navigate()
+    expect(post_thread_page.unauthorised).to_be_visible()
+    post_thread_page.sign_in()
+    expect(post_thread_page.body_input).to_be_visible()
 
 
 def test_sign_in_errors_are_cleared_when_navigating_to_new_page(page: Page):
