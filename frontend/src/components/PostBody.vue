@@ -24,6 +24,10 @@ const markdown = new MarkdownIt()
     margin-top: 0;
   }
 
+  :deep(strong) {
+    font-weight: 700;
+  }
+
   :deep(img) {
     max-width: 80%;
 
