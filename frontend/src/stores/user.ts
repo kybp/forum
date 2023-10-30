@@ -9,6 +9,7 @@ const api = axios.create({
 export type User = {
   id: number
   username: string
+  email: string
 }
 
 export const useUserStore = defineStore('user', () => {

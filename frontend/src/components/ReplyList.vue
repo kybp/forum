@@ -29,6 +29,6 @@ const replies = computed(() => threadStore.replies(props.postId))
 
 <style scoped>
 .reply + .reply {
-  margin-top: 1rem;
+  margin-top: 2rem;
 }
 </style>

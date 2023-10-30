@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import PostBody from '@/components/PostBody.vue'
 import LoadingPlaceholder from '@/components/LoadingPlaceholder.vue'
+import UserAvatar from '@/components/UserAvatar.vue'
 import { useUserStore } from '@/stores/user'
 
 const props = defineProps({
@@ -21,7 +22,10 @@ if (!author.value) userStore.fetchUser(props.reply.author)
 
 <template>
   <div class="reply" :data-testid="dataTestid">
-    <div v-if="author" data-testid="author">{{ author.username }}</div>
+    <div v-if="author" class="author" data-testid="author">
+      <UserAvatar :user="author" class="avatar" />
+      <span class="username">{{ author.username }}</span>
+    </div>
     <LoadingPlaceholder v-else />
 
     <PostBody :value="reply.body" class="body" data-testid="body" />
@@ -32,8 +36,15 @@ if (!author.value) userStore.fetchUser(props.reply.author)
 .reply {
   display: block;
 
+  .author {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
   .body {
     display: block;
+    margin-left: 1rem;
   }
 }
 </style>
