@@ -40,6 +40,10 @@ class ThreadDetailPage(BasePage):
         return self.page.get_by_role("textbox", name="Reply")
 
     @property
+    def reply_preview(self):
+        return self.page.get_by_test_id("preview")
+
+    @property
     def submit_reply_button(self):
         return self.page.get_by_role("button", name="Submit")
 
@@ -50,6 +54,13 @@ class ThreadDetailPage(BasePage):
     @property
     def like_button(self):
         return self.page.get_by_role("button", name="👍")
+
+    @property
+    def toggle_preview_button(self):
+        return self.page.get_by_role("button", name="Preview")
+
+    def toggle_preview(self):
+        self.toggle_preview_button.click()
 
     def like_thread(self):
         self.like_button.click()

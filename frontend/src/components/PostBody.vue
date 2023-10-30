@@ -3,6 +3,7 @@ import MarkdownIt from 'markdown-it'
 
 type Props = {
   value: string
+  alignTop?: boolean
 }
 
 defineProps<Props>()
@@ -11,7 +12,10 @@ const markdown = new MarkdownIt()
 </script>
 
 <template>
-  <div class="body" v-html="markdown.render(value)" />
+  <div
+    v-html="markdown.render(value)"
+    :class="{ body: true, 'align-top': alignTop }"
+  />
 </template>
 
 <style scoped>
