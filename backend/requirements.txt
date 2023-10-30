@@ -1,5 +1,5 @@
 # Django is an obscure web framework; app doesn't seem to work without it.
-Django==4.2.5
+Django==4.2.6
 # Use psycopg2 for connecting to Postgres
 psycopg2-binary==2.9.9
 # Use DRF for more robust REST API support in Django
