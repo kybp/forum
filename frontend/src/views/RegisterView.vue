@@ -119,52 +119,45 @@ const register = async ({ username, email, password }: any) => {
 }
 
 .form {
-  width: 30vw;
   display: grid;
   align-items: center;
-}
+  width: 30%;
 
-@media (--large-viewport) {
-  .form {
-    width: 40vw;
+  @media (--large-viewport) {
+    width: 40%;
   }
-}
 
-@media (--medium-viewport) {
-  .form {
-    width: 60vw;
+  @media (--medium-viewport) {
+    width: 60%;
   }
-}
 
-@media (--small-viewport) {
-  .form {
+  @media (--small-viewport) {
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: start;
-    width: 100%;
-  }
-
-  .field {
-    margin-bottom: 1rem;
-  }
-
-  .actions {
-    align-self: end;
   }
 }
 
 label {
-  grid-column-start: 1;
+  grid-column: 1;
 }
 
 .field {
-  grid-column-start: 2;
-  grid-column-end: 4;
+  grid-column: span 2;
+
+  @media (--small-viewport) {
+    margin-bottom: 1rem;
+  }
 }
 
 .actions {
-  grid-column-start: 3;
-  grid-row-start: 5;
+  grid-column: 3;
+  grid-row: 5;
   justify-self: end;
+
+  @media (--small-viewport) {
+    align-self: end;
+  }
 }
 </style>

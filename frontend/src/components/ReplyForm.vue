@@ -83,46 +83,49 @@ form {
   display: grid;
   grid-template-columns: 50% 50%;
   column-gap: 1rem;
+
+  @media (--small-viewport), (--medium-viewport) {
+    grid-template-columns: 100%;
+  }
 }
 
 .field {
   grid-column: 1;
   grid-row: 1;
+
+  textarea {
+    /* Sync height with preview if it grows larger than input. */
+    height: 100%;
+  }
 }
 
 .preview {
   grid-row: 1;
+
+  @media (--small-viewport), (--medium-viewport) {
+    /* Hide the preview; it's re-enabled with the mobile-preview class */
+    display: none;
+  }
 }
 
 button.toggle-mobile-preview {
   display: none;
-}
 
-@media (--small-viewport), (--medium-viewport) {
-  form {
-    grid-template-columns: 100%;
-  }
-
-  button.toggle-mobile-preview {
-    display: inline-block;
-  }
-
-  .preview {
-    display: none;
-  }
-
-  .mobile-preview .field {
-    display: none;
-  }
-
-  .mobile-preview .preview {
+  @media (--small-viewport), (--medium-viewport) {
     display: inline-block;
   }
 }
 
-.field textarea {
-  /* Sync height with preview if it grows larger than input. */
-  height: 100%;
+.mobile-preview {
+  @media (--small-viewport), (--medium-viewport) {
+    .field {
+      display: none;
+    }
+
+    .preview {
+      display: inline-block;
+    }
+  }
 }
 
 .actions {

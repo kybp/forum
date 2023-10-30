@@ -118,6 +118,10 @@ form {
   grid-template-columns: 50% 50%;
   column-gap: 2rem;
   row-gap: 0.5em;
+
+  @media (--small-viewport) {
+    grid-template-columns: 100%;
+  }
 }
 
 .fields {
@@ -137,56 +141,51 @@ form {
 .preview {
   grid-column: 2;
   grid-row: 1;
+
+  @media (--small-viewport) {
+    /* Hide the preview; it's re-enabled with the mobile-preview class */
+    display: none;
+    grid-column: 1;
+  }
 }
 
 button.toggle-mobile-preview {
   display: none;
+
+  @media (--small-viewport) {
+    display: inline-block;
+  }
 }
 
-@media (--small-viewport) {
-  .fields {
-    grid-column: span 2;
-  }
+.mobile-preview {
+  @media (--small-viewport) {
+    .fields {
+      display: none;
+    }
 
-  .actions {
-    grid-column: span 2;
-  }
-
-  button.toggle-mobile-preview {
-    display: inline-block;
-  }
-
-  .mobile-preview .fields {
-    display: none;
-  }
-
-  .preview {
-    display: none;
-  }
-
-  .mobile-preview .preview {
-    display: inline-block;
-    grid-column: span 2;
+    .preview {
+      display: inline-block;
+    }
   }
 }
 
 .field {
   width: 100%;
-}
 
-.field.title {
-  margin-top: 1rem;
-}
+  &.title {
+    margin-top: 1rem;
+  }
 
-.field.tags {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-}
+  &.tags {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
 
-.field.tags .tag {
-  margin-top: 0.1rem;
-  margin-bottom: 0.1rem;
+    .tag {
+      margin-top: 0.1rem;
+      margin-bottom: 0.1rem;
+    }
+  }
 }
 
 .button.add-tag {

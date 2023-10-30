@@ -31,9 +31,9 @@ if (!author.value) userStore.fetchUser(props.reply.author)
 <style scoped>
 .reply {
   display: block;
-}
 
-.reply .body {
-  display: block;
+  .body {
+    display: block;
+  }
 }
 </style>

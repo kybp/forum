@@ -109,7 +109,7 @@ button[type='submit'] + * {
   }
 
   .fields {
-    grid-row-start: 1;
+    grid-row: 1;
     margin-bottom: 0.5rem;
   }
 
@@ -119,7 +119,7 @@ button[type='submit'] + * {
   }
 
   .actions {
-    grid-row-start: 2;
+    grid-row: 2;
     display: flex;
     justify-content: end;
   }

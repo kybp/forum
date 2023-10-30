@@ -19,10 +19,6 @@ a:visited {
   }
 }
 
-a.button:visited {
-  color: inherit;
-}
-
 .field {
   display: flex;
   flex-direction: column;
@@ -31,6 +27,11 @@ a.button:visited {
 input {
   color: inherit;
   background: var(--color-input-background);
+
+  &.invalid {
+    border: 1px solid var(--color-error);
+    border-radius: 3px;
+  }
 }
 
 textarea {
@@ -39,11 +40,6 @@ textarea {
   border: 1px solid var(--f-blue-3);
   border-radius: 2px;
   padding: 0.4rem 0.6rem;
-}
-
-input.invalid {
-  border: 1px solid var(--color-error);
-  border-radius: 3px;
 }
 
 span[role='alert'] {
@@ -79,12 +75,28 @@ span[role='alert'] {
   border-radius: 3px;
   padding: 0.2rem 0.4rem;
   line-height: normal;
+
+  &:enabled {
+    &:hover {
+      background-color: var(--f-pink-2);
+    }
+
+    &:active {
+      filter: brightness(85%);
+    }
+  }
 }
 
-.button:enabled:hover {
-  background-color: var(--f-pink-2);
-}
+a.button {
+  &:visited {
+    color: inherit;
+  }
 
-.button:enabled:active {
-  filter: brightness(85%);
+  &:hover {
+    background-color: var(--f-pink-2);
+  }
+
+  &:active {
+    filter: brightness(85%);
+  }
 }

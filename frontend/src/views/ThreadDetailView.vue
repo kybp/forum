@@ -70,10 +70,10 @@ watchEffect(() => {
 .author {
   font-size: 0.75rem;
   padding-left: 2rem;
-}
 
-.author::before {
-  content: 'by ';
+  &::before {
+    content: 'by ';
+  }
 }
 
 .body {
@@ -85,9 +85,6 @@ watchEffect(() => {
 .tags {
   display: flex;
   width: 100%;
-}
-
-ul.tags {
   margin-bottom: 0.5rem;
 }
 

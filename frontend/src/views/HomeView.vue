@@ -38,10 +38,8 @@ main {
   margin-top: 1rem;
   display: flex;
   gap: 2rem;
-}
 
-@media (--small-viewport) {
-  main {
+  @media (--small-viewport) {
     flex-direction: column;
     gap: 0;
   }

@@ -44,6 +44,7 @@
 :root {
   --color-background: var(--f-purple-2);
   --color-input-background: var(--f-purple-1);
+  --color-input-highlight-background: var(--f-purple-2);
   --color-text: var(--f-blue-4);
   --color-error: var(--f-red-3);
   --color-error-background: var(--f-red-1);
@@ -101,14 +102,14 @@ button {
   background: transparent;
   color: inherit;
   font-size: inherit;
-}
 
-button:enabled {
-  cursor: pointer;
-}
+  &:enabled {
+    cursor: pointer;
+  }
 
-button:disabled {
-  cursor: default;
+  &:disabled {
+    cursor: default;
+  }
 }
 
 input {

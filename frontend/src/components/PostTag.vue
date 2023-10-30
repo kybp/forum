@@ -53,38 +53,39 @@ watch(
   border-radius: 5px;
   display: flex;
   width: fit-content;
-}
 
-.tag::before {
-  content: '#';
-}
+  &::before {
+    content: '#';
+  }
 
-.tag input {
-  background: inherit;
-  color: inherit;
-  font-size: inherit;
-}
+  input {
+    background: inherit;
+    color: inherit;
+    font-size: inherit;
+  }
 
-.tag.programming {
-  background: var(--color-background-programming-tag);
-  color: var(--f-purple-1);
-}
+  &.programming {
+    background: var(--color-background-programming-tag);
+    color: var(--f-purple-1);
+  }
 
-.tag.music {
-  background: var(--color-background-music-tag);
-  color: var(--f-purple-1);
-}
+  &.music {
+    background: var(--color-background-music-tag);
+    color: var(--f-purple-1);
+  }
 
-.tag.photos {
-  background: var(--color-background-photos-tag);
-}
+  &.photos {
+    background: var(--color-background-photos-tag);
+  }
 
-.tag.default {
-  background: var(--color-background-tag-default);
-  color: var(--f-purple-1);
+  &.default {
+    background: var(--color-background-tag-default);
+    color: var(--f-purple-1);
+  }
 }
 
 button {
+  color: var(--f-purple-1);
   backdrop-filter: brightness(55%);
   border-radius: 1rem;
   padding: 0.1rem 0.3rem;

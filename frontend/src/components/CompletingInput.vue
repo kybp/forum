@@ -91,6 +91,7 @@ const isActive = (i: number) => {
         :class="{ active: isActive(i) }"
         :key="`suggestion-${i}`"
         @mouseenter="index = i"
+        @mouseleave="index = null"
       >
         {{ suggestion }}
       </li>
@@ -116,18 +117,21 @@ ul {
   top: 1.2rem;
   background: var(--color-input-background);
   color: var(--color-text);
-}
+  z-index: 5;
+  border: 1px solid var(--f-purple-3);
+  border-top: none;
 
-ul.closed {
-  display: none;
+  &.closed {
+    display: none;
+  }
 }
 
 li {
   padding: 0.2rem 0.4rem;
-}
 
-li.active,
-li:hover {
-  backdrop-filter: brightness(85%);
+  &.active,
+  &:hover {
+    background: var(--color-input-highlight-background);
+  }
 }
 </style>

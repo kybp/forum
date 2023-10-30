@@ -57,9 +57,9 @@ const deleteAccount = async () => {
 .confirm-delete {
   display: flex;
   flex-direction: column;
-}
 
-.confirm-delete .confirm.button {
-  margin-top: 0.2rem;
+  .confirm.button {
+    margin-top: 0.2rem;
+  }
 }
 </style>
