@@ -1,19 +1,33 @@
 import pytest
-from django.test import Client
+from rest_framework.test import APIClient
 
 from users.factories import UserFactory
 from .factories import PostFactory, TagFactory
+from .models import Post
 from .serializers import PostSerializer
 
 
 @pytest.mark.django_db
-def test_get_posts_returns_200(client: Client):
+def test_returns_200(client: APIClient):
     response = client.get("/api/threads/posts/")
     assert response.status_code == 200
 
 
 @pytest.mark.django_db
-def test_get_posts_filtered_by_tags(client: Client):
+def test_returns_posts(client: APIClient, post: Post):
+    response = client.get("/api/threads/posts/")
+    assert response.data == [PostSerializer(post).data]
+
+
+@pytest.mark.django_db
+def test_does_not_return_deleted_posts(client: APIClient, post: Post):
+    post.delete()
+    response = client.get("/api/threads/posts/")
+    assert response.data == []
+
+
+@pytest.mark.django_db
+def test_filtered_by_tags(client: APIClient):
     tags = "tag one", "tag two"
     posts = [PostFactory() for tag in tags]
     for tag, post in zip(tags, posts):
@@ -27,7 +41,7 @@ def test_get_posts_filtered_by_tags(client: Client):
 
 
 @pytest.mark.django_db
-def test_get_posts_filtered_by_authors(client: Client):
+def test_filtered_by_authors(client: APIClient):
     authors = [UserFactory(), UserFactory()]
     posts = [PostFactory(author=author) for author in authors]
     PostFactory()

@@ -32,6 +32,9 @@ class PostViewSet(
         if tags := self.request.query_params.getlist("tag"):
             queryset = queryset.filter(tags__name__in=tags)
 
+        if self.action == 'list':
+            queryset = queryset.filter(is_deleted=False)
+
         return queryset
 
     def _create_tags(self, post: Post, tags: list[str]):
