@@ -5,6 +5,7 @@ from django.contrib.contenttypes.fields import (
 )
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from simple_history.models import HistoricalRecords
 
 User = get_user_model()
 
@@ -63,6 +64,7 @@ class Post(models.Model):
     date_posted = models.DateTimeField(auto_now_add=True)
     reactions = GenericRelation(Reaction)
     is_deleted = models.BooleanField(default=False)
+    history = HistoricalRecords()
 
     def __str__(self):
         title = truncate(self.title, 50)
@@ -83,6 +85,7 @@ class Tag(models.Model):
     post = models.ForeignKey(
         Post, on_delete=models.CASCADE, related_name="tags"
     )
+    history = HistoricalRecords()
 
     def __str__(self):
         return f"{self.name} -- {self.post.title}"
@@ -97,6 +100,7 @@ class Reply(models.Model):
     )
     body = models.TextField(null=False, blank=False)
     date_posted = models.DateTimeField(auto_now_add=True)
+    history = HistoricalRecords()
 
     def __str__(self):
         return f"{self.author.username}: {truncate(self.body, 250)}"

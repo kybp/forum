@@ -10,6 +10,8 @@ drf-nested-routers==0.93.4
 django-cors-headers==4.3.0
 # Use DRF Access Policy for declarative, IAM-like access policy definitions
 drf-access-policy==1.5.0
+# Use django-simple-history to keep old versions of records after update/delete
+django-simple-history==3.4.0
 # Use flake8 for checking code quality
 flake8==6.1.0
 # Use black for code formatting
