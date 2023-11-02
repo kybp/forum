@@ -11,7 +11,7 @@ const props = defineProps<Props>()
 
 const emit = defineEmits(['update:modelValue'])
 
-const inputValue = ref('')
+const inputValue = ref(props.modelValue ?? '')
 
 const suggestions = computed(() =>
   props.choices.filter((c) => c.startsWith(inputValue.value ?? '')),

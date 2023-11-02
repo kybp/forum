@@ -7,7 +7,7 @@ type Props = {
   editable?: boolean
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   value: '',
   editable: false,
 })
@@ -23,7 +23,7 @@ const tagClass = (tag: string) => {
   return specialClass ?? 'default'
 }
 
-const inputValue = ref('')
+const inputValue = ref(props.value ?? '')
 
 watch(
   () => inputValue.value,
