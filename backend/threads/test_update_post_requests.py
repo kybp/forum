@@ -5,6 +5,7 @@ from rest_framework.test import APIClient
 
 from users.factories import UserFactory
 from users.models import User
+from .factories import TagFactory
 from .models import Post
 
 fake = Faker()
@@ -21,7 +22,11 @@ def update_post_props(post: Post):
 
 
 def make_request(client: APIClient, props: dict):
-    return client.put(f"/api/threads/posts/{props['id']}/", props)
+    return client.put(
+        f"/api/threads/posts/{props['id']}/",
+        data=json.dumps(props),
+        content_type="application/json",
+    )
 
 
 @pytest.mark.django_db
@@ -38,11 +43,7 @@ def test_saves_unique_trimmed_non_blank_tags(
 
     assert set(tag.name for tag in post.tags.all()) != {"one", "two"}
 
-    user_client.put(
-        f"/api/threads/posts/{post.id}/",
-        data=json.dumps(update_post_props),
-        content_type="application/json",
-    )
+    make_request(user_client, update_post_props)
 
     post.refresh_from_db()
     assert set(tag.name for tag in post.tags.all()) == {"one", "two"}
@@ -96,3 +97,30 @@ def test_updates_db_record(
 
     post.refresh_from_db()
     assert post.title == update_post_props["title"]
+
+
+@pytest.mark.django_db
+def test_does_not_update_fields_that_are_left_out(
+    user_client: APIClient, user: User, update_post_props: dict, post: Post
+):
+    original_title = post.title
+    del update_post_props["title"]
+
+    make_request(user_client, update_post_props)
+
+    post.refresh_from_db()
+    assert post.title == original_title
+
+
+@pytest.mark.django_db
+def test_can_delete_tags_by_excluding_some(
+    user_client: APIClient, user: User, update_post_props: dict, post: Post
+):
+    # Create more tags than are in the update
+    for _ in range(len(update_post_props["tags"]) + 1):
+        TagFactory(post=post)
+
+    make_request(user_client, update_post_props)
+
+    post.refresh_from_db()
+    assert post.tags.count() == len(update_post_props["tags"])

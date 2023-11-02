@@ -32,7 +32,11 @@ class PostViewSet(viewsets.ModelViewSet):
         return queryset
 
     def _ensure_tags(self, post: Post, tags: list[str]):
-        for tag in set(tag.strip() for tag in tags if tag.strip()):
+        new_tags = set(tag.strip() for tag in tags if tag.strip())
+
+        Tag.objects.filter(post=post).exclude(name__in=tags).delete()
+
+        for tag in new_tags:
             Tag.objects.get_or_create(post=post, name=tag)
 
     def create(self, request):

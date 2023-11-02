@@ -19,17 +19,30 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.BigIntegerField(
-                        auto_created=True, blank=True, db_index=True, verbose_name="ID"
+                        auto_created=True,
+                        blank=True,
+                        db_index=True,
+                        verbose_name="ID",
                     ),
                 ),
                 ("name", models.CharField()),
-                ("history_id", models.AutoField(primary_key=True, serialize=False)),
+                (
+                    "history_id",
+                    models.AutoField(primary_key=True, serialize=False),
+                ),
                 ("history_date", models.DateTimeField(db_index=True)),
-                ("history_change_reason", models.CharField(max_length=100, null=True)),
+                (
+                    "history_change_reason",
+                    models.CharField(max_length=100, null=True),
+                ),
                 (
                     "history_type",
                     models.CharField(
-                        choices=[("+", "Created"), ("~", "Changed"), ("-", "Deleted")],
+                        choices=[
+                            ("+", "Created"),
+                            ("~", "Changed"),
+                            ("-", "Deleted"),
+                        ],
                         max_length=1,
                     ),
                 ),
@@ -68,18 +81,34 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.BigIntegerField(
-                        auto_created=True, blank=True, db_index=True, verbose_name="ID"
+                        auto_created=True,
+                        blank=True,
+                        db_index=True,
+                        verbose_name="ID",
                     ),
                 ),
                 ("body", models.TextField()),
-                ("date_posted", models.DateTimeField(blank=True, editable=False)),
-                ("history_id", models.AutoField(primary_key=True, serialize=False)),
+                (
+                    "date_posted",
+                    models.DateTimeField(blank=True, editable=False),
+                ),
+                (
+                    "history_id",
+                    models.AutoField(primary_key=True, serialize=False),
+                ),
                 ("history_date", models.DateTimeField(db_index=True)),
-                ("history_change_reason", models.CharField(max_length=100, null=True)),
+                (
+                    "history_change_reason",
+                    models.CharField(max_length=100, null=True),
+                ),
                 (
                     "history_type",
                     models.CharField(
-                        choices=[("+", "Created"), ("~", "Changed"), ("-", "Deleted")],
+                        choices=[
+                            ("+", "Created"),
+                            ("~", "Changed"),
+                            ("-", "Deleted"),
+                        ],
                         max_length=1,
                     ),
                 ),
@@ -129,20 +158,36 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.BigIntegerField(
-                        auto_created=True, blank=True, db_index=True, verbose_name="ID"
+                        auto_created=True,
+                        blank=True,
+                        db_index=True,
+                        verbose_name="ID",
                     ),
                 ),
                 ("title", models.CharField()),
                 ("body", models.TextField(blank=True)),
-                ("date_posted", models.DateTimeField(blank=True, editable=False)),
+                (
+                    "date_posted",
+                    models.DateTimeField(blank=True, editable=False),
+                ),
                 ("is_deleted", models.BooleanField(default=False)),
-                ("history_id", models.AutoField(primary_key=True, serialize=False)),
+                (
+                    "history_id",
+                    models.AutoField(primary_key=True, serialize=False),
+                ),
                 ("history_date", models.DateTimeField(db_index=True)),
-                ("history_change_reason", models.CharField(max_length=100, null=True)),
+                (
+                    "history_change_reason",
+                    models.CharField(max_length=100, null=True),
+                ),
                 (
                     "history_type",
                     models.CharField(
-                        choices=[("+", "Created"), ("~", "Changed"), ("-", "Deleted")],
+                        choices=[
+                            ("+", "Created"),
+                            ("~", "Changed"),
+                            ("-", "Deleted"),
+                        ],
                         max_length=1,
                     ),
                 ),
