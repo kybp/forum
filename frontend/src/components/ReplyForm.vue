@@ -30,13 +30,17 @@ watchEffect(() => {
 
 const body = ref('')
 
-const reply = async (formValues: any, { resetForm }: FormActions<any>) => {
+const reply = async (
+  formValues: any,
+  { resetForm }: FormActions<{ body: string }>,
+) => {
   await threadStore.reply({
     postId: props.postId,
     body: formValues.body,
   })
-  resetForm()
+
   body.value = ''
+  resetForm({ values: { body: '' } })
 }
 
 const isMobilePreviewOpen = ref(false)

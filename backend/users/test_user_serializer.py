@@ -19,7 +19,7 @@ def user_props(user: User):
 @pytest.mark.django_db
 def test_contains_expected_fields(user: User):
     serializer = UserSerializer(user)
-    assert set(serializer.data.keys()) == {"id", "username", "email"}
+    assert set(serializer.data.keys()) == {"id", "username", "avatar"}
 
 
 @pytest.mark.django_db

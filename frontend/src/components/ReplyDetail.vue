@@ -2,7 +2,6 @@
 import { computed } from 'vue'
 import PostBody from '@/components/PostBody.vue'
 import LoadingPlaceholder from '@/components/LoadingPlaceholder.vue'
-import UserAvatar from '@/components/UserAvatar.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useThreadStore, type Reply } from '@/stores/thread'
 import { useUserStore } from '@/stores/user'
@@ -34,7 +33,7 @@ const deleteReply = () => threadStore.deleteReply(props.reply)
 <template>
   <div class="reply">
     <div v-if="author" class="author" data-testid="author">
-      <UserAvatar :user="author" class="avatar" />
+      <img :src="author.avatar" class="avatar" />
       <span class="username">{{ author.username }}</span>
     </div>
     <LoadingPlaceholder v-else />

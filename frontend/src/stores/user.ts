@@ -9,7 +9,7 @@ const api = axios.create({
 export type User = {
   id: number | null
   username: string
-  email: string
+  avatar?: string
 }
 
 export const useUserStore = defineStore('user', () => {
@@ -31,7 +31,7 @@ export const useUserStore = defineStore('user', () => {
 
   const user = (id: number | null): User | undefined => {
     if (id === null) {
-      return { id: null, username: '[deleted]', email: '' }
+      return { id: null, username: '[deleted]' }
     }
 
     return users.value[id]

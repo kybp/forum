@@ -6,6 +6,6 @@ import { makeId } from '@/test-utils'
 export const userFactory = (props: Partial<User> = {}): User => ({
   id: makeId(),
   username: faker.internet.userName(),
-  email: faker.internet.email(),
+  avatar: faker.internet.url(),
   ...props,
 })

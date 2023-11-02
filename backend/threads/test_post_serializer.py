@@ -109,7 +109,7 @@ def test_author_is_null_when_post_is_deleted(post: Post):
 
 
 @pytest.mark.django_db
-def test_body_is_null_when_post_is_deleted(post: Post):
+def test_body_is_deleted_when_post_is_deleted(post: Post):
     post.is_deleted = True
     serializer = PostSerializer(post)
-    assert serializer.data["body"] is None
+    assert serializer.data["body"] == "[deleted]"

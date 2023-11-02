@@ -60,6 +60,6 @@ class PostSerializer(serializers.ModelSerializer):
 
         if post.is_deleted:
             result["author"] = None
-            result["body"] = None
+            result["body"] = "[deleted]"
 
         return result

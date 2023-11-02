@@ -7,6 +7,7 @@ User = get_user_model()
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
+    email = serializers.EmailField(write_only=True)
 
     def create(self, data):
         return get_user_model().objects.create_user(
@@ -20,8 +21,9 @@ class UserSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "username",
-            "email",
             "password",
+            "email",
+            "avatar",
         )
 
     def to_representation(self, user):
