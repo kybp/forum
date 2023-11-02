@@ -35,6 +35,12 @@ const router = createRouter({
       beforeEnter: guards.checkSignedIn,
     },
     {
+      path: '/threads/:id/edit',
+      name: 'edit post',
+      component: () => import('../views/EditPostView.vue'),
+      beforeEnter: guards.checkSignedIn,
+    },
+    {
       path: '/threads/:id',
       name: 'thread detail',
       component: () => import('../views/ThreadDetailView.vue'),

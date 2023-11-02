@@ -51,7 +51,7 @@ def test_redirected_back_after_sign_in(page: Page):
     post_thread_page.navigate()
     expect(post_thread_page.unauthorised).to_be_visible()
     post_thread_page.sign_in()
-    expect(post_thread_page.body_input).to_be_visible()
+    expect(post_thread_page.form.body_input).to_be_visible()
 
 
 def test_sign_in_errors_are_cleared_when_navigating_to_new_page(page: Page):

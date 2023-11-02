@@ -1,6 +1,7 @@
 from playwright.sync_api import Page, expect
 
 from e2e.pages.account_page import AccountPage
+from e2e.pages.edit_post_page import EditPostPage
 from e2e.pages.home_page import HomePage
 from e2e.pages.post_thread_page import PostThreadPage
 from e2e.pages.thread_detail_page import ThreadDetailPage
@@ -47,15 +48,15 @@ def test_replying_to_a_thread(page: Page):
     username = home_page.sign_in()
     home_page.post_thread()
 
-    thread_page = ThreadDetailPage(page)
+    thread_detail_page = ThreadDetailPage(page)
     body = "A well thought-out response"
-    thread_page.reply(body)
+    thread_detail_page.reply(body)
 
     # Check that the input is cleared
-    expect(thread_page.reply_input).to_have_value("")
+    expect(thread_detail_page.reply_input).to_have_value("")
     # Check that the reply is added to the page
-    expect(thread_page.first_reply_author).to_have_text(username)
-    expect(thread_page.first_reply_body).to_have_text(body)
+    expect(thread_detail_page.first_reply_author).to_have_text(username)
+    expect(thread_detail_page.first_reply_body).to_have_text(body)
 
 
 def test_posts_and_replies_support_markdown(page: Page):
@@ -79,10 +80,12 @@ def test_post_markdown_preview(page: Page):
     home_page.post_thread_button.click()
     post_thread_page = PostThreadPage(page)
 
-    post_thread_page.body_input.fill("# Header")
+    post_thread_page.form.body_input.fill("# Header")
 
-    expect(post_thread_page.preview).to_be_visible()
-    markdown = post_thread_page.preview.get_by_role("heading", name="Header")
+    expect(post_thread_page.form.preview).to_be_visible()
+    markdown = post_thread_page.form.preview.get_by_role(
+        "heading", name="Header"
+    )
     expect(markdown).to_be_visible()
 
 
@@ -94,22 +97,24 @@ def test_post_markdown_preview_is_a_toggle_on_mobile(page: Page):
     home_page.post_thread_button.click()
     post_thread_page = PostThreadPage(page)
 
-    post_thread_page.body_input.fill("# Header")
-    expect(post_thread_page.preview).to_be_hidden()
-    post_thread_page.toggle_preview()
+    post_thread_page.form.body_input.fill("# Header")
+    expect(post_thread_page.form.preview).to_be_hidden()
+    post_thread_page.form.toggle_preview()
 
     # Preview is visible
-    expect(post_thread_page.preview).to_be_visible()
-    markdown = post_thread_page.preview.get_by_role("heading", name="Header")
+    expect(post_thread_page.form.preview).to_be_visible()
+    markdown = post_thread_page.form.preview.get_by_role(
+        "heading", name="Header"
+    )
     expect(markdown).to_be_visible()
 
     # Form is not visible
-    expect(post_thread_page.body_input).to_be_hidden()
+    expect(post_thread_page.form.body_input).to_be_hidden()
 
     # Toggle back
-    post_thread_page.toggle_preview()
-    expect(post_thread_page.body_input).to_be_visible()
-    expect(post_thread_page.preview).to_be_hidden()
+    post_thread_page.form.toggle_preview()
+    expect(post_thread_page.form.body_input).to_be_visible()
+    expect(post_thread_page.form.preview).to_be_hidden()
 
 
 def test_reply_markdown_preview(page: Page):
@@ -230,3 +235,27 @@ def test_deleting_posts_and_replies(page: Page):
     thread_detail_page.delete_post()
     expect(thread_detail_page.author).to_have_text("[deleted]")
     expect(thread_detail_page.body).to_have_text("[deleted]")
+
+
+def test_editing_post(page: Page):
+    home_page = HomePage(page)
+
+    home_page.sign_in()
+    old_title, old_body = "old title", "old body"
+    home_page.post_thread(title=old_title, body=old_body)
+
+    thread_detail_page = ThreadDetailPage(page)
+    new_title, new_body = "new title", "new body"
+    thread_detail_page.edit_post_button.click()
+    edit_post_page = EditPostPage(page)
+
+    # Check that form populates from DB
+    expect(edit_post_page.form.title_input).to_have_value(old_title)
+    expect(edit_post_page.form.body_input).to_have_value(old_body)
+
+    edit_post_page.edit(title=new_title, body=new_body)
+    thread_detail_page.author.wait_for()
+
+    # Check updates
+    expect(thread_detail_page.title).to_have_text(new_title)
+    expect(thread_detail_page.body).to_have_text(new_body)

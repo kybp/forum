@@ -9,6 +9,7 @@ import type {
   Thread,
   ThreadFilters,
   ThreadStore,
+  UpdatePostParams,
 } from '@/stores/thread'
 import { useAuthStore } from './auth'
 import type { User } from './auth'
@@ -20,12 +21,14 @@ import {
   replyParamsFactory,
   threadFactory,
   threadFiltersFactory,
+  updatePostParamsFactory,
 } from './thread.factories'
 import { makeId } from '@/test-utils'
 
 const api = vi.hoisted(() => ({
   get: vi.fn(),
   post: vi.fn(),
+  put: vi.fn(),
   delete: vi.fn(),
 }))
 
@@ -108,6 +111,12 @@ describe('thread store', () => {
         expect(threadInStore.title).toEqual(createdThread.title)
       })
 
+      it('returns the returned thread', async () => {
+        const thread = threadFactory()
+        api.post.mockResolvedValueOnce({ data: thread })
+        expect(await threadStore.post(params)).toEqual(thread)
+      })
+
       it('clears postErrors', async () => {
         threadStore.postErrors = { title: ['title error'] }
         await threadStore.post(params)
@@ -125,6 +134,84 @@ describe('thread store', () => {
 
       it('saves the returned errors in the store', async () => {
         await threadStore.post(params)
+        expect(threadStore.postErrors).toEqual(error.response.data)
+      })
+
+      it('returns undefined', async () => {
+        expect(await threadStore.post(params)).toBeUndefined()
+      })
+    })
+  })
+
+  describe('updatePost', () => {
+    let threadStore: ThreadStore
+    let params: UpdatePostParams
+
+    beforeEach(() => {
+      threadStore = useThreadStore()
+      params = updatePostParamsFactory()
+    })
+
+    describe('when the request succeeds', () => {
+      beforeEach(() => {
+        api.put.mockResolvedValue({ data: threadFactory() })
+      })
+
+      it('sends a PUT request to the endpoint', async () => {
+        await threadStore.updatePost(params)
+
+        expect(api.put).toHaveBeenCalledWith(
+          `threads/posts/${params.id}/`,
+          params,
+          authHeaders,
+        )
+      })
+
+      it('saves the returned thread in the store', async () => {
+        const thread = threadFactory()
+        threadStore.allThreads = { [thread.id]: thread }
+
+        const newTitle = thread.title + ' but different'
+        api.put.mockResolvedValueOnce({ data: { ...thread, title: newTitle } })
+
+        await threadStore.updatePost(params)
+
+        const threadInStore = threadStore.thread(thread.id)!
+        expect(threadInStore.title).toEqual(newTitle)
+      })
+
+      it('returns the returned thread', async () => {
+        const thread = threadFactory()
+        api.put.mockResolvedValueOnce({ data: thread })
+
+        expect(await threadStore.updatePost(updatePostParamsFactory())).toEqual(
+          thread,
+        )
+      })
+
+      it('clears postErrors', async () => {
+        threadStore.postErrors = { title: ['title error'] }
+        await threadStore.updatePost(params)
+        expect(threadStore.postErrors).toBe(null)
+      })
+    })
+
+    describe('when the request fails', () => {
+      let error: { response: Partial<AxiosResponse> }
+
+      beforeEach(() => {
+        error = { response: { status: 400, data: { body: ['error'] } } }
+        api.put.mockRejectedValue(error)
+      })
+
+      it('saves the returned errors in the store', async () => {
+        await threadStore.updatePost(params)
+      })
+
+      it('returns undefined', async () => {
+        expect(
+          await threadStore.updatePost(updatePostParamsFactory()),
+        ).toBeUndefined()
       })
     })
   })

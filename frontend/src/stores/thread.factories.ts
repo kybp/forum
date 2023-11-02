@@ -7,6 +7,7 @@ import type {
   Reply,
   ReplyParams,
   Thread,
+  UpdatePostParams,
 } from '@/stores/thread'
 import { makeId } from '@/test-utils'
 
@@ -50,6 +51,16 @@ export const threadFiltersFactory = (
 export const postParamsFactory = (
   props: Partial<PostParams> = {},
 ): PostParams => ({
+  title: faker.lorem.sentence(),
+  body: faker.lorem.paragraph(),
+  tags: [faker.animal.bird()],
+  ...props,
+})
+
+export const updatePostParamsFactory = (
+  props: Partial<UpdatePostParams> = {},
+): UpdatePostParams => ({
+  id: makeId(),
   title: faker.lorem.sentence(),
   body: faker.lorem.paragraph(),
   tags: [faker.animal.bird()],

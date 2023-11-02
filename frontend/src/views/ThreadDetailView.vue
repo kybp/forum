@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, watchEffect } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, RouterLink } from 'vue-router'
 
 import PostBody from '@/components/PostBody.vue'
 import PostTag from '@/components/PostTag.vue'
@@ -47,6 +47,14 @@ watchEffect(() => {
   <div class="header">
     <h1 class="title" v-if="thread" data-testid="title">{{ thread.title }}</h1>
     <LoadingPlaceholder v-else />
+
+    <RouterLink
+      v-if="userIsAuthor"
+      :to="{ name: 'edit post', params: { id: postId } }"
+      class="button"
+    >
+      Edit
+    </RouterLink>
     <button v-if="userIsAuthor" @click="deletePost" class="button">
       Delete
     </button>
@@ -84,7 +92,7 @@ watchEffect(() => {
 .header {
   display: flex;
 
-  button {
+  .button {
     margin-left: 1rem;
     align-self: center;
   }

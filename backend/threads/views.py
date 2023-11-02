@@ -12,13 +12,7 @@ from .models import Post, Reaction, Reply, Tag
 from .serializers import PostSerializer, ReactionSerializer, ReplySerializer
 
 
-class PostViewSet(
-    mixins.CreateModelMixin,
-    mixins.RetrieveModelMixin,
-    mixins.ListModelMixin,
-    mixins.DestroyModelMixin,
-    viewsets.GenericViewSet,
-):
+class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all().prefetch_related("replies")
     serializer_class = PostSerializer
     permission_classes = [policies.PostAccessPolicy]
@@ -32,22 +26,26 @@ class PostViewSet(
         if tags := self.request.query_params.getlist("tag"):
             queryset = queryset.filter(tags__name__in=tags)
 
-        if self.action == 'list':
+        if self.action == "list":
             queryset = queryset.filter(is_deleted=False)
 
         return queryset
 
-    def _create_tags(self, post: Post, tags: list[str]):
+    def _ensure_tags(self, post: Post, tags: list[str]):
         for tag in set(tag.strip() for tag in tags if tag.strip()):
-            Tag.objects.create(post=post, name=tag)
+            Tag.objects.get_or_create(post=post, name=tag)
 
     def create(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         post = serializer.save(author=self.request.user)
-        self._create_tags(post, request.data["tags"])
+        self._ensure_tags(post, request.data["tags"])
 
         return Response(serializer.data, status=201)
+
+    def perform_update(self, serializer):
+        post = serializer.save()
+        self._ensure_tags(post, self.request.data["tags"])
 
     def retrieve(self, request, pk):
         post = get_object_or_404(self.queryset.filter(pk=pk))

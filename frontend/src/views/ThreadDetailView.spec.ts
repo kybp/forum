@@ -1,3 +1,4 @@
+import { h } from 'vue'
 import { VueWrapper } from '@vue/test-utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -40,6 +41,7 @@ const route = vi.hoisted(() => ({
 vi.mock('vue-router', () => ({
   useRouter: vi.fn(),
   useRoute: () => route,
+  RouterLink: () => h('div'),
 }))
 
 let thread: Thread

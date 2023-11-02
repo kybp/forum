@@ -3,10 +3,12 @@ import { ref, watchEffect, type Ref } from 'vue'
 import { ErrorMessage, Field, FieldArray, Form } from 'vee-validate'
 import PostBody from '@/components/PostBody.vue'
 import PostTag from '@/components/PostTag.vue'
+import type { Thread } from '@/stores/thread'
 import type { Errors } from '@/stores/utils'
 import * as yup from 'yup'
 
 type Props = {
+  initialValue?: Thread
   errors: Errors | null
 }
 
@@ -35,8 +37,8 @@ const postThread = async ({ title, body, tags }: any) => {
   emit('submit', { title, body, tags: tags ?? [] })
 }
 
-const title = ref('')
-const body = ref('')
+const title = ref(props.initialValue?.title ?? '')
+const body = ref(props.initialValue?.body ?? '')
 </script>
 <template>
   <h1>New Thread</h1>
@@ -45,6 +47,7 @@ const body = ref('')
     ref="form"
     @submit="postThread"
     :validation-schema="schema"
+    :initial-values="initialValue"
     :class="{ 'mobile-preview': isMobilePreviewOpen }"
     data-testid="post-form"
   >

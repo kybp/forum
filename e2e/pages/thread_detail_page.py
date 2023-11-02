@@ -67,6 +67,10 @@ class ThreadDetailPage(BasePage):
     def toggle_preview_button(self):
         return self.page.get_by_role("button", name="Preview")
 
+    @property
+    def edit_post_button(self):
+        return self.page.get_by_role("link", name="Edit")
+
     def toggle_preview(self):
         self.toggle_preview_button.click()
 

@@ -48,6 +48,10 @@ export type PostParams = {
   tags: string[]
 }
 
+export type UpdatePostParams = PostParams & {
+  id: number
+}
+
 export type ReplyParams = {
   postId: number
   body: string
@@ -85,6 +89,29 @@ export const useThreadStore = defineStore('thread', () => {
     try {
       const response = await api.post(
         'threads/posts/',
+        params,
+        useAuthOptions(),
+      )
+      const thread: Thread = response.data
+
+      allThreads.value[thread.id] = thread
+
+      postErrors.value = null
+
+      return thread
+    } catch (error: unknown) {
+      if (!isAxiosError(error)) throw error
+
+      if (error.response?.status === 400) postErrors.value = error.response.data
+    }
+  }
+
+  const updatePost = async (
+    params: UpdatePostParams,
+  ): Promise<Thread | undefined> => {
+    try {
+      const response = await api.put(
+        `threads/posts/${params.id}/`,
         params,
         useAuthOptions(),
       )
@@ -269,6 +296,7 @@ export const useThreadStore = defineStore('thread', () => {
     // Post
     post,
     postErrors,
+    updatePost,
 
     // Reply
     reply,
