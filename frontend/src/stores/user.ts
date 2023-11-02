@@ -7,7 +7,7 @@ const api = axios.create({
 })
 
 export type User = {
-  id: number
+  id: number | null
   username: string
   email: string
 }
@@ -22,14 +22,20 @@ export const useUserStore = defineStore('user', () => {
     if (loading.value[id]) return
 
     loading.value[id] = true
-    const response = await api.get(`users/accounts/${id}`)
+    const response = await api.get(`users/accounts/${id}/`)
     const user: User = response.data
     loading.value[id] = false
 
-    users.value[user.id] = user
+    users.value[id] = user
   }
 
-  const user = (id: number): User | undefined => users.value[id]
+  const user = (id: number | null): User | undefined => {
+    if (id === null) {
+      return { id: null, username: '[deleted]', email: '' }
+    }
+
+    return users.value[id]
+  }
 
   const isLoading = (id: number) => loading.value[id]
 
@@ -40,6 +46,9 @@ export const useUserStore = defineStore('user', () => {
     isLoading,
 
     // Internal
+    users,
     loading,
   }
 })
+
+export type UserStore = ReturnType<typeof useUserStore>

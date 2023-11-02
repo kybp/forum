@@ -18,7 +18,8 @@ export type Reaction = {
 
 export type Thread = {
   id: number
-  author: number
+  /** The user who created the thread, or null if they have deleted it. */
+  author: number | null
   title: string
   body: string
   date_posted: string
@@ -226,6 +227,26 @@ export const useThreadStore = defineStore('thread', () => {
     return ids.map((id) => allReplies.value[id])
   }
 
+  const deletePost = async ({ id }: Thread) => {
+    await api.delete(`threads/posts/${id}/`, useAuthOptions())
+
+    const thread = allThreads.value[id]
+    thread.author = null
+    thread.body = '[deleted]'
+  }
+
+  const deleteReply = async (reply: Reply) => {
+    await api.delete(
+      `threads/posts/${reply.post}/replies/${reply.id}/`,
+      useAuthOptions(),
+    )
+    const threadReplies = repliesByPost.value[reply.post]
+    repliesByPost.value[reply.post] = threadReplies.filter(
+      (x) => x !== reply.id,
+    )
+    delete allReplies.value[reply.id]
+  }
+
   return {
     allThreads,
     threadFilters,
@@ -253,7 +274,11 @@ export const useThreadStore = defineStore('thread', () => {
     reply,
     replyErrors,
 
-    // Toggle Reaction
+    // Misc
+    deletePost,
+    deleteReply,
     toggleThreadReaction,
   }
 })
+
+export type ThreadStore = ReturnType<typeof useThreadStore>

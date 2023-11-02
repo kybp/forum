@@ -24,13 +24,13 @@ def user():
 
 
 @pytest.fixture
-def post():
-    return threads_factories.PostFactory()
+def post(user: User):
+    return threads_factories.PostFactory(author=user)
 
 
 @pytest.fixture
-def reply():
-    return threads_factories.ReplyFactory()
+def reply(user: User):
+    return threads_factories.ReplyFactory(author=user)
 
 
 @pytest.fixture

@@ -99,3 +99,17 @@ def test_includes_tags_as_strings(post: Post):
     tags = [TagFactory(post=post), TagFactory(post=post)]
     serializer = PostSerializer(post)
     assert serializer.data["tags"] == [tag.name for tag in tags]
+
+
+@pytest.mark.django_db
+def test_author_is_null_when_post_is_deleted(post: Post):
+    post.is_deleted = True
+    serializer = PostSerializer(post)
+    assert serializer.data["author"] is None
+
+
+@pytest.mark.django_db
+def test_body_is_null_when_post_is_deleted(post: Post):
+    post.is_deleted = True
+    serializer = PostSerializer(post)
+    assert serializer.data["body"] is None

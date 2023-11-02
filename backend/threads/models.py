@@ -61,6 +61,8 @@ class Post(models.Model):
     title = models.CharField(null=False, blank=False)
     body = models.TextField(null=False, blank=True)
     date_posted = models.DateTimeField(auto_now_add=True)
+    reactions = GenericRelation(Reaction)
+    is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         title = truncate(self.title, 50)
@@ -69,7 +71,9 @@ class Post(models.Model):
 
         return f"{title}{separator}{body}"
 
-    reactions = GenericRelation(Reaction)
+    def delete(self):
+        self.is_deleted = True
+        self.save()
 
 
 class Tag(models.Model):

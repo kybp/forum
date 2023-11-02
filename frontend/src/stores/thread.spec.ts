@@ -8,6 +8,7 @@ import type {
   ReplyParams,
   Thread,
   ThreadFilters,
+  ThreadStore,
 } from '@/stores/thread'
 import { useAuthStore } from './auth'
 import type { User } from './auth'
@@ -71,7 +72,7 @@ describe('thread store', () => {
   })
 
   describe('post', () => {
-    let threadStore: ReturnType<typeof useThreadStore>
+    let threadStore: ThreadStore
     let params: PostParams
 
     beforeEach(() => {
@@ -129,7 +130,7 @@ describe('thread store', () => {
   })
 
   describe('reply', () => {
-    let threadStore: ReturnType<typeof useThreadStore>
+    let threadStore: ThreadStore
     let params: ReplyParams
 
     beforeEach(() => {
@@ -266,8 +267,66 @@ describe('thread store', () => {
     })
   })
 
+  describe('deletePost', () => {
+    let threadStore: ThreadStore
+    let thread: Thread
+
+    beforeEach(() => {
+      threadStore = useThreadStore()
+      thread = threadFactory()
+      threadStore.allThreads = { [thread.id]: thread }
+    })
+
+    it('calls the delete endpoint', async () => {
+      await threadStore.deletePost(thread)
+
+      expect(api.delete).toHaveBeenCalledWith(
+        `threads/posts/${thread.id}/`,
+        authHeaders,
+      )
+    })
+
+    it('sets the post content to [deleted] in the store', async () => {
+      expect(threadStore.thread(thread.id)).toEqual(thread)
+
+      await threadStore.deletePost(thread)
+
+      const valueInStore = threadStore.thread(thread.id)
+      expect(valueInStore?.author).toBe(null)
+      expect(valueInStore?.title).toEqual(thread.title)
+      expect(valueInStore?.body).toEqual('[deleted]')
+    })
+  })
+
+  describe('deleteReply', () => {
+    let threadStore: ThreadStore
+    let reply: Reply
+
+    beforeEach(() => {
+      threadStore = useThreadStore()
+      reply = replyFactory()
+      threadStore.allReplies = { [reply.id]: reply }
+      threadStore.repliesByPost = { [reply.post]: [reply.id] }
+    })
+
+    it('calls the delete endpoint', async () => {
+      await threadStore.deleteReply(reply)
+
+      expect(api.delete).toHaveBeenCalledWith(
+        `threads/posts/${reply.post}/replies/${reply.id}/`,
+        authHeaders,
+      )
+    })
+
+    it('removes the reply from the store', async () => {
+      expect(threadStore.replies(reply.post)).toContainEqual(reply)
+      await threadStore.deleteReply(reply)
+      expect(threadStore.replies(reply.post)).not.toContainEqual(reply)
+    })
+  })
+
   describe('toggleThreadReaction', () => {
-    let threadStore: ReturnType<typeof useThreadStore>
+    let threadStore: ThreadStore
     let thread: Thread
 
     describe('when the user has reacted this way to the thread before', () => {
@@ -395,7 +454,7 @@ describe('thread store', () => {
   })
 
   describe('fetchFilters', () => {
-    let threadStore: ReturnType<typeof useThreadStore>
+    let threadStore: ThreadStore
     let filters: ThreadFilters
 
     beforeEach(() => {

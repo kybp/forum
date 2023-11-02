@@ -211,3 +211,22 @@ def test_viewing_thread_by_deleted_user(page: Page):
     home_page.open_thread(home_page.newest_thread_title.text_content())
 
     expect(ThreadDetailPage(page).author).to_have_text("[deleted]")
+
+
+def test_deleting_posts_and_replies(page: Page):
+    home_page = HomePage(page)
+
+    home_page.sign_in()
+    title = "framework"
+    home_page.post_thread(title=title)
+
+    thread_detail_page = ThreadDetailPage(page)
+    body = "very informative"
+    thread_detail_page.reply(body=body)
+
+    thread_detail_page.delete_first_reply()
+    expect(thread_detail_page.first_reply).to_be_hidden()
+
+    thread_detail_page.delete_post()
+    expect(thread_detail_page.author).to_have_text("[deleted]")
+    expect(thread_detail_page.body).to_have_text("[deleted]")

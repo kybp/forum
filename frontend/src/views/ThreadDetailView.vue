@@ -11,28 +11,46 @@ import ReplyList from '@/components/ReplyList.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useThreadStore } from '@/stores/thread'
 import { useUserStore } from '@/stores/user'
+import { storeToRefs } from 'pinia'
 
 const route = useRoute()
 const authStore = useAuthStore()
 const threadStore = useThreadStore()
 const userStore = useUserStore()
 
+const { user } = storeToRefs(authStore)
+
 const postId = +route.params.id
 
 const thread = computed(() => threadStore.thread(postId))
 if (!thread.value) threadStore.fetchThread(postId)
+
+const userIsAuthor = computed(() => {
+  return user.value && user.value.id === thread.value?.author
+})
+
+const deletePost = () => {
+  if (thread.value) threadStore.deletePost(thread.value)
+}
 
 const author = computed(() => {
   return thread.value ? userStore.user(thread.value.author) : null
 })
 
 watchEffect(() => {
-  if (thread.value && !author.value) userStore.fetchUser(thread.value.author)
+  if (thread.value?.author && !author.value) {
+    userStore.fetchUser(thread.value.author)
+  }
 })
 </script>
 <template>
-  <h1 class="title" v-if="thread" data-testid="title">{{ thread.title }}</h1>
-  <LoadingPlaceholder v-else />
+  <div class="header">
+    <h1 class="title" v-if="thread" data-testid="title">{{ thread.title }}</h1>
+    <LoadingPlaceholder v-else />
+    <button v-if="userIsAuthor" @click="deletePost" class="button">
+      Delete
+    </button>
+  </div>
 
   <div class="author" v-if="author" data-testid="author">
     {{ author.username }}
@@ -63,8 +81,18 @@ watchEffect(() => {
 </template>
 
 <style scoped>
+.header {
+  display: flex;
+
+  button {
+    margin-left: 1rem;
+    align-self: center;
+  }
+}
+
 .title {
   line-height: normal;
+  display: inline-block;
 }
 
 .author {

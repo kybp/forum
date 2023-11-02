@@ -13,7 +13,16 @@ class PostAccessPolicy(AccessPolicy):
             "principal": "authenticated",
             "effect": "allow",
         },
+        {
+            "action": ["destroy"],
+            "principal": "authenticated",
+            "condition": "is_author",
+            "effect": "allow",
+        },
     ]
+
+    def is_author(self, request, view, action) -> bool:
+        return request.user == view.get_object().author
 
 
 class ReplyAccessPolicy(AccessPolicy):
@@ -28,7 +37,17 @@ class ReplyAccessPolicy(AccessPolicy):
             "principal": "authenticated",
             "effect": "allow",
         },
+        {
+            "action": ["destroy"],
+            "principal": "authenticated",
+            "condition": "is_author",
+            "effect": "allow",
+        },
     ]
+
+    def is_author(self, request, view, action) -> bool:
+        reply = view.get_object()
+        return reply is None or request.user == reply.author
 
 
 class PostReactionAccessPolicy(AccessPolicy):

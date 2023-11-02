@@ -54,3 +54,12 @@ class PostSerializer(serializers.ModelSerializer):
             "reactions",
             "tags",
         ]
+
+    def to_representation(self, post):
+        result = super().to_representation(post)
+
+        if post.is_deleted:
+            result["author"] = None
+            result["body"] = None
+
+        return result

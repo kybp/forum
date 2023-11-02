@@ -24,6 +24,10 @@ class ThreadDetailPage(BasePage):
         return self.page.get_by_test_id("tags")
 
     @property
+    def delete_post_button(self):
+        return self.page.get_by_role("button", name="Delete").first
+
+    @property
     def first_reply(self):
         return self.page.get_by_test_id("reply-0")
 
@@ -34,6 +38,10 @@ class ThreadDetailPage(BasePage):
     @property
     def first_reply_body(self):
         return self.first_reply.get_by_test_id("body")
+
+    @property
+    def delete_first_reply_button(self):
+        return self.first_reply.get_by_role("button", name="Delete")
 
     @property
     def reply_input(self):
@@ -72,3 +80,9 @@ class ThreadDetailPage(BasePage):
     def reply(self, body: str = "some response message"):
         self.reply_input.fill(body)
         self.submit_reply_button.click()
+
+    def delete_post(self):
+        self.delete_post_button.click()
+
+    def delete_first_reply(self):
+        self.delete_first_reply_button.click()

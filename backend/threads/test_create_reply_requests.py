@@ -17,7 +17,7 @@ def create_reply_props(post: Post):
 
 
 @pytest.mark.django_db
-def test_create_reply_returns_201_when_valid(
+def test_returns_201_when_valid(
     user_client: APIClient, create_reply_props: dict, post: Post
 ):
     response = user_client.post(
@@ -27,7 +27,7 @@ def test_create_reply_returns_201_when_valid(
 
 
 @pytest.mark.django_db
-def test_create_reply_saves_db_record(
+def test_saves_db_record(
     user_client: APIClient, create_reply_props: dict, post: Post
 ):
     initial_count = Reply.objects.count()
@@ -38,7 +38,7 @@ def test_create_reply_saves_db_record(
 
 
 @pytest.mark.django_db
-def test_create_reply_returns_401_when_not_authenticated(
+def test_returns_401_when_not_authenticated(
     client: Client, create_reply_props: dict, post: Post
 ):
     response = client.post(
@@ -48,7 +48,7 @@ def test_create_reply_returns_401_when_not_authenticated(
 
 
 @pytest.mark.django_db
-def test_create_reply_returns_400_when_invalid(
+def test_returns_400_when_invalid(
     user_client: APIClient, create_reply_props: dict, post: Post
 ):
     del create_reply_props["body"]
@@ -59,11 +59,23 @@ def test_create_reply_returns_400_when_invalid(
 
 
 @pytest.mark.django_db
-def test_create_reply_returns_404_when_post_does_not_exist(
+def test_can_reply_when_post_is_deleted(
     user_client: APIClient, create_reply_props: dict, post: Post
 ):
     post_id = post.id
     post.delete()
+    response = user_client.post(
+        f"/api/threads/posts/{post_id}/replies/", create_reply_props
+    )
+    assert response.status_code == 201
+
+
+@pytest.mark.django_db
+def test_returns_404_when_post_does_not_exist(
+    user_client: APIClient, create_reply_props: dict, post: Post
+):
+    post_id = post.id
+    Post.objects.filter(pk=post_id).delete()
     response = user_client.post(
         f"/api/threads/posts/{post_id}/replies/", create_reply_props
     )

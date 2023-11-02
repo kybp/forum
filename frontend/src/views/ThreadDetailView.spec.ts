@@ -45,6 +45,8 @@ vi.mock('vue-router', () => ({
 let thread: Thread
 let user: User
 
+const deleteButton = () => wrapper.find('button')
+
 beforeEach(async () => {
   wrapper = wrap(ThreadDetailView)
 
@@ -104,13 +106,30 @@ const itRendersThread = () => {
 
 describe('when the user is signed in', () => {
   beforeEach(() => {
-    authStore.user = authUserFactory()
+    authStore.user = authUserFactory({ id: thread.author! })
   })
 
   itRendersThread()
 
   it('renders a reply form', () => {
     expect(wrapper.findComponent(ReplyForm).exists()).toBe(true)
+  })
+
+  it('renders delete button if user is the author', async () => {
+    authStore.user = authUserFactory({ id: thread.author! })
+    await wrapper.vm.$nextTick()
+    expect(deleteButton().exists()).toBe(true)
+  })
+
+  it('does not render delete button if user is not the author', async () => {
+    authStore.user = authUserFactory({ id: thread.author! + 1 })
+    await wrapper.vm.$nextTick()
+    expect(deleteButton().exists()).toBe(false)
+  })
+
+  it('calls threadStore.deletePost when delete button is clicked', async () => {
+    await deleteButton().trigger('click')
+    expect(threadStore.deletePost).toHaveBeenCalledWith(thread)
   })
 })
 
@@ -123,5 +142,9 @@ describe('when the user is signed out', () => {
 
   it('does not render a reply form', () => {
     expect(wrapper.findComponent(ReplyForm).exists()).toBe(false)
+  })
+
+  it('does not render a delete button', () => {
+    expect(deleteButton().exists()).toBe(false)
   })
 })

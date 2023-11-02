@@ -16,6 +16,7 @@ class PostViewSet(
     mixins.CreateModelMixin,
     mixins.RetrieveModelMixin,
     mixins.ListModelMixin,
+    mixins.DestroyModelMixin,
     viewsets.GenericViewSet,
 ):
     queryset = Post.objects.all().prefetch_related("replies")
@@ -75,6 +76,17 @@ class ReplyViewSet(
             raise Http404
 
         serializer.save(author=self.request.user, post_id=int(post_id))
+
+    def destroy(self, request, post_pk, pk):
+        Reply.objects.filter(pk=pk).delete()
+        return Response(status=204)
+
+    def get_object(self):
+        try:
+            return super().get_object()
+        except Http404:
+            if self.action == "destroy":
+                return None
 
 
 class PostReactionViewSet(

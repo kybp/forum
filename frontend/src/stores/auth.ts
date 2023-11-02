@@ -133,3 +133,5 @@ export const useAuthOptions = (options = { notSignedInOkay: false }) => {
     headers: { Authorization: `Token ${user.token}` },
   } as const
 }
+
+export type AuthStore = ReturnType<typeof useAuthStore>
