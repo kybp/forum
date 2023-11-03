@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
+import { storeToRefs } from 'pinia'
 import PostBody from '@/components/PostBody.vue'
 import LoadingPlaceholder from '@/components/LoadingPlaceholder.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useThreadStore, type Reply } from '@/stores/thread'
 import { useUserStore } from '@/stores/user'
-import { storeToRefs } from 'pinia'
+import { formatDate } from '@/utils'
 
 type Props = {
   reply: Reply
@@ -45,6 +46,10 @@ const editRoute = computed(() => ({
     <LoadingPlaceholder v-else />
 
     <PostBody :value="reply.body" class="body" data-testid="body" />
+
+    <div v-if="reply.date_edited" class="edited note" data-testid="edited">
+      Updated {{ formatDate(reply.date_edited) }}
+    </div>
 
     <div v-if="userIsAuthor" class="actions">
       <RouterLink :to="editRoute" class="button">Edit</RouterLink>

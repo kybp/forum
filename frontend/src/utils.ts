@@ -7,3 +7,7 @@ export const countBy = <T, Value extends string | number | symbol>(
     {} as any,
   )
 }
+
+export const formatDate = (date: string): string => {
+  return new Date(date).toLocaleString()
+}

@@ -246,6 +246,7 @@ def test_editing_post(page: Page):
     home_page.post_thread(title=old_title, body=old_body)
 
     thread_detail_page = ThreadDetailPage(page)
+    expect(thread_detail_page.edited).to_be_hidden()
     new_title, new_body = "new title", "new body"
     thread_detail_page.edit_post_button.click()
     edit_post_page = EditPostPage(page)
@@ -258,6 +259,7 @@ def test_editing_post(page: Page):
     thread_detail_page.author.wait_for()
 
     # Check updates
+    expect(thread_detail_page.edited).to_be_visible()
     expect(thread_detail_page.title).to_have_text(new_title)
     expect(thread_detail_page.body).to_have_text(new_body)
 
@@ -273,6 +275,7 @@ def test_editing_reply(page: Page):
     old_body = "some old text"
     thread_detail_page.reply(body=old_body)
 
+    expect(thread_detail_page.first_reply_edited).to_be_hidden()
     thread_detail_page.edit_first_reply_button.click()
     edit_reply_page = EditReplyPage(page)
 
@@ -284,4 +287,5 @@ def test_editing_reply(page: Page):
     thread_detail_page.author.wait_for()
 
     # Check update
+    expect(thread_detail_page.first_reply_edited).to_be_visible()
     expect(thread_detail_page.first_reply_body).to_have_text(new_body)

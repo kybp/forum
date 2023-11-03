@@ -100,3 +100,9 @@ a.button {
     filter: brightness(85%);
   }
 }
+
+.note {
+  font-weight: 300;
+  font-style: italic;
+  font-size: x-small;
+}

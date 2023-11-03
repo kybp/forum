@@ -16,6 +16,10 @@ class ThreadDetailPage(BasePage):
         return self.page.get_by_test_id("title")
 
     @property
+    def edited(self):
+        return self.page.get_by_test_id("edited").first
+
+    @property
     def body(self):
         return self.page.get_by_test_id("body")
 
@@ -38,6 +42,10 @@ class ThreadDetailPage(BasePage):
     @property
     def first_reply_body(self):
         return self.first_reply.get_by_test_id("body")
+
+    @property
+    def first_reply_edited(self):
+        return self.first_reply.get_by_test_id("edited")
 
     @property
     def edit_first_reply_button(self):

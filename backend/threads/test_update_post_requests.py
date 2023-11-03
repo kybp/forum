@@ -50,6 +50,18 @@ def test_saves_unique_trimmed_non_blank_tags(
 
 
 @pytest.mark.django_db
+def test_saves_edited_date(
+    user_client: APIClient, post: Post, update_post_props: dict
+):
+    original_edited_date = post.date_edited
+
+    make_request(user_client, update_post_props)
+
+    post.refresh_from_db()
+    assert original_edited_date != post.date_edited
+
+
+@pytest.mark.django_db
 def test_returns_404_when_post_does_not_exist(
     user_client: APIClient, update_post_props: dict, post: Post
 ):

@@ -28,6 +28,7 @@ def test_contains_expected_fields(post: Post):
         "title",
         "body",
         "date_posted",
+        "date_edited",
         "replies",
         "reactions",
         "tags",
@@ -113,3 +114,15 @@ def test_body_is_deleted_when_post_is_deleted(post: Post):
     post.is_deleted = True
     serializer = PostSerializer(post)
     assert serializer.data["body"] == "[deleted]"
+
+
+@pytest.mark.django_db
+def test_date_edited_is_null_when_not_edited(post: Post):
+    assert PostSerializer(post).data["date_edited"] is None
+
+
+@pytest.mark.django_db
+def test_date_edited_is_included_when_edited(post: Post):
+    post.body += "foo"
+    post.save()
+    assert PostSerializer(post).data["date_edited"] is not None

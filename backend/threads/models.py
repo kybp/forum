@@ -62,6 +62,8 @@ class Post(models.Model):
     title = models.CharField(null=False, blank=False)
     body = models.TextField(null=False, blank=True)
     date_posted = models.DateTimeField(auto_now_add=True)
+    date_edited = models.DateTimeField(auto_now=True)
+    is_edited = models.BooleanField(default=False)
     reactions = GenericRelation(Reaction)
     is_deleted = models.BooleanField(default=False)
     history = HistoricalRecords()
@@ -72,6 +74,11 @@ class Post(models.Model):
         separator = " --- " if body else ""
 
         return f"{title}{separator}{body}"
+
+    def save(self, **kwargs):
+        if self.id:
+            self.is_edited = True
+        super().save(**kwargs)
 
     def delete(self):
         self.is_deleted = True
@@ -100,7 +107,14 @@ class Reply(models.Model):
     )
     body = models.TextField(null=False, blank=False)
     date_posted = models.DateTimeField(auto_now_add=True)
+    date_edited = models.DateTimeField(auto_now=True)
+    is_edited = models.BooleanField(default=False)
     history = HistoricalRecords()
 
     def __str__(self):
         return f"{self.author.username}: {truncate(self.body, 250)}"
+
+    def save(self, **kwargs):
+        if self.id:
+            self.is_edited = True
+        super().save(**kwargs)

@@ -23,6 +23,7 @@ export type Thread = {
   title: string
   body: string
   date_posted: string
+  date_edited: string | null
   replies: number[]
   reactions: Reaction[]
   user_reaction_type: ReactionType | null
@@ -35,6 +36,7 @@ export type Reply = {
   author: number
   body: string
   date_posted: string
+  date_edited: string | null
 }
 
 export type ThreadFilters = {

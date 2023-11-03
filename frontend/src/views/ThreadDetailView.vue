@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, watchEffect } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
+import { storeToRefs } from 'pinia'
 
 import PostBody from '@/components/PostBody.vue'
 import PostTag from '@/components/PostTag.vue'
@@ -11,7 +12,7 @@ import ReplyList from '@/components/ReplyList.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useThreadStore } from '@/stores/thread'
 import { useUserStore } from '@/stores/user'
-import { storeToRefs } from 'pinia'
+import { formatDate } from '@/utils'
 
 const route = useRoute()
 const authStore = useAuthStore()
@@ -71,6 +72,10 @@ const createReply = async ({ postId, body, onSuccess }: any) => {
   </div>
   <LoadingPlaceholder v-else />
 
+  <div v-if="thread?.date_edited" class="edited note" data-testid="edited">
+    Updated {{ formatDate(thread.date_edited) }}
+  </div>
+
   <PostBody
     v-if="thread"
     :value="thread.body"
@@ -121,6 +126,10 @@ const createReply = async ({ postId, body, onSuccess }: any) => {
   &::before {
     content: 'by ';
   }
+}
+
+.edited {
+  margin-left: 0.2rem;
 }
 
 .body {

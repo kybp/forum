@@ -26,7 +26,15 @@ class ReplySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Reply
-        fields = ["id", "author", "post", "body", "date_posted"]
+        fields = ["id", "author", "post", "body", "date_posted", "date_edited"]
+
+    def to_representation(self, reply):
+        result = super().to_representation(reply)
+
+        if not reply.is_edited:
+            result["date_edited"] = None
+
+        return result
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -50,6 +58,7 @@ class PostSerializer(serializers.ModelSerializer):
             "title",
             "body",
             "date_posted",
+            "date_edited",
             "replies",
             "reactions",
             "tags",
@@ -61,5 +70,8 @@ class PostSerializer(serializers.ModelSerializer):
         if post.is_deleted:
             result["author"] = None
             result["body"] = "[deleted]"
+
+        if not post.is_edited:
+            result["date_edited"] = None
 
         return result

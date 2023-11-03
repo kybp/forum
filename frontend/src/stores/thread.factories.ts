@@ -25,6 +25,7 @@ export const threadFactory = (props: Partial<Thread> = {}): Thread => ({
   title: faker.lorem.sentence(),
   body: faker.lorem.paragraph(),
   date_posted: faker.date.anytime().toISOString(),
+  date_edited: faker.date.anytime().toISOString(),
   replies: [],
   reactions: [],
   user_reaction_type: 'like',
@@ -38,6 +39,7 @@ export const replyFactory = (props: Partial<Reply> = {}): Reply => ({
   post: makeId(),
   body: faker.lorem.paragraph(),
   date_posted: faker.date.anytime().toISOString(),
+  date_edited: faker.date.anytime().toISOString(),
   ...props,
 })
 

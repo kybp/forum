@@ -73,7 +73,7 @@ def test_returns_403_for_other_user(
 
 @pytest.mark.django_db
 def test_updates_db_record(
-    user_client: APIClient, user: User, update_reply_props: dict, reply: Reply
+    user_client: APIClient, update_reply_props: dict, reply: Reply
 ):
     assert update_reply_props["body"] != reply.body
 
@@ -81,6 +81,18 @@ def test_updates_db_record(
 
     reply.refresh_from_db()
     assert reply.body == update_reply_props["body"]
+
+
+@pytest.mark.django_db
+def test_saves_edited_date(
+    user_client: APIClient, reply: Reply, update_reply_props: dict
+):
+    original_edited_date = reply.date_edited
+
+    make_request(user_client, update_reply_props)
+
+    reply.refresh_from_db()
+    assert original_edited_date != reply.date_edited
 
 
 @pytest.mark.django_db
