@@ -1,6 +1,6 @@
 # Forum
 
-## Running
+## Setup
 
 To run the app, all you need is a recent version of Docker.
 
@@ -8,32 +8,47 @@ To set up, first copy `.env.example` into a file named `.env`. The
 default settings should work, but take a peek in the file and see if
 you want to change anything.
 
-The included `run` script wraps docker commands for common tasks. To
-spin up the app in dev mode, just do `./run`. See the bottom of the
-`run` script for other commands.
+Next, do `./run migrate`. This will set up the DB and build necessary
+Docker images.
 
-The first time you run the app, you will also need to `./run migrate`
-in order to set up the database.
+## Running
+
+To start the app in dev mode, just do `./run`. This will enable
+debugging features and will automatically reload code on save. By
+default, the site will be available at
+[http://localhost:3000](http://localhost:3000).
+
+You can also test out a production build with `./run preview`. The
+production preview will be available at
+[http://localhost:8000](http://localhost:8000). Dev and prod builds
+will step on each other's toes, so you'll need to do `./run stop`
+first if you have a dev build running.
+
+The `run` script packages the most common project operations; see the
+bottom of the script for the full list of commands.
 
 ### e2e Specs
 
-If you only want to run the e2e specs, `./run e2e` will work. This
-calls out to `pytest` and supports many options; `./run e2e --help` to
-see them.
+You have two choices for running the e2e specs.
 
-You can also run the tests with a graphical inspector, but this
-doesn't work when running inside Docker Desktop, so you will need to
-install Python v3.8+ locally. Then you can `./run install-local-e2e`
-to install the e2e project in a virtual environment.
+If you want to run them inside Docker (note that the graphical
+debugger will not work), change `VITE_API_HOST` in your `.env` file
+according to the comments, restart the app to pick up the changes if
+you had it running, and then do `./run e2e`.
 
-After this, change `VITE_API_HOST` in your `.env` according to the
-instructions. Remember to change it back and restart the app if you
-want to run the tests inside Docker.
+If you want to use the graphical debugger, you will need to install
+Python v3.8+ locally. Then you can `./run install-local-e2e` to
+install the e2e project in a virtual environment, and from there
+`./run debug-e2e` will run the tests. You do not need to change your
+`.env` file from normal development settings to run the specs this
+way.
 
-Finally, you should be able to `./run debug-e2e`.
+Both `./run e2e` and `./run debug-e2e` forward arguments to `pytest`
+with the Playwright plugin installed, which supports many options. Run
+with `--help` to see a full list.
 
-If you want to bail on a run, close the browser before the inspector,
-or Playwright might not exit properly.
+If you want to bail on a test run, close the browser before the
+inspector, or Playwright might not exit properly.
 
 ## GitHub Configuration
 
