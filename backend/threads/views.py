@@ -64,6 +64,7 @@ class PostViewSet(viewsets.ModelViewSet):
 
 class ReplyViewSet(
     mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
     mixins.ListModelMixin,
     viewsets.GenericViewSet,
 ):
@@ -80,7 +81,13 @@ class ReplyViewSet(
         if not Post.objects.filter(id=post_id).exists():
             raise Http404
 
-        serializer.save(author=self.request.user, post_id=int(post_id))
+        serializer.save(author=self.request.user, post_id=post_id)
+
+    def perform_update(self, serializer):
+        if not Reply.objects.filter(pk=self.kwargs["pk"]).exists():
+            raise Http404
+        post_id = int(self.kwargs["post_pk"])
+        serializer.save(author=self.request.user, post_id=post_id)
 
     def destroy(self, request, post_pk, pk):
         Reply.objects.filter(pk=pk).delete()

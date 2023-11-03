@@ -8,6 +8,7 @@ import type {
   ReplyParams,
   Thread,
   UpdatePostParams,
+  UpdateReplyParams,
 } from '@/stores/thread'
 import { makeId } from '@/test-utils'
 
@@ -70,6 +71,15 @@ export const updatePostParamsFactory = (
 export const replyParamsFactory = (
   props: Partial<ReplyParams> = {},
 ): ReplyParams => ({
+  postId: makeId(),
+  body: faker.lorem.paragraph(),
+  ...props,
+})
+
+export const updateReplyParamsFactory = (
+  props: Partial<UpdateReplyParams> = {},
+): UpdateReplyParams => ({
+  id: makeId(),
   postId: makeId(),
   body: faker.lorem.paragraph(),
   ...props,

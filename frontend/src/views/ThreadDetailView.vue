@@ -42,6 +42,12 @@ watchEffect(() => {
     userStore.fetchUser(thread.value.author)
   }
 })
+
+const createReply = async ({ postId, body, onSuccess }: any) => {
+  if (await threadStore.createReply({ postId, body })) {
+    onSuccess()
+  }
+}
 </script>
 <template>
   <div class="header">
@@ -83,7 +89,12 @@ watchEffect(() => {
     <ReactionList class="reaction-list" v-if="thread" :thread="thread" />
   </div>
 
-  <ReplyForm class="reply-form" v-if="authStore.isSignedIn" :post-id="postId" />
+  <ReplyForm
+    class="reply-form"
+    v-if="authStore.isSignedIn"
+    @submit="createReply"
+    :post-id="postId"
+  />
 
   <ReplyList v-if="thread" :post-id="thread.id" />
 </template>

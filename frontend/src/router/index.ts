@@ -45,6 +45,12 @@ const router = createRouter({
       name: 'thread detail',
       component: () => import('../views/ThreadDetailView.vue'),
     },
+    {
+      path: '/threads/:postId/replies/:replyId/edit',
+      name: 'edit reply',
+      component: () => import('../views/EditReplyView.vue'),
+      beforeEnter: guards.checkSignedIn,
+    },
   ],
 })
 

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { RouterLink } from 'vue-router'
 import PostBody from '@/components/PostBody.vue'
 import LoadingPlaceholder from '@/components/LoadingPlaceholder.vue'
 import { useAuthStore } from '@/stores/auth'
@@ -28,6 +29,11 @@ const author = computed(() => userStore.user(props.reply.author))
 if (!author.value) userStore.fetchUser(props.reply.author)
 
 const deleteReply = () => threadStore.deleteReply(props.reply)
+
+const editRoute = computed(() => ({
+  name: 'edit reply',
+  params: { postId: props.reply.post, replyId: props.reply.id },
+}))
 </script>
 
 <template>
@@ -40,9 +46,13 @@ const deleteReply = () => threadStore.deleteReply(props.reply)
 
     <PostBody :value="reply.body" class="body" data-testid="body" />
 
-    <button v-if="userIsAuthor" @click="deleteReply" class="button">
-      Delete
-    </button>
+    <div v-if="userIsAuthor" class="actions">
+      <RouterLink :to="editRoute" class="button">Edit</RouterLink>
+
+      <button v-if="userIsAuthor" @click="deleteReply" class="button">
+        Delete
+      </button>
+    </div>
   </div>
 </template>
 
@@ -59,6 +69,11 @@ const deleteReply = () => threadStore.deleteReply(props.reply)
   .body {
     display: block;
     margin-left: 1rem;
+  }
+
+  .actions {
+    display: flex;
+    gap: 0.5rem;
   }
 }
 </style>

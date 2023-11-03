@@ -44,6 +44,12 @@ class ReplyAccessPolicy(AccessPolicy):
             "effect": "allow",
         },
         {
+            "action": ["update"],
+            "principal": "authenticated",
+            "condition": "is_author",
+            "effect": "allow",
+        },
+        {
             "action": ["destroy"],
             "principal": "authenticated",
             "condition": "is_author",

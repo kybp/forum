@@ -57,6 +57,8 @@ export type ReplyParams = {
   body: string
 }
 
+export type UpdateReplyParams = ReplyParams & { id: number }
+
 export const useThreadStore = defineStore('thread', () => {
   /** A map of post ID's to objects */
   const allThreads = ref<Record<number, Thread>>({})
@@ -129,7 +131,7 @@ export const useThreadStore = defineStore('thread', () => {
     }
   }
 
-  const reply = async (params: ReplyParams): Promise<void> => {
+  const createReply = async (params: ReplyParams): Promise<Reply | void> => {
     try {
       const response = await api.post(
         `threads/posts/${params.postId}/replies/`,
@@ -142,6 +144,34 @@ export const useThreadStore = defineStore('thread', () => {
 
       replyErrors.value = null
       saveReply(params.postId, reply)
+
+      return reply
+    } catch (error: unknown) {
+      if (!isAxiosError(error)) throw error
+
+      if (error.response?.status === 400) {
+        replyErrors.value = error.response.data
+      }
+    }
+  }
+
+  const updateReply = async (
+    params: UpdateReplyParams,
+  ): Promise<Reply | void> => {
+    try {
+      const response = await api.put(
+        `threads/posts/${params.postId}/replies/${params.id}/`,
+        {
+          body: params.body,
+        },
+        useAuthOptions(),
+      )
+      const reply: Reply = response.data
+
+      replyErrors.value = null
+      saveReply(params.postId, reply)
+
+      return reply
     } catch (error: unknown) {
       if (!isAxiosError(error)) throw error
 
@@ -156,7 +186,7 @@ export const useThreadStore = defineStore('thread', () => {
 
     if (!repliesByPost.value[postId]) {
       repliesByPost.value[postId] = [reply.id]
-    } else {
+    } else if (!repliesByPost.value[postId].find((id) => id === reply.id)) {
       repliesByPost.value[postId].push(reply.id)
     }
   }
@@ -299,7 +329,8 @@ export const useThreadStore = defineStore('thread', () => {
     updatePost,
 
     // Reply
-    reply,
+    createReply,
+    updateReply,
     replyErrors,
 
     // Misc

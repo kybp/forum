@@ -9,7 +9,7 @@ class ThreadDetailPage(BasePage):
 
     @property
     def author(self):
-        return self.page.get_by_test_id("author")
+        return self.page.get_by_test_id("author").first
 
     @property
     def title(self):
@@ -38,6 +38,10 @@ class ThreadDetailPage(BasePage):
     @property
     def first_reply_body(self):
         return self.first_reply.get_by_test_id("body")
+
+    @property
+    def edit_first_reply_button(self):
+        return self.first_reply.get_by_role("link", name="Edit").first
 
     @property
     def delete_first_reply_button(self):
@@ -69,7 +73,7 @@ class ThreadDetailPage(BasePage):
 
     @property
     def edit_post_button(self):
-        return self.page.get_by_role("link", name="Edit")
+        return self.page.get_by_role("link", name="Edit").first
 
     def toggle_preview(self):
         self.toggle_preview_button.click()

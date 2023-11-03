@@ -10,6 +10,7 @@ import type {
   ThreadFilters,
   ThreadStore,
   UpdatePostParams,
+  UpdateReplyParams,
 } from '@/stores/thread'
 import { useAuthStore } from './auth'
 import type { User } from './auth'
@@ -22,6 +23,7 @@ import {
   threadFactory,
   threadFiltersFactory,
   updatePostParamsFactory,
+  updateReplyParamsFactory,
 } from './thread.factories'
 import { makeId } from '@/test-utils'
 
@@ -206,6 +208,7 @@ describe('thread store', () => {
 
       it('saves the returned errors in the store', async () => {
         await threadStore.updatePost(params)
+        expect(threadStore.postErrors).toEqual(error.response.data)
       })
 
       it('returns undefined', async () => {
@@ -216,7 +219,7 @@ describe('thread store', () => {
     })
   })
 
-  describe('reply', () => {
+  describe('createReply', () => {
     let threadStore: ThreadStore
     let params: ReplyParams
 
@@ -234,7 +237,7 @@ describe('thread store', () => {
       })
 
       it('posts to the new reply endpoint', async () => {
-        await threadStore.reply(params)
+        await threadStore.createReply(params)
 
         const path = `threads/posts/${params.postId}/replies/`
         const postParams: any = { ...params }
@@ -243,7 +246,7 @@ describe('thread store', () => {
       })
 
       it('saves the reply in the store', async () => {
-        await threadStore.reply(params)
+        await threadStore.createReply(params)
 
         expect(threadStore.allReplies).toEqual({ [reply.id]: reply })
         expect(threadStore.repliesByPost).toEqual({ [reply.post]: [reply.id] })
@@ -252,8 +255,12 @@ describe('thread store', () => {
 
       it('clears replyErrors', async () => {
         threadStore.replyErrors = { body: ['an error'] }
-        await threadStore.reply(params)
+        await threadStore.createReply(params)
         expect(threadStore.replyErrors).toBe(null)
+      })
+
+      it('returns the reply', async () => {
+        expect(await threadStore.createReply(params)).toEqual(reply)
       })
     })
 
@@ -269,13 +276,105 @@ describe('thread store', () => {
       })
 
       it('saves the returned errors in the store', async () => {
-        await threadStore.reply(params)
+        await threadStore.createReply(params)
         expect(threadStore.replyErrors).toEqual(error.response.data)
       })
 
       it('does not save a reply in the store', async () => {
-        await threadStore.reply(params)
+        await threadStore.createReply(params)
         expect(threadStore.allReplies).toEqual({})
+      })
+
+      it('returns undefined', async () => {
+        expect(await threadStore.createReply(params)).toBeUndefined()
+      })
+    })
+  })
+
+  describe('updateReply', () => {
+    let threadStore: ThreadStore
+    let params: UpdateReplyParams
+
+    beforeEach(() => {
+      threadStore = useThreadStore()
+      params = updateReplyParamsFactory()
+    })
+
+    describe('when the request succeeds', () => {
+      beforeEach(() => {
+        api.put.mockResolvedValue({ data: replyFactory() })
+      })
+
+      it('sends a PUT request to the endpoint', async () => {
+        await threadStore.updateReply(params)
+
+        expect(api.put).toHaveBeenCalledWith(
+          `threads/posts/${params.postId}/replies/${params.id}/`,
+          { body: params.body },
+          authHeaders,
+        )
+      })
+
+      it('saves the returned reply in the store', async () => {
+        const reply = replyFactory()
+        threadStore.allReplies = { [reply.id]: reply }
+
+        const newBody = reply.body + ' but different'
+        api.put.mockResolvedValueOnce({ data: { ...reply, body: newBody } })
+
+        await threadStore.updateReply(params)
+
+        const replyInStore = threadStore.allReplies[reply.id]
+        expect(replyInStore.body).toEqual(newBody)
+      })
+
+      it('does not change thread replies in the store', async () => {
+        const replies = [12, 31, params.id]
+        const thread = threadFactory({
+          id: params.postId,
+          replies: [...replies],
+        })
+        threadStore.allThreads = { [thread.id]: thread }
+
+        await threadStore.createReply(params)
+
+        expect(threadStore.thread(thread.id)!.replies).toEqual(replies)
+      })
+
+      it('returns the returned reply', async () => {
+        const reply = replyFactory()
+        api.put.mockResolvedValueOnce({ data: reply })
+
+        expect(
+          await threadStore.updateReply(updateReplyParamsFactory()),
+        ).toEqual(reply)
+      })
+
+      it('clears replyErrors', async () => {
+        threadStore.replyErrors = { body: ['body error'] }
+        await threadStore.updateReply(params)
+        expect(threadStore.replyErrors).toBe(null)
+      })
+    })
+
+    describe('when the request fails', () => {
+      let error: { response: Partial<AxiosResponse> }
+
+      beforeEach(() => {
+        error = { response: { status: 400, data: { body: ['error'] } } }
+        api.put.mockRejectedValue(error)
+      })
+
+      it('saves the returned errors in the store', async () => {
+        await threadStore.updateReply(params)
+
+        expect(threadStore.replyErrors).toEqual(error.response.data)
+      })
+
+      it('returns undefined', async () => {
+        expect(
+          await threadStore.updateReply(updateReplyParamsFactory()),
+        ).toBeUndefined()
       })
     })
   })

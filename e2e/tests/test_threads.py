@@ -2,6 +2,7 @@ from playwright.sync_api import Page, expect
 
 from e2e.pages.account_page import AccountPage
 from e2e.pages.edit_post_page import EditPostPage
+from e2e.pages.edit_reply_page import EditReplyPage
 from e2e.pages.home_page import HomePage
 from e2e.pages.post_thread_page import PostThreadPage
 from e2e.pages.thread_detail_page import ThreadDetailPage
@@ -259,3 +260,28 @@ def test_editing_post(page: Page):
     # Check updates
     expect(thread_detail_page.title).to_have_text(new_title)
     expect(thread_detail_page.body).to_have_text(new_body)
+
+
+def test_editing_reply(page: Page):
+    home_page = HomePage(page)
+
+    home_page.sign_in()
+    home_page.post_thread()
+
+    thread_detail_page = ThreadDetailPage(page)
+
+    old_body = "some old text"
+    thread_detail_page.reply(body=old_body)
+
+    thread_detail_page.edit_first_reply_button.click()
+    edit_reply_page = EditReplyPage(page)
+
+    # Check that form populates from DB
+    expect(edit_reply_page.body_input).to_have_value(old_body)
+
+    new_body = "some new text"
+    edit_reply_page.edit(body=new_body)
+    thread_detail_page.author.wait_for()
+
+    # Check update
+    expect(thread_detail_page.first_reply_body).to_have_text(new_body)

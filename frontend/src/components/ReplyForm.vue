@@ -5,14 +5,16 @@ import type { FormActions } from 'vee-validate'
 import { storeToRefs } from 'pinia'
 import * as yup from 'yup'
 import PostBody from '@/components/PostBody.vue'
-import { useThreadStore } from '@/stores/thread'
+import { useThreadStore, type Reply } from '@/stores/thread'
 
-const props = defineProps({
-  postId: {
-    type: Number,
-    required: true,
-  },
-})
+type Props = {
+  postId: number
+  initialValue?: Reply
+}
+
+const props = defineProps<Props>()
+
+const emit = defineEmits(['submit'])
 
 const threadStore = useThreadStore()
 
@@ -28,19 +30,19 @@ watchEffect(() => {
   if (replyErrors.value) form.value?.setErrors(replyErrors.value)
 })
 
-const body = ref('')
+const body = ref(props.initialValue?.body ?? '')
 
 const reply = async (
   formValues: any,
   { resetForm }: FormActions<{ body: string }>,
 ) => {
-  await threadStore.reply({
+  emit('submit', {
     postId: props.postId,
     body: formValues.body,
+    onSuccess: () => {
+      resetForm({ values: { body: '' } })
+    },
   })
-
-  body.value = ''
-  resetForm({ values: { body: '' } })
 }
 
 const isMobilePreviewOpen = ref(false)
