@@ -31,11 +31,20 @@ header {
   width: 100%;
   display: flex;
   justify-content: space-between;
+
+  @media (--small-viewport) {
+    justify-content: space-between;
+    margin-bottom: 5rem;
+  }
 }
 
 nav {
   display: flex;
   gap: 0.5rem;
+
+  @media (--small-viewport) {
+    flex-direction: column;
+  }
 }
 
 nav a {

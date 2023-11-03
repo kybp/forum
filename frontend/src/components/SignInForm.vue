@@ -86,42 +86,76 @@ form {
   display: flex;
   align-items: flex-start;
   height: 2rem;
-}
 
-.fields {
-  display: flex;
-  margin-top: 0.3rem;
-}
+  @media (--small-viewport) {
+    display: grid;
+  }
 
-.fields + .actions {
-  margin-left: 0.5rem;
-}
-
-.field + .field,
-button[type='submit'] + * {
-  margin-left: 0.5rem;
-}
-
-@media (--small-viewport) {
-  form {
+  @media (--medium-viewport) {
     display: grid;
     margin-bottom: 3rem;
   }
 
   .fields {
-    grid-row: 1;
-    margin-bottom: 0.5rem;
-  }
+    display: flex;
+    margin-top: 0.3rem;
 
-  .field {
-    max-width: 9rem;
-    margin-right: 0;
+    @media (--medium-viewport) {
+      grid-row: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    @media (--small-viewport) {
+      display: grid;
+    }
+
+    .field {
+      @media (--medium-viewport) {
+        max-width: 9rem;
+        margin-right: 0;
+      }
+
+      @media (--small-viewport) {
+        max-width: 100%;
+      }
+
+      & + .field {
+        margin-left: 0.5rem;
+
+        @media (--small-viewport) {
+          margin-top: 0.3rem;
+          margin-left: 0;
+        }
+      }
+    }
   }
 
   .actions {
-    grid-row: 2;
-    display: flex;
-    justify-content: end;
+    margin-left: 0.5rem;
+
+    @media (--medium-viewport) {
+      grid-row: 2;
+      display: flex;
+      justify-content: end;
+    }
+
+    @media (--small-viewport) {
+      display: flex;
+      justify-content: end;
+      margin-top: 0.3rem;
+
+      .button + .button {
+        margin-left: 0.5rem;
+      }
+    }
+
+    button[type='submit'] + * {
+      margin-left: 0.5rem;
+
+      @media (--small-viewport) {
+        margin-left: 0;
+      }
+    }
   }
 }
 </style>
