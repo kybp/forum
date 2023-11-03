@@ -3,7 +3,7 @@ gunicorn==21.2.0
 
 # These are the requirements from requirements.txt that are used by
 # the app at runtime.
-Django==4.2.5
+Django==4.2.7
 psycopg2-binary==2.9.9
 djangorestframework==3.14.0
 drf-nested-routers==0.93.4
