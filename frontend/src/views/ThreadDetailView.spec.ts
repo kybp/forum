@@ -2,6 +2,7 @@ import { h } from 'vue'
 import { VueWrapper } from '@vue/test-utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import ArticleDates from '@/components/ArticleDates.vue'
 import LoadingPlaceholder from '@/components/LoadingPlaceholder.vue'
 import PostBody from '@/components/PostBody.vue'
 import PostTag from '@/components/PostTag.vue'
@@ -47,7 +48,12 @@ vi.mock('vue-router', () => ({
 let thread: Thread
 let user: User
 
+const loading = () => wrapper.findComponent(LoadingPlaceholder)
+const body = () => wrapper.findComponent(PostBody)
+const articleDates = () => wrapper.findComponent(ArticleDates)
+const tags = () => wrapper.findAllComponents(PostTag)
 const deleteButton = () => wrapper.find('button')
+const replyForm = () => wrapper.findComponent(ReplyForm)
 
 beforeEach(async () => {
   wrapper = wrap(ThreadDetailView)
@@ -73,36 +79,37 @@ const itRendersThread = () => {
   })
 
   it('renders post body', () => {
-    const body = wrapper.findComponent(PostBody)
+    expect(body().exists()).toBe(true)
+    expect(body().props().value).toEqual(thread.body)
+  })
 
-    expect(body.exists()).toBe(true)
-    expect(body.vm.$props.value).toEqual(thread.body)
+  it('renders article dates', () => {
+    expect(articleDates().exists()).toBe(true)
+    expect(articleDates().props().article).toEqual(thread)
   })
 
   it('renders tags', () => {
-    const tags = wrapper.findAllComponents(PostTag)
-
-    expect(tags.length).toEqual(thread.tags.length)
-    expect(new Set(tags.map((t) => t.props().value))).toEqual(
+    expect(tags().length).toEqual(thread.tags.length)
+    expect(new Set(tags().map((t) => t.props().value))).toEqual(
       new Set(thread.tags),
     )
-    tags.forEach((t) => expect(t.props().editable).toBe(false))
+    tags().forEach((t) => expect(t.props().editable).toBe(false))
   })
 
   it('is not loading when it has all data', () => {
-    expect(wrapper.findComponent(LoadingPlaceholder).exists()).toBe(false)
+    expect(loading().exists()).toBe(false)
   })
 
   it('is loading when it does not have the thread', async () => {
     threadStore.thread = () => undefined
     await wrapper.vm.$nextTick()
-    expect(wrapper.findComponent(LoadingPlaceholder).exists()).toBe(true)
+    expect(loading().exists()).toBe(true)
   })
 
   it('is loading when it does not have the user', async () => {
     userStore.user = () => undefined
     await wrapper.vm.$nextTick()
-    expect(wrapper.findComponent(LoadingPlaceholder).exists()).toBe(true)
+    expect(loading().exists()).toBe(true)
   })
 }
 
@@ -114,7 +121,7 @@ describe('when the user is signed in', () => {
   itRendersThread()
 
   it('renders a reply form', () => {
-    expect(wrapper.findComponent(ReplyForm).exists()).toBe(true)
+    expect(replyForm().exists()).toBe(true)
   })
 
   it('renders delete button if user is the author', async () => {
@@ -143,7 +150,7 @@ describe('when the user is signed out', () => {
   itRendersThread()
 
   it('does not render a reply form', () => {
-    expect(wrapper.findComponent(ReplyForm).exists()).toBe(false)
+    expect(replyForm().exists()).toBe(false)
   })
 
   it('does not render a delete button', () => {
