@@ -18,6 +18,7 @@ authStore.$subscribe(async () => {
   <header>
     <nav>
       <RouterLink to="/">Home</RouterLink>
+      <RouterLink to="/formatting">Formatting</RouterLink>
     </nav>
     <UserControls />
   </header>
@@ -32,7 +33,16 @@ header {
   justify-content: space-between;
 }
 
-nav a.router-link-exact-active {
+nav {
+  display: flex;
+  gap: 0.5rem;
+}
+
+nav a {
   color: var(--color-text);
+
+  &.router-link-exact-active {
+    color: var(--f-blue-5);
+  }
 }
 </style>

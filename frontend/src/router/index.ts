@@ -23,6 +23,11 @@ const router = createRouter({
       beforeEnter: guards.checkNotSignedIn,
     },
     {
+      path: '/formatting',
+      name: 'formatting',
+      component: () => import('../views/FormattingView.vue'),
+    },
+    {
       path: '/account',
       name: 'account',
       component: () => import('../views/AccountView.vue'),

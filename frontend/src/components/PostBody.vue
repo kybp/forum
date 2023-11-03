@@ -42,10 +42,15 @@ const markdown = new MarkdownIt()
 
   :deep(pre),
   :deep(code) {
-    filter: brightness(150%);
-    backdrop-filter: brightness(63%);
     border-radius: 5px;
     width: fit-content;
+    filter: brightness(150%);
+    backdrop-filter: brightness(63%);
+
+    @media (prefers-color-scheme: dark) {
+      filter: none;
+      backdrop-filter: brightness(160%);
+    }
   }
 
   :deep(pre) {
@@ -64,7 +69,7 @@ const markdown = new MarkdownIt()
 
   :deep(ul),
   :deep(ol) {
-    padding-left: 2rem;
+    padding-left: 1.5rem;
   }
 
   :deep(* + ul),
@@ -72,12 +77,39 @@ const markdown = new MarkdownIt()
     margin-top: 1rem;
   }
 
-  :deep(ul li) {
-    list-style: inside;
-  }
-
   :deep(ol) {
     list-style-type: decimal;
+  }
+
+  :deep(ol ol) {
+    list-style-type: upper-roman;
+  }
+
+  :deep(ol ol ol) {
+    list-style-type: lower-roman;
+  }
+
+  :deep(ul) {
+    list-style-type: disc;
+  }
+
+  :deep(ul ul) {
+    list-style-type: circle;
+  }
+
+  :deep(ul ul ul) {
+    list-style-type: square;
+  }
+
+  :deep(blockquote) {
+    margin-left: 0.5rem;
+    border-left: 0.3rem solid var(--f-purple-3);
+    padding-left: 0.5rem;
+    backdrop-filter: brightness(95%);
+
+    @media (prefers-color-scheme: dark) {
+      backdrop-filter: brightness(160%);
+    }
   }
 }
 </style>
