@@ -4,6 +4,7 @@ import { useRoute, RouterLink } from 'vue-router'
 import { storeToRefs } from 'pinia'
 
 import ArticleDates from '@/components/ArticleDates.vue'
+import CollapsibleMenu from '@/components/CollapsibleMenu.vue'
 import MarkdownBody from '@/components/MarkdownBody.vue'
 import PostTag from '@/components/PostTag.vue'
 import LoadingPlaceholder from '@/components/LoadingPlaceholder.vue'
@@ -55,16 +56,15 @@ const createReply = async ({ postId, body, onSuccess }: any) => {
     <h1 class="title" v-if="thread" data-testid="title">{{ thread.title }}</h1>
     <LoadingPlaceholder v-else />
 
-    <RouterLink
-      v-if="userIsAuthor"
-      :to="{ name: 'edit post', params: { id: postId } }"
-      class="button"
-    >
-      Edit
-    </RouterLink>
-    <button v-if="userIsAuthor" @click="deletePost" class="button">
-      Delete
-    </button>
+    <CollapsibleMenu v-if="userIsAuthor" class="menu">
+      <RouterLink
+        :to="{ name: 'edit post', params: { id: postId } }"
+        class="button"
+      >
+        Edit
+      </RouterLink>
+      <button @click="deletePost" class="button">Delete</button>
+    </CollapsibleMenu>
   </div>
 
   <div class="author" v-if="author" data-testid="author">
@@ -105,10 +105,20 @@ const createReply = async ({ postId, body, onSuccess }: any) => {
 <style scoped>
 .header {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
 
-  .button {
-    margin-left: 1rem;
-    align-self: center;
+  @media (--small-viewport) {
+    margin-top: 0;
+  }
+}
+
+.menu .button {
+  margin-left: 0.5rem;
+
+  @media (--small-viewport) {
+    margin-left: 0;
   }
 }
 

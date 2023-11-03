@@ -3,6 +3,7 @@ import { VueWrapper } from '@vue/test-utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import ArticleDates from '@/components/ArticleDates.vue'
+import CollapsibleMenu from '@/components/CollapsibleMenu.vue'
 import LoadingPlaceholder from '@/components/LoadingPlaceholder.vue'
 import MarkdownBody from '@/components/MarkdownBody.vue'
 import PostTag from '@/components/PostTag.vue'
@@ -52,7 +53,7 @@ const loading = () => wrapper.findComponent(LoadingPlaceholder)
 const body = () => wrapper.findComponent(MarkdownBody)
 const articleDates = () => wrapper.findComponent(ArticleDates)
 const tags = () => wrapper.findAllComponents(PostTag)
-const deleteButton = () => wrapper.find('button')
+const actionsMenu = () => wrapper.findComponent(CollapsibleMenu)
 const replyForm = () => wrapper.findComponent(ReplyForm)
 
 beforeEach(async () => {
@@ -124,21 +125,16 @@ describe('when the user is signed in', () => {
     expect(replyForm().exists()).toBe(true)
   })
 
-  it('renders delete button if user is the author', async () => {
+  it('renders actions menu if user is the author', async () => {
     authStore.account = accountFactory({ id: thread.author! })
     await wrapper.vm.$nextTick()
-    expect(deleteButton().exists()).toBe(true)
+    expect(actionsMenu().exists()).toBe(true)
   })
 
-  it('does not render delete button if user is not the author', async () => {
+  it('does not render actions menu if user is not the author', async () => {
     authStore.account = accountFactory({ id: thread.author! + 1 })
     await wrapper.vm.$nextTick()
-    expect(deleteButton().exists()).toBe(false)
-  })
-
-  it('calls threadStore.deletePost when delete button is clicked', async () => {
-    await deleteButton().trigger('click')
-    expect(threadStore.deletePost).toHaveBeenCalledWith(thread)
+    expect(actionsMenu().exists()).toBe(false)
   })
 })
 
@@ -153,7 +149,7 @@ describe('when the user is signed out', () => {
     expect(replyForm().exists()).toBe(false)
   })
 
-  it('does not render a delete button', () => {
-    expect(deleteButton().exists()).toBe(false)
+  it('does not render actions menu', () => {
+    expect(actionsMenu().exists()).toBe(false)
   })
 })

@@ -103,7 +103,7 @@ a.button {
   }
 
   &:active {
-    filter: brightness(85%);
+    filter: brightness(75%);
   }
 }
 
