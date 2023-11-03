@@ -6,7 +6,7 @@ import NewThreadView from '@/views/NewThreadView.vue'
 import { useThreadStore } from '@/stores/thread'
 import { wrap } from '@/test-utils'
 import { useAuthStore } from '@/stores/auth'
-import { userFactory } from '@/stores/auth.factories'
+import { accountFactory } from '@/stores/auth.factories'
 
 let wrapper: VueWrapper<typeof NewThreadView>
 
@@ -33,7 +33,7 @@ beforeEach(() => {
   useThreadStore()
 
   const authStore = useAuthStore()
-  authStore.user = userFactory()
+  authStore.account = accountFactory()
 })
 
 it('renders a PostForm', () => {

@@ -6,10 +6,11 @@ import { useUserStore } from './user'
 
 const api = axios.create({ baseURL: import.meta.env.VITE_API_HOST })
 
-export type User = {
+export type Account = {
   id: number
   username: string
   email: string
+  avatar: string
   token: string
 }
 
@@ -27,25 +28,25 @@ export type RegisterProps = {
 export const useAuthStore = defineStore('auth', () => {
   const userStore = useUserStore()
 
-  const user = ref<User | null>(
-    JSON.parse(localStorage.getItem('user') ?? 'null'),
+  const account = ref<Account | null>(
+    JSON.parse(localStorage.getItem('account') ?? 'null'),
   )
 
   const options = computed(() => {
-    if (!user.value) return {}
+    if (!account.value) return {}
 
     return {
-      headers: { Authorization: `Token ${user.value.token}` },
+      headers: { Authorization: `Token ${account.value.token}` },
     }
   })
 
-  const updateUser = (newUser: User | null) => {
-    user.value = newUser
+  const saveAccount = (newAccount: Account | null) => {
+    account.value = newAccount
 
-    if (newUser) {
-      localStorage.setItem('user', JSON.stringify(newUser))
+    if (newAccount) {
+      localStorage.setItem('account', JSON.stringify(newAccount))
     } else {
-      localStorage.removeItem('user')
+      localStorage.removeItem('account')
     }
   }
 
@@ -58,7 +59,7 @@ export const useAuthStore = defineStore('auth', () => {
   const register = async (props: RegisterProps) => {
     try {
       const response = await api.post('users/accounts/', props)
-      updateUser(response.data)
+      saveAccount(response.data)
       clearRegisterErrors()
     } catch (error: unknown) {
       if (!isAxiosError(error)) throw error
@@ -78,7 +79,7 @@ export const useAuthStore = defineStore('auth', () => {
   const signIn = async (props: SignInProps) => {
     try {
       const response = await api.post('users/token/', props)
-      updateUser(response.data)
+      saveAccount(response.data)
       clearSignInErrors()
     } catch (error: unknown) {
       if (!isAxiosError(error)) throw error
@@ -89,23 +90,23 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  const signOut = () => {
-    updateUser(null)
+  const signOut = async () => {
+    saveAccount(null)
   }
 
   const deleteAccount = async () => {
-    if (!user.value) throw new Error('Not signed in')
+    if (!account.value) throw new Error('Not signed in')
 
-    await api.delete(`users/accounts/${user.value.id}/`, options.value)
-    await userStore.fetchUser(user.value.id)
+    await api.delete(`users/accounts/${account.value.id}/`, options.value)
+    await userStore.fetchUser(account.value.id)
 
-    updateUser(null)
+    saveAccount(null)
   }
 
-  const isSignedIn = computed(() => !!user.value)
+  const isSignedIn = computed(() => !!account.value)
 
   return {
-    user,
+    account,
     // Register
     register,
     registerErrors,
@@ -122,15 +123,15 @@ export const useAuthStore = defineStore('auth', () => {
 })
 
 export const useAuthOptions = (options = { notSignedInOkay: false }) => {
-  const { user } = useAuthStore()
+  const { account } = useAuthStore()
 
-  if (!user) {
+  if (!account) {
     if (options.notSignedInOkay) return {}
     throw new Error('Not signed in')
   }
 
   return {
-    headers: { Authorization: `Token ${user.token}` },
+    headers: { Authorization: `Token ${account.token}` },
   } as const
 }
 

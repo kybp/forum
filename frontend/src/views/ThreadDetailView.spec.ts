@@ -8,7 +8,7 @@ import PostTag from '@/components/PostTag.vue'
 import ReplyForm from '@/components/ReplyForm.vue'
 import ThreadDetailView from '@/views/ThreadDetailView.vue'
 import { useAuthStore } from '@/stores/auth'
-import { userFactory as authUserFactory } from '@/stores/auth.factories'
+import { accountFactory } from '@/stores/auth.factories'
 import type { Thread } from '@/stores/thread'
 import { useThreadStore } from '@/stores/thread'
 import { threadFactory } from '@/stores/thread.factories'
@@ -108,7 +108,7 @@ const itRendersThread = () => {
 
 describe('when the user is signed in', () => {
   beforeEach(() => {
-    authStore.user = authUserFactory({ id: thread.author! })
+    authStore.account = accountFactory({ id: thread.author! })
   })
 
   itRendersThread()
@@ -118,13 +118,13 @@ describe('when the user is signed in', () => {
   })
 
   it('renders delete button if user is the author', async () => {
-    authStore.user = authUserFactory({ id: thread.author! })
+    authStore.account = accountFactory({ id: thread.author! })
     await wrapper.vm.$nextTick()
     expect(deleteButton().exists()).toBe(true)
   })
 
   it('does not render delete button if user is not the author', async () => {
-    authStore.user = authUserFactory({ id: thread.author! + 1 })
+    authStore.account = accountFactory({ id: thread.author! + 1 })
     await wrapper.vm.$nextTick()
     expect(deleteButton().exists()).toBe(false)
   })
@@ -137,7 +137,7 @@ describe('when the user is signed in', () => {
 
 describe('when the user is signed out', () => {
   beforeEach(() => {
-    authStore.user = null
+    authStore.account = null
   })
 
   itRendersThread()

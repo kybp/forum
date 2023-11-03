@@ -10,7 +10,7 @@ import { computed } from 'vue'
 const authStore = useAuthStore()
 const threadStore = useThreadStore()
 
-const { user } = storeToRefs(authStore)
+const { account } = storeToRefs(authStore)
 
 threadStore.fetchThreadList()
 
@@ -22,7 +22,7 @@ const loading = computed(() => threadStore.loadingThreadList)
   <main>
     <div class="meta">
       <h1>Threads</h1>
-      <RouterLink v-if="user" to="/post" class="button new-thread">
+      <RouterLink v-if="account" to="/post" class="button new-thread">
         New Thread
       </RouterLink>
     </div>

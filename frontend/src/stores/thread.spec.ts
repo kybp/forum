@@ -13,8 +13,8 @@ import type {
   UpdateReplyParams,
 } from '@/stores/thread'
 import { useAuthStore } from './auth'
-import type { User } from './auth'
-import { userFactory } from './auth.factories'
+import type { Account } from './auth'
+import { accountFactory } from './auth.factories'
 import {
   postParamsFactory,
   reactionFactory,
@@ -45,7 +45,7 @@ const token = 'x123'
 
 let authStore: ReturnType<typeof useAuthStore>
 let authHeaders: any
-let user: User
+let account: Account
 
 describe('thread store', () => {
   beforeEach(() => {
@@ -54,8 +54,8 @@ describe('thread store', () => {
     authHeaders = {
       headers: { Authorization: `Token ${token}` },
     }
-    user = userFactory({ token })
-    authStore.user = user
+    account = accountFactory({ token })
+    authStore.account = account
   })
 
   describe('initially', () => {
@@ -522,7 +522,7 @@ describe('thread store', () => {
         thread = threadFactory({
           id: threadId,
           user_reaction_type: 'like',
-          reactions: [reactionFactory({ user: user.id, content: threadId })],
+          reactions: [reactionFactory({ user: account.id, content: threadId })],
         })
         threadStore.allThreads = { [thread.id]: thread }
       })
@@ -566,7 +566,7 @@ describe('thread store', () => {
         thread = threadFactory({
           id: threadId,
           user_reaction_type: 'like',
-          reactions: [reactionFactory({ user: user.id, content: threadId })],
+          reactions: [reactionFactory({ user: account.id, content: threadId })],
         })
         threadStore.allThreads = { [thread.id]: thread }
       })
@@ -593,7 +593,7 @@ describe('thread store', () => {
         await threadStore.toggleThreadReaction(thread, reactionType)
 
         expect(threadStore.thread(thread.id)!.reactions).toEqual([
-          { user: user.id, type: reactionType, content: thread.id },
+          { user: account.id, type: reactionType, content: thread.id },
         ])
       })
     })
@@ -633,7 +633,7 @@ describe('thread store', () => {
         await threadStore.toggleThreadReaction(thread, reactionType)
 
         expect(threadStore.thread(thread.id)!.reactions).toEqual([
-          { user: user.id, type: reactionType, content: thread.id },
+          { user: account.id, type: reactionType, content: thread.id },
         ])
       })
     })
@@ -650,7 +650,7 @@ describe('thread store', () => {
     })
 
     it('makes a GET request to the endpoint', async () => {
-      authStore.user = null
+      authStore.account = null
       await threadStore.fetchThreadFilters()
       expect(api.get).toHaveBeenCalledWith('threads/filters/', {})
     })

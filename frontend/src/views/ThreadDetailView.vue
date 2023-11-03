@@ -19,7 +19,7 @@ const authStore = useAuthStore()
 const threadStore = useThreadStore()
 const userStore = useUserStore()
 
-const { user } = storeToRefs(authStore)
+const { account } = storeToRefs(authStore)
 
 const postId = +route.params.id
 
@@ -27,7 +27,7 @@ const thread = computed(() => threadStore.thread(postId))
 if (!thread.value) threadStore.fetchThread(postId)
 
 const userIsAuthor = computed(() => {
-  return user.value && user.value.id === thread.value?.author
+  return account.value && account.value.id === thread.value?.author
 })
 
 const deletePost = () => {

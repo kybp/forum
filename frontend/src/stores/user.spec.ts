@@ -40,7 +40,7 @@ describe('user store', () => {
     it('makes a GET request to the endpoint', async () => {
       const id = makeId()
       await userStore.fetchUser(id)
-      expect(api.get).toHaveBeenCalledWith(`users/accounts/${id}/`)
+      expect(api.get).toHaveBeenCalledWith(`users/users/${id}/`)
     })
 
     it('saves the user in the store', async () => {

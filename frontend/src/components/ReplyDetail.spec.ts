@@ -8,7 +8,7 @@ import type { Reply } from '@/stores/thread'
 import { wrap } from '@/test-utils'
 import { useAuthStore, type AuthStore } from '@/stores/auth'
 import { useThreadStore, type ThreadStore } from '@/stores/thread'
-import { userFactory } from '@/stores/auth.factories'
+import { accountFactory } from '@/stores/auth.factories'
 
 let wrapper: VueWrapper<typeof ReplyDetail>
 let reply: Reply
@@ -21,7 +21,7 @@ beforeEach(() => {
   reply = replyFactory()
   wrapper = wrap(ReplyDetail, { propsData: { reply } })
   authStore = useAuthStore()
-  authStore.user = userFactory({ id: reply.author })
+  authStore.account = accountFactory({ id: reply.author })
   threadStore = useThreadStore()
 })
 
@@ -33,13 +33,13 @@ it('renders post body', () => {
 })
 
 it('renders delete button when the user is the author', async () => {
-  authStore.user = userFactory({ id: reply.author })
+  authStore.account = accountFactory({ id: reply.author })
   await wrapper.vm.$nextTick()
   expect(deleteButton().exists()).toBe(true)
 })
 
 it('does not render delete button when the user is not the author', async () => {
-  authStore.user = userFactory({ id: reply.author + 1 })
+  authStore.account = accountFactory({ id: reply.author + 1 })
   await wrapper.vm.$nextTick()
   expect(deleteButton().exists()).toBe(false)
 })

@@ -19,10 +19,10 @@ const authStore = useAuthStore()
 const threadStore = useThreadStore()
 const userStore = useUserStore()
 
-const { user } = storeToRefs(authStore)
+const { account } = storeToRefs(authStore)
 
 const userIsAuthor = computed(
-  () => user.value && user.value.id === props.reply.author,
+  () => account.value && account.value.id === props.reply.author,
 )
 
 const author = computed(() => userStore.user(props.reply.author))

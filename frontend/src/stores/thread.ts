@@ -87,7 +87,7 @@ export const useThreadStore = defineStore('thread', () => {
   const loadingThreadList = ref(false)
 
   const authStore = useAuthStore()
-  const { user } = storeToRefs(authStore)
+  const { account } = storeToRefs(authStore)
 
   const post = async (params: PostParams): Promise<Thread | undefined> => {
     try {
@@ -248,8 +248,8 @@ export const useThreadStore = defineStore('thread', () => {
     { id, user_reaction_type }: Thread,
     type: ReactionType,
   ) => {
-    if (user.value === null) throw new Error('Not signed in')
-    const userId = user.value.id
+    if (account.value === null) throw new Error('Not signed in')
+    const userId = account.value.id
 
     const options = useAuthOptions()
     const thread = allThreads.value[id]

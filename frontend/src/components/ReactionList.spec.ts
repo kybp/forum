@@ -8,7 +8,7 @@ import type { Thread } from '@/stores/thread'
 import { reactionFactory, threadFactory } from '@/stores/thread.factories'
 import { wrap } from '@/test-utils'
 import { useAuthStore } from '@/stores/auth'
-import { userFactory } from '@/stores/auth.factories'
+import { accountFactory } from '@/stores/auth.factories'
 
 let wrapper: VueWrapper<typeof ReactionList>
 let authStore: ReturnType<typeof useAuthStore>
@@ -18,7 +18,7 @@ beforeEach(() => {
   thread = threadFactory({ reactions: [reactionFactory()] })
   wrapper = wrap(ReactionList, { propsData: { thread } })
   authStore = useAuthStore()
-  authStore.user = userFactory()
+  authStore.account = accountFactory()
 })
 
 it('renders a ReactionIcon for each ReactionType', () => {
@@ -34,7 +34,7 @@ it('does not render reactions with a 0 count when cannot react', async () => {
   const type = 'laugh'
   thread = threadFactory({ reactions: [reactionFactory({ type })] })
   await wrapper.setProps({ thread })
-  authStore.user = null
+  authStore.account = null
 
   await wrapper.vm.$nextTick()
   const icons = wrapper.findAllComponents(ReactionIcon)
@@ -50,7 +50,7 @@ test('users can react to everything they can react to', async () => {
 })
 
 test('users cannot react when not signed in', async () => {
-  authStore.user = null
+  authStore.account = null
 
   await wrapper.vm.$nextTick()
   const buttons = wrapper.findAll('li button')
@@ -60,7 +60,7 @@ test('users cannot react when not signed in', async () => {
 
 test('users cannot react to their own posts', async () => {
   thread = threadFactory({
-    author: authStore.user!.id,
+    author: authStore.account!.id,
     reactions: [reactionFactory()],
   })
 

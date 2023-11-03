@@ -9,10 +9,10 @@ const password = ref('')
 const error = ref<string | null>(null)
 
 const deleteAccount = async () => {
-  if (!authStore.user) throw new Error('Not signed in')
+  if (!authStore.account) throw new Error('Not signed in')
 
   await authStore.signIn({
-    username: authStore.user.username,
+    username: authStore.account.username,
     password: password.value,
   })
 

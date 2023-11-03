@@ -22,7 +22,7 @@ export const useUserStore = defineStore('user', () => {
     if (loading.value[id]) return
 
     loading.value[id] = true
-    const response = await api.get(`users/accounts/${id}/`)
+    const response = await api.get(`users/users/${id}/`)
     const user: User = response.data
     loading.value[id] = false
 

@@ -5,21 +5,20 @@ from rest_framework.response import Response
 
 from users import policies
 from .models import User
-from .serializers import UserSerializer
+from .serializers import AccountSerializer, UserSerializer
 
 
-class UserViewSet(
+class AccountViewSet(
     mixins.CreateModelMixin,
     mixins.DestroyModelMixin,
-    mixins.RetrieveModelMixin,
     viewsets.GenericViewSet,
 ):
     queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [policies.UserAccessPolicy]
+    serializer_class = AccountSerializer
+    permission_classes = [policies.AccountAccessPolicy]
 
     def create(self, request):
-        serializer = UserSerializer(data=request.data)
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         token = Token.objects.create(user=user)
@@ -28,13 +27,23 @@ class UserViewSet(
             {
                 **serializer.data,
                 "token": token.key,
-            }
+            },
+            status=201,
         )
 
     def perform_destroy(self, user):
         user.is_active = False
         user.save()
         Token.objects.filter(user=user).delete()
+
+
+class UserViewSet(
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet,
+):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [policies.UserAccessPolicy]
 
 
 class ObtainAuthTokenView(ObtainAuthToken):
@@ -51,7 +60,7 @@ class ObtainAuthTokenView(ObtainAuthToken):
                 status=400,
             )
 
-        serializer = UserSerializer(user)
+        serializer = AccountSerializer(user)
         token, _created = Token.objects.get_or_create(user=user)
 
         return Response(

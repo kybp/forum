@@ -17,7 +17,7 @@ const props = defineProps<Props>()
 const authStore = useAuthStore()
 const threadStore = useThreadStore()
 
-const { user } = storeToRefs(authStore)
+const { account } = storeToRefs(authStore)
 
 const reactions = computed(() => countBy(props.thread.reactions, (r) => r.type))
 
@@ -26,7 +26,7 @@ const toggleReaction = (type: ReactionType) => {
 }
 
 const canReact = computed(
-  () => user.value && props.thread.author !== user.value.id,
+  () => account.value && props.thread.author !== account.value.id,
 )
 
 const availableReactionTypes = computed(() =>

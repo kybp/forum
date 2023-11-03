@@ -1,11 +1,12 @@
 import { faker } from '@faker-js/faker'
 
-import type { User, RegisterProps, SignInProps } from '@/stores/auth'
+import type { Account, RegisterProps, SignInProps } from '@/stores/auth'
 
-export const userFactory = (props: Partial<User> = {}): User => ({
+export const accountFactory = (props: Partial<Account> = {}): Account => ({
   id: Math.floor(Math.random()),
   username: faker.internet.userName(),
   email: faker.internet.email(),
+  avatar: faker.image.avatar(),
   token: faker.internet.ipv6(),
   ...props,
 })

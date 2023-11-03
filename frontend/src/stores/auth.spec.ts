@@ -3,13 +3,13 @@ import type { Mocked } from 'vitest'
 import { beforeEach, describe, expect, it, test, vi } from 'vitest'
 import type { AxiosResponse } from 'axios'
 
-import type { SignInProps, User } from '@/stores/auth'
+import type { SignInProps, Account } from '@/stores/auth'
 import { useAuthStore } from '@/stores/auth'
 import {
   registerPropsFactory,
   signInPropsFactory,
 } from '@/stores/auth.factories'
-import { userFactory } from '@/stores/auth.factories'
+import { accountFactory } from '@/stores/auth.factories'
 import { useUserStore } from '@/stores/user'
 
 const localStorage: Mocked<Storage> = {
@@ -45,19 +45,19 @@ describe('auth store', () => {
   })
 
   describe('initially', () => {
-    it('loads the user from localStorage when present', () => {
-      const user = userFactory()
-      localStorage.getItem.mockReturnValueOnce(JSON.stringify(user))
+    it('loads the account from localStorage when present', () => {
+      const account = accountFactory()
+      localStorage.getItem.mockReturnValueOnce(JSON.stringify(account))
 
       authStore = useAuthStore()
 
-      expect(localStorage.getItem).toHaveBeenCalledWith('user')
-      expect(authStore.user).toEqual(user)
+      expect(localStorage.getItem).toHaveBeenCalledWith('account')
+      expect(authStore.account).toEqual(account)
     })
 
-    it('does not load the user from localStorage when not present', () => {
+    it('does not load the account from localStorage when not present', () => {
       authStore = useAuthStore()
-      expect(authStore.user).toEqual(null)
+      expect(authStore.account).toEqual(null)
     })
 
     it('has no registration errors', () => {
@@ -76,13 +76,13 @@ describe('auth store', () => {
       authStore = useAuthStore()
     })
 
-    it('is true when user is set', () => {
-      authStore.user = userFactory()
+    it('is true when account is set', () => {
+      authStore.account = accountFactory()
       expect(authStore.isSignedIn).toBe(true)
     })
 
-    it('is false when user is null', () => {
-      authStore.user = null
+    it('is false when account is null', () => {
+      authStore.account = null
       expect(authStore.isSignedIn).toBe(false)
     })
   })
@@ -100,23 +100,23 @@ describe('auth store', () => {
     })
 
     describe('when the request succeeds', () => {
-      let user: User
+      let account: Account
 
       beforeEach(() => {
-        user = userFactory()
-        api.post.mockResolvedValueOnce({ data: user })
+        account = accountFactory()
+        api.post.mockResolvedValueOnce({ data: account })
       })
 
-      it('saves the user in the store', async () => {
+      it('saves the account in the store', async () => {
         await authStore.register(params)
-        expect(authStore.user).toEqual(user)
+        expect(authStore.account).toEqual(account)
       })
 
-      it('saves the user in localStorage', async () => {
+      it('saves the account in localStorage', async () => {
         await authStore.register(params)
         expect(localStorage.setItem).toHaveBeenCalledWith(
-          'user',
-          JSON.stringify(user),
+          'account',
+          JSON.stringify(account),
         )
       })
 
@@ -146,10 +146,10 @@ describe('auth store', () => {
         expect(authStore.registerErrors).toEqual(error.response.data)
       })
 
-      it('does not set user', async () => {
+      it('does not set account', async () => {
         await authStore.register(params)
 
-        expect(authStore.user).toBe(null)
+        expect(authStore.account).toBe(null)
       })
     })
   })
@@ -171,11 +171,11 @@ describe('auth store', () => {
     })
 
     describe('when the request succeeds', () => {
-      let user: User
+      let account: Account
 
       beforeEach(() => {
-        user = userFactory()
-        api.post.mockResolvedValueOnce({ data: user })
+        account = accountFactory()
+        api.post.mockResolvedValueOnce({ data: account })
       })
 
       it('posts to the token endpoint', async () => {
@@ -183,16 +183,16 @@ describe('auth store', () => {
         expect(api.post).toHaveBeenCalledWith('users/token/', params)
       })
 
-      it('saves the user in the store', async () => {
+      it('saves the account in the store', async () => {
         await authStore.signIn(params)
-        expect(authStore.user).toEqual(user)
+        expect(authStore.account).toEqual(account)
       })
 
-      it('saves the user in localStorage', async () => {
+      it('saves the account in localStorage', async () => {
         await authStore.signIn(params)
         expect(localStorage.setItem).toHaveBeenCalledWith(
-          'user',
-          JSON.stringify(user),
+          'account',
+          JSON.stringify(account),
         )
       })
 
@@ -223,10 +223,10 @@ describe('auth store', () => {
         expect(authStore.signInErrors).toEqual(error.response.data)
       })
 
-      it('does not set user', async () => {
+      it('does not set account', async () => {
         await authStore.signIn(params)
 
-        expect(authStore.user).toBe(null)
+        expect(authStore.account).toBe(null)
       })
     })
   })
@@ -244,43 +244,43 @@ describe('auth store', () => {
       authStore = useAuthStore()
     })
 
-    it('clears the user from the store', async () => {
-      authStore.user = userFactory()
+    it('clears the account from the store', async () => {
+      authStore.account = accountFactory()
       await authStore.signOut()
-      expect(authStore.user).toEqual(null)
+      expect(authStore.account).toEqual(null)
     })
 
-    it('clears the user from localStorage', async () => {
+    it('clears the account from localStorage', async () => {
       await authStore.signOut()
-      expect(localStorage.removeItem).toHaveBeenCalledWith('user')
+      expect(localStorage.removeItem).toHaveBeenCalledWith('account')
     })
   })
 
   describe('deleteAccount', () => {
     beforeEach(() => {
-      authStore.user = userFactory()
+      authStore.account = accountFactory()
     })
 
     it('sends a delete request to the endpoint', async () => {
-      const { id, token } = authStore.user!
+      const { id, token } = authStore.account!
       await authStore.deleteAccount()
       expect(api.delete).toHaveBeenCalledWith(`users/accounts/${id}/`, {
         headers: { Authorization: `Token ${token}` },
       })
     })
 
-    it('clears the user from the store', async () => {
+    it('clears the account from the store', async () => {
       await authStore.deleteAccount()
-      expect(authStore.user).toBeNull()
+      expect(authStore.account).toBeNull()
     })
 
-    it('clears the user from localStorage', async () => {
+    it('clears the account from localStorage', async () => {
       await authStore.deleteAccount()
-      expect(localStorage.removeItem).toHaveBeenCalledWith('user')
+      expect(localStorage.removeItem).toHaveBeenCalledWith('account')
     })
 
     it('throws an error if not signed in', async () => {
-      authStore.user = null
+      authStore.account = null
       await expect(authStore.deleteAccount()).rejects.toThrowError()
     })
   })

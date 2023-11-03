@@ -4,7 +4,7 @@ import { beforeEach, expect, it } from 'vitest'
 import { useAuthStore } from '@/stores/auth'
 import { wrap } from '@/test-utils'
 import AccountView from '@/views/AccountView.vue'
-import { userFactory } from '@/stores/auth.factories'
+import { accountFactory } from '@/stores/auth.factories'
 
 let wrapper: VueWrapper<typeof AccountView>
 let authStore: ReturnType<typeof useAuthStore>
@@ -20,7 +20,7 @@ const error = () => wrapper.find('span[role="alert"]')
 beforeEach(() => {
   wrapper = wrap(AccountView)
   authStore = useAuthStore()
-  authStore.user = userFactory()
+  authStore.account = accountFactory()
 })
 
 it('renders delete account button', () => {
@@ -43,7 +43,7 @@ it('renders confirm delete button after delete is clicked', async () => {
 })
 
 it('checks password when confirming delete', async () => {
-  const username = authStore.user!.username
+  const username = authStore.account!.username
   const password = 'some password'
 
   await deleteButton().trigger('click')

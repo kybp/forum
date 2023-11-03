@@ -1,13 +1,8 @@
 from rest_access_policy import AccessPolicy
 
 
-class UserAccessPolicy(AccessPolicy):
+class AccountAccessPolicy(AccessPolicy):
     statements = [
-        {
-            "action": ["retrieve"],
-            "principal": "*",
-            "effect": "allow",
-        },
         {
             "action": ["create"],
             "principal": "*",
@@ -23,3 +18,13 @@ class UserAccessPolicy(AccessPolicy):
 
     def is_self(self, request, view, action) -> bool:
         return request.user == view.get_object()
+
+
+class UserAccessPolicy(AccessPolicy):
+    statements = [
+        {
+            "action": ["retrieve"],
+            "principal": "*",
+            "effect": "allow",
+        },
+    ]

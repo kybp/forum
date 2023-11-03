@@ -5,7 +5,7 @@ import { RouterLink } from 'vue-router'
 import LoadingPlaceholder from '@/components/LoadingPlaceholder.vue'
 import ThreadList from '@/components/ThreadList.vue'
 import { useAuthStore } from '@/stores/auth'
-import { userFactory } from '@/stores/auth.factories'
+import { accountFactory } from '@/stores/auth.factories'
 import { useThreadStore } from '@/stores/thread'
 import { threadFactory } from '@/stores/thread.factories'
 import { wrap } from '@/test-utils'
@@ -43,7 +43,7 @@ describe('rendering', () => {
 
   describe('when the user is signed in', () => {
     beforeEach(() => {
-      authStore.user = userFactory()
+      authStore.account = accountFactory()
     })
 
     it('links the "new thread" page', () => {
@@ -57,7 +57,7 @@ describe('rendering', () => {
 
   describe('when the user is signed out', () => {
     beforeEach(() => {
-      authStore.user = null
+      authStore.account = null
     })
 
     it('does not render a "new thread" button', () => {

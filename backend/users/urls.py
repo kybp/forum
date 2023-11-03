@@ -4,7 +4,8 @@ from rest_framework_nested import routers
 from users import views
 
 router = routers.SimpleRouter()
-router.register("accounts", views.UserViewSet)
+router.register("users", views.UserViewSet)
+router.register("accounts", views.AccountViewSet)
 
 urlpatterns = [
     path("", include(router.urls)),

@@ -3,10 +3,10 @@ import { useAuthStore } from '@/stores/auth'
 
 export const checkSignedIn: NavigationGuard = () => {
   const authStore = useAuthStore()
-  if (!authStore.user) return { name: 'sign in' }
+  if (!authStore.account) return { name: 'sign in' }
 }
 
 export const checkNotSignedIn: NavigationGuard = () => {
   const authStore = useAuthStore()
-  if (authStore.user) return { name: 'home' }
+  if (authStore.account) return { name: 'home' }
 }

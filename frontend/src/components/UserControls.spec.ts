@@ -5,7 +5,7 @@ import { RouterLink } from 'vue-router'
 import SignInForm from '@/components/SignInForm.vue'
 import UserControls from '@/components/UserControls.vue'
 import { useAuthStore } from '@/stores/auth'
-import { userFactory } from '@/stores/auth.factories'
+import { accountFactory } from '@/stores/auth.factories'
 import { wrap } from '@/test-utils'
 
 let wrapper: VueWrapper<typeof UserControls>
@@ -19,7 +19,7 @@ beforeEach(() => {
 describe('rendering', () => {
   describe('when the user is signed in', () => {
     beforeEach(() => {
-      authStore.user = userFactory()
+      authStore.account = accountFactory()
     })
 
     it('renders a sign-out button', () => {
@@ -39,7 +39,7 @@ describe('rendering', () => {
 
   describe('when the user is signed out', () => {
     beforeEach(() => {
-      authStore.user = null
+      authStore.account = null
     })
 
     it('does not render a sign-out button', () => {
