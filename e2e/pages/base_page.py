@@ -16,6 +16,15 @@ class BasePage:
         self.page.get_by_test_id("account-link").click()
 
     @property
+    def background_color(self):
+        return self.page.evaluate(
+            """() => {
+              const body = document.querySelector('body')
+              return getComputedStyle(body).backgroundColor
+            }"""
+        )
+
+    @property
     def unauthorised(self):
         return self.page.get_by_text("you need an account")
 

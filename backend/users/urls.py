@@ -10,4 +10,5 @@ router.register("accounts", views.AccountViewSet)
 urlpatterns = [
     path("", include(router.urls)),
     path("token/", views.ObtainAuthTokenView.as_view()),
+    path("themes/", views.GetThemesView.as_view()),
 ]

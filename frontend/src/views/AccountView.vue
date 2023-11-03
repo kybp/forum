@@ -1,8 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()
+
+const { themes } = storeToRefs(authStore)
+
+authStore.fetchThemes()
 
 const isOpen = ref(false)
 const password = ref('')
@@ -22,10 +27,27 @@ const deleteAccount = async () => {
     authStore.deleteAccount()
   }
 }
+
+const updateTheme = ({ target: { value } }: any) => {
+  authStore.updateAccount({ theme: value })
+}
 </script>
 
 <template>
-  <div class="wrapper">
+  <h1>Account Settings</h1>
+
+  <div class="theme-select">
+    <label for="theme">Theme</label>
+    <select
+      name="theme"
+      :value="authStore.account?.theme"
+      @change="updateTheme"
+    >
+      <option v-for="theme in themes" :key="theme">{{ theme }}</option>
+    </select>
+  </div>
+
+  <div class="delete-wrapper">
     <button
       @click="isOpen = true"
       :disabled="isOpen"
@@ -44,7 +66,7 @@ const deleteAccount = async () => {
 </template>
 
 <style scoped>
-.wrapper {
+.delete-wrapper {
   display: flex;
   max-width: 50vw;
 }

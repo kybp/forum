@@ -37,6 +37,7 @@ class AccountSerializer(serializers.ModelSerializer):
             "password",
             "email",
             "avatar",
+            "theme",
         )
 
     password = serializers.CharField(write_only=True)

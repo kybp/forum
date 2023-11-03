@@ -24,6 +24,7 @@ def test_contains_expected_fields(user: User):
         "username",
         "email",
         "avatar",
+        "theme",
     }
 
 
@@ -71,3 +72,11 @@ def test_password_is_required(props: dict):
     serializer = AccountSerializer(data=props)
     assert not serializer.is_valid()
     assert "password" in serializer.errors
+
+
+@pytest.mark.django_db
+def test_theme_must_be_valid(props: dict):
+    props["theme"] = "an invalid theme"
+    serializer = AccountSerializer(data=props)
+    assert not serializer.is_valid()
+    assert "theme" in serializer.errors

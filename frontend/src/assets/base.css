@@ -54,8 +54,14 @@
   --color-background-tag-default: teal;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
+:root {
+  @media (prefers-color-scheme: dark) {
+    --color-background: var(--f-purple-5);
+    --color-input-background: var(--f-purple-4);
+    --color-text: var(--f-blue-3);
+  }
+
+  &.dark-theme {
     --color-background: var(--f-purple-5);
     --color-input-background: var(--f-purple-4);
     --color-text: var(--f-blue-3);

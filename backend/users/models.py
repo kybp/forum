@@ -7,6 +7,12 @@ from django.utils.translation import gettext_lazy as _
 class User(AbstractUser):
     """User model."""
 
+    class Theme(models.TextChoices):
+        LIGHT = "light", "light"
+        DARK = "dark", "dark"
+
+    REQUIRED_FIELDS = ["email"]
+
     email = models.EmailField(
         _("email address"),
         unique=True,
@@ -14,7 +20,9 @@ class User(AbstractUser):
         null=False,
     )
 
-    REQUIRED_FIELDS = ["email"]
+    theme = models.CharField(
+        null=False, blank=False, choices=Theme.choices, default=Theme.LIGHT
+    )
 
     @property
     def avatar(self):

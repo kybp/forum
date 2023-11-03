@@ -11,6 +11,7 @@ export type Account = {
   username: string
   email: string
   avatar: string
+  theme: string
   token: string
 }
 
@@ -28,9 +29,13 @@ export type RegisterProps = {
 export const useAuthStore = defineStore('auth', () => {
   const userStore = useUserStore()
 
+  /** The currently signed-in user, or `null` if we're signed out. */
   const account = ref<Account | null>(
     JSON.parse(localStorage.getItem('account') ?? 'null'),
   )
+
+  /** The list of available themes */
+  const themes = ref<string[]>([])
 
   const options = computed(() => {
     if (!account.value) return {}
@@ -39,6 +44,11 @@ export const useAuthStore = defineStore('auth', () => {
       headers: { Authorization: `Token ${account.value.token}` },
     }
   })
+
+  const fetchThemes = async () => {
+    const response = await api.get('users/themes/')
+    themes.value = response.data
+  }
 
   const saveAccount = (newAccount: Account | null) => {
     account.value = newAccount
@@ -94,6 +104,18 @@ export const useAuthStore = defineStore('auth', () => {
     saveAccount(null)
   }
 
+  const updateAccount = async (params: Partial<Account>) => {
+    if (!account.value) throw new Error('Not signed in')
+
+    try {
+      const url = `users/accounts/${account.value.id}/`
+      const response = await api.patch(url, params, options.value)
+      saveAccount({ ...response.data, token: account.value.token })
+    } catch (error) {
+      if (!isAxiosError(error)) throw error
+    }
+  }
+
   const deleteAccount = async () => {
     if (!account.value) throw new Error('Not signed in')
 
@@ -107,16 +129,24 @@ export const useAuthStore = defineStore('auth', () => {
 
   return {
     account,
+
     // Register
     register,
     registerErrors,
     clearRegisterErrors,
+
     // Sign in
     signIn,
     signInErrors,
     clearSignInErrors,
+
+    // Themes
+    themes,
+    fetchThemes,
+
     // Misc
     signOut,
+    updateAccount,
     deleteAccount,
     isSignedIn,
   }

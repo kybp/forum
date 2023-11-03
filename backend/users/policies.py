@@ -9,7 +9,7 @@ class AccountAccessPolicy(AccessPolicy):
             "effect": "allow",
         },
         {
-            "action": ["destroy"],
+            "action": ["partial_update", "destroy"],
             "principal": "authenticated",
             "effect": "allow",
             "condition": "is_self",

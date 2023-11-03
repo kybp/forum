@@ -23,6 +23,7 @@ const localStorage: Mocked<Storage> = {
 vi.stubGlobal('localStorage', localStorage)
 
 const api = vi.hoisted(() => ({
+  patch: vi.fn(),
   post: vi.fn(),
   delete: vi.fn(),
 }))
@@ -256,12 +257,77 @@ describe('auth store', () => {
     })
   })
 
+  describe('updateAccount', () => {
+    let params: Partial<Account>
+
+    beforeEach(() => {
+      authStore.account = accountFactory()
+      params = { theme: 'light' }
+    })
+
+    describe('when the request succeeds', () => {
+      let updatedAccount: Account
+
+      beforeEach(() => {
+        updatedAccount = accountFactory()
+        api.patch.mockResolvedValue({ data: updatedAccount })
+      })
+
+      it('sends a PATCH request to the endpoint', async () => {
+        await authStore.updateAccount(params)
+        const { id, token } = authStore.account!
+        expect(api.patch).toHaveBeenCalledWith(
+          `users/accounts/${id}/`,
+          params,
+          { headers: { Authorization: `Token ${token}` } },
+        )
+      })
+
+      it('saves the account in the store with the old token', async () => {
+        const oldToken = authStore.account?.token
+        await authStore.updateAccount(params)
+        expect(authStore.account).toEqual({
+          ...updatedAccount,
+          token: oldToken,
+        })
+      })
+
+      it('saves the account in localStorage with the old token', async () => {
+        const oldToken = authStore.account?.token
+        await authStore.updateAccount(params)
+        expect(localStorage.setItem).toHaveBeenCalledWith(
+          'account',
+          JSON.stringify({ ...updatedAccount, token: oldToken }),
+        )
+      })
+    })
+
+    describe('when the request fails', () => {
+      let error: { response: Partial<AxiosResponse> }
+
+      beforeEach(() => {
+        error = {
+          response: {
+            status: 400,
+            data: { username: ['a very serious error'] },
+          },
+        }
+        api.patch.mockRejectedValueOnce(error)
+      })
+
+      it('does not update the account in localStorage', async () => {
+        await authStore.updateAccount(params)
+        expect(localStorage.setItem).not.toHaveBeenCalled()
+      })
+    })
+  })
+
   describe('deleteAccount', () => {
     beforeEach(() => {
       authStore.account = accountFactory()
     })
 
-    it('sends a delete request to the endpoint', async () => {
+    it('sends a DELETE request to the endpoint', async () => {
       const { id, token } = authStore.account!
       await authStore.deleteAccount()
       expect(api.delete).toHaveBeenCalledWith(`users/accounts/${id}/`, {

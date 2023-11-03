@@ -7,6 +7,7 @@ export const accountFactory = (props: Partial<Account> = {}): Account => ({
   username: faker.internet.userName(),
   email: faker.internet.email(),
   avatar: faker.image.avatar(),
+  theme: 'light',
   token: faker.internet.ipv6(),
   ...props,
 })

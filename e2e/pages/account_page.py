@@ -1,3 +1,4 @@
+import time
 from playwright.sync_api import Page
 
 from .base_page import BasePage
@@ -18,6 +19,11 @@ class AccountPage(BasePage):
     @property
     def confirm_delete_button(self):
         return self.page.get_by_role("button", name="Delete Forever")
+
+    def select_theme(self, theme):
+        self.page.locator("select").select_option(theme)
+        # Give a moment for the styles to be applied
+        time.sleep(0.1)
 
     def delete_account(self, password: str):
         self.delete_button.click()

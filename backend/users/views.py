@@ -1,7 +1,9 @@
+from operator import itemgetter
 from rest_framework import mixins, viewsets
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from users import policies
 from .models import User
@@ -10,6 +12,7 @@ from .serializers import AccountSerializer, UserSerializer
 
 class AccountViewSet(
     mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
     mixins.DestroyModelMixin,
     viewsets.GenericViewSet,
 ):
@@ -44,6 +47,11 @@ class UserViewSet(
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [policies.UserAccessPolicy]
+
+
+class GetThemesView(APIView):
+    def get(self, request, *args, **kwargs):
+        return Response(list(map(itemgetter(0), User.Theme.choices)))
 
 
 class ObtainAuthTokenView(ObtainAuthToken):

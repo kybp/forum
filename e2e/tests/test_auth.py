@@ -72,6 +72,20 @@ def test_sign_in_errors_are_cleared_when_navigating_to_new_page(page: Page):
     expect(home_page.field_error).to_be_hidden()
 
 
+def test_changing_theme(page: Page):
+    home_page = HomePage(page)
+    home_page.sign_in()
+    home_page.go_to_account_page()
+    account_page = AccountPage(page)
+
+    account_page.select_theme("light")
+    light_background_color = account_page.background_color
+    account_page.select_theme("dark")
+    dark_background_color = account_page.background_color
+
+    assert light_background_color != dark_background_color
+
+
 def test_deleting_account(page: Page):
     home_page = HomePage(page)
 

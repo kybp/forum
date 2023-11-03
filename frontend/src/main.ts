@@ -1,14 +1,27 @@
 import './assets/main.css'
 
-import { createApp } from 'vue'
+import { createApp, watch } from 'vue'
 import { createPinia } from 'pinia'
 
 import App from './App.vue'
 import router from './router'
+import { useAuthStore } from './stores/auth'
 
 const app = createApp(App)
 
 app.use(createPinia())
 app.use(router)
+
+const authStore = useAuthStore()
+
+watch(
+  () => authStore.account?.theme,
+  () => {
+    const theme = authStore.account?.theme
+    const className = theme ? `${theme}-theme` : ''
+    document.documentElement.className = className
+  },
+  { immediate: true },
+)
 
 app.mount('#app')
