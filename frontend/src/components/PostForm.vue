@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watchEffect, type Ref } from 'vue'
 import { ErrorMessage, Field, FieldArray, Form } from 'vee-validate'
-import PostBody from '@/components/PostBody.vue'
+import MarkdownBody from '@/components/MarkdownBody.vue'
 import PostTag from '@/components/PostTag.vue'
 import type { Thread } from '@/stores/thread'
 import type { Errors } from '@/stores/utils'
@@ -108,7 +108,7 @@ const body = ref(props.initialValue?.body ?? '')
     <div class="preview" data-testid="preview">
       <h1 class="title">{{ title }}</h1>
 
-      <PostBody :value="body" class="body" />
+      <MarkdownBody :value="body" class="body" />
     </div>
   </Form>
 </template>

@@ -4,7 +4,7 @@ import { ErrorMessage, Field, Form } from 'vee-validate'
 import type { FormActions } from 'vee-validate'
 import { storeToRefs } from 'pinia'
 import * as yup from 'yup'
-import PostBody from '@/components/PostBody.vue'
+import MarkdownBody from '@/components/MarkdownBody.vue'
 import { useThreadStore, type Reply } from '@/stores/thread'
 
 type Props = {
@@ -81,7 +81,7 @@ const isMobilePreviewOpen = ref(false)
     </div>
 
     <div class="preview" data-testid="preview">
-      <PostBody :value="body" class="body" align-top />
+      <MarkdownBody :value="body" class="body" align-top />
     </div>
   </Form>
 </template>

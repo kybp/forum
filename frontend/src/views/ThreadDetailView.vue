@@ -4,7 +4,7 @@ import { useRoute, RouterLink } from 'vue-router'
 import { storeToRefs } from 'pinia'
 
 import ArticleDates from '@/components/ArticleDates.vue'
-import PostBody from '@/components/PostBody.vue'
+import MarkdownBody from '@/components/MarkdownBody.vue'
 import PostTag from '@/components/PostTag.vue'
 import LoadingPlaceholder from '@/components/LoadingPlaceholder.vue'
 import ReactionList from '@/components/ReactionList.vue'
@@ -72,7 +72,7 @@ const createReply = async ({ postId, body, onSuccess }: any) => {
   </div>
   <LoadingPlaceholder v-else />
 
-  <PostBody
+  <MarkdownBody
     v-if="thread"
     :value="thread.body"
     class="body"

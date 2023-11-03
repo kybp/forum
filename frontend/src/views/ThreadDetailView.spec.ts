@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import ArticleDates from '@/components/ArticleDates.vue'
 import LoadingPlaceholder from '@/components/LoadingPlaceholder.vue'
-import PostBody from '@/components/PostBody.vue'
+import MarkdownBody from '@/components/MarkdownBody.vue'
 import PostTag from '@/components/PostTag.vue'
 import ReplyForm from '@/components/ReplyForm.vue'
 import ThreadDetailView from '@/views/ThreadDetailView.vue'
@@ -49,7 +49,7 @@ let thread: Thread
 let user: User
 
 const loading = () => wrapper.findComponent(LoadingPlaceholder)
-const body = () => wrapper.findComponent(PostBody)
+const body = () => wrapper.findComponent(MarkdownBody)
 const articleDates = () => wrapper.findComponent(ArticleDates)
 const tags = () => wrapper.findAllComponents(PostTag)
 const deleteButton = () => wrapper.find('button')

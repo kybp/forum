@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import ArticleDates from '@/components/ArticleDates.vue'
-import PostBody from '@/components/PostBody.vue'
+import MarkdownBody from '@/components/MarkdownBody.vue'
 import LoadingPlaceholder from '@/components/LoadingPlaceholder.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useThreadStore, type Reply } from '@/stores/thread'
@@ -45,7 +45,7 @@ const editRoute = computed(() => ({
     </div>
     <LoadingPlaceholder v-else />
 
-    <PostBody :value="reply.body" class="body" data-testid="body" />
+    <MarkdownBody :value="reply.body" class="body" data-testid="body" />
 
     <ArticleDates :article="reply" />
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import PostBody from '@/components/PostBody.vue'
+import MarkdownBody from '@/components/MarkdownBody.vue'
 
 const demo = `
   **Bold**, *italics*, \`code\`, ~~strikethrough~~
@@ -42,7 +42,7 @@ const demo = `
   <p>You can use Markdown to format your posts and replies.</p>
   <div class="demo">
     <pre>{{ demo }}</pre>
-    <PostBody :value="demo" />
+    <MarkdownBody :value="demo" />
   </div>
 </template>
 

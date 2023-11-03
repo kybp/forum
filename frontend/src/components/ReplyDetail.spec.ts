@@ -3,7 +3,7 @@ import { RouterLink } from 'vue-router'
 import { beforeEach, describe, expect, it } from 'vitest'
 
 import ArticleDates from '@/components/ArticleDates.vue'
-import PostBody from '@/components/PostBody.vue'
+import MarkdownBody from '@/components/MarkdownBody.vue'
 import ReplyDetail from '@/components/ReplyDetail.vue'
 import { replyFactory } from '@/stores/thread.factories'
 import type { Reply } from '@/stores/thread'
@@ -17,7 +17,7 @@ let reply: Reply
 let authStore: AuthStore
 let threadStore: ThreadStore
 
-const body = () => wrapper.findComponent(PostBody)
+const body = () => wrapper.findComponent(MarkdownBody)
 const articleDates = () => wrapper.findComponent(ArticleDates)
 const editLink = () => wrapper.findComponent(RouterLink)
 const deleteButton = () => wrapper.find('button')
