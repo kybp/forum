@@ -35,7 +35,6 @@ const loading = computed(() => threadStore.loadingThreadList)
 
 <style scoped>
 main {
-  margin-top: 1rem;
   display: flex;
   gap: 2rem;
 
@@ -56,6 +55,6 @@ main {
 }
 
 .thread-list {
-  padding-top: 0.6rem;
+  padding-top: 0.5rem;
 }
 </style>

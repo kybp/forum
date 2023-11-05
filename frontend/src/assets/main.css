@@ -112,3 +112,8 @@ a.button {
   font-style: italic;
   font-size: x-small;
 }
+
+select {
+  background: var(--color-input-background);
+  border: none;
+}

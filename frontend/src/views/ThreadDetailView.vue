@@ -107,7 +107,6 @@ const createReply = async ({ postId, body, onSuccess }: any) => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 1rem;
 
   @media (--small-viewport) {
     margin-top: 0;
@@ -123,7 +122,6 @@ const createReply = async ({ postId, body, onSuccess }: any) => {
 }
 
 .title {
-  line-height: normal;
   display: inline-block;
 }
 

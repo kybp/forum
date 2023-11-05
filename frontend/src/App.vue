@@ -31,6 +31,7 @@ header {
   width: 100%;
   display: flex;
   justify-content: space-between;
+  margin-bottom: 1rem;
 
   @media (--small-viewport) {
     justify-content: space-between;

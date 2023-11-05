@@ -34,54 +34,87 @@ const updateTheme = ({ target: { value } }: any) => {
 </script>
 
 <template>
-  <h1>Account Settings</h1>
+  <div class="wrapper">
+    <h1>Account</h1>
 
-  <div class="theme-select">
-    <label for="theme">Theme</label>
-    <select
-      name="theme"
-      :value="authStore.account?.theme"
-      @change="updateTheme"
-    >
-      <option v-for="theme in themes" :key="theme">{{ theme }}</option>
-    </select>
-  </div>
+    <div class="controls">
+      <div class="theme-select">
+        <label for="theme">Theme:</label>
+        <select
+          name="theme"
+          :value="authStore.account?.theme"
+          @change="updateTheme"
+        >
+          <option v-for="theme in themes" :key="theme">{{ theme }}</option>
+        </select>
+      </div>
 
-  <div class="delete-wrapper">
-    <button
-      @click="isOpen = true"
-      :disabled="isOpen"
-      class="button open-confirm"
-    >
-      Delete Account
-    </button>
-    <div v-if="isOpen" class="confirm-delete">
-      <input v-model="password" type="password" placeholder="Password" />
-      <span v-if="error" role="alert">{{ error }}</span>
-      <button class="confirm button" @click="deleteAccount">
-        Delete Forever
-      </button>
+      <div class="delete-wrapper">
+        <button
+          @click="isOpen = true"
+          :disabled="isOpen"
+          class="button open-confirm"
+        >
+          Delete Account
+        </button>
+        <div v-if="isOpen" class="confirm-delete">
+          <input v-model="password" type="password" placeholder="Password" />
+          <span v-if="error" role="alert">{{ error }}</span>
+          <button class="confirm button" @click="deleteAccount">
+            Delete Forever
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.delete-wrapper {
+.wrapper {
   display: flex;
-  max-width: 50vw;
-}
+  gap: 2rem;
 
-.open-confirm.button {
-  align-self: start;
-  margin-right: 0.5rem;
-}
+  @media (--small-viewport) {
+    flex-direction: column;
+    gap: 0;
+  }
 
-.confirm-delete {
-  display: flex;
-  flex-direction: column;
+  h1 {
+    display: inline-block;
+  }
 
-  .confirm.button {
-    margin-top: 0.2rem;
+  .controls {
+    margin-top: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    @media (--small-viewport) {
+      margin-top: 0;
+    }
+
+    label + select {
+      margin-left: 0.5rem;
+    }
+
+    .delete-wrapper {
+      display: flex;
+      max-width: 50vw;
+    }
+
+    .open-confirm.button {
+      align-self: start;
+      margin-right: 0.5rem;
+    }
+
+    .confirm-delete {
+      display: flex;
+      flex-direction: column;
+
+      .confirm.button {
+        margin-top: 0.2rem;
+      }
+    }
   }
 }
 </style>
