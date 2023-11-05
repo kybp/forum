@@ -50,7 +50,7 @@
   --color-error-background: var(--f-red-1);
   --color-background-programming-tag: #00ab32;
   --color-background-music-tag: blue;
-  --color-background-photos-tag: yellow;
+  --color-background-photos-tag: #aa0;
   --color-background-tag-default: teal;
 }
 
@@ -59,12 +59,14 @@
     --color-background: var(--f-purple-5);
     --color-input-background: var(--f-purple-4);
     --color-text: var(--f-blue-3);
+    --color-background-photos-tag: #560;
   }
 
   &.dark-theme {
     --color-background: var(--f-purple-5);
     --color-input-background: var(--f-purple-4);
     --color-text: var(--f-blue-3);
+    --color-background-photos-tag: #560;
   }
 }
 
