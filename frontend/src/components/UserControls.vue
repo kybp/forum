@@ -26,5 +26,9 @@ const signOut = () => authStore.signOut()
 .wrapper {
   display: flex;
   gap: 0.5rem;
+
+  button {
+    align-self: start;
+  }
 }
 </style>
