@@ -53,7 +53,9 @@ const createReply = async ({ postId, body, onSuccess }: any) => {
 </script>
 <template>
   <div class="header">
-    <h1 class="title" v-if="thread" data-testid="title">{{ thread.title }}</h1>
+    <h1 class="title" v-if="thread" data-testid="thread-detail-title">
+      {{ thread.title }}
+    </h1>
     <LoadingPlaceholder v-else />
 
     <CollapsibleMenu v-if="userIsAuthor" class="menu">

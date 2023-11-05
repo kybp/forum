@@ -13,7 +13,7 @@ class ThreadDetailPage(BasePage):
 
     @property
     def title(self):
-        return self.page.get_by_test_id("title")
+        return self.page.get_by_test_id("thread-detail-title")
 
     @property
     def edited(self):

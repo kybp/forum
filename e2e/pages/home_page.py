@@ -10,9 +10,11 @@ fake = Faker()
 
 
 class HomePage(BasePage):
-    def __init__(self, page: Page):
+    def __init__(self, page: Page, navigate=True):
         self.page = page
-        self.page.goto(config.HOST)
+
+        if navigate:
+            self.page.goto(config.HOST)
 
     @property
     def post_thread_button(self):
@@ -47,5 +49,8 @@ class HomePage(BasePage):
         post_thread_page = PostThreadPage(self.page)
         post_thread_page.post_thread(title, body, tags)
 
-    def open_thread(self, title):
+    def open_thread(self, title=None):
+        if title is None:
+            title = self.newest_thread_title.text_content()
+
         self.page.get_by_role("link", name=title).first.click()

@@ -214,7 +214,7 @@ def test_viewing_thread_by_deleted_user(page: Page):
     home_page.sign_in()
     home_page.go_to_home_page()
     expect(home_page.post_thread_button).to_be_visible()
-    home_page.open_thread(home_page.newest_thread_title.text_content())
+    home_page.open_thread()
 
     expect(ThreadDetailPage(page).author).to_have_text("[deleted]")
 

@@ -36,10 +36,11 @@ const signIn = async ({ username, password }: any) => {
   await authStore.signIn({ username, password })
 
   if (!authStore.signInErrors) {
-    const next = route.redirectedFrom
-      ? { path: route.redirectedFrom.fullPath }
-      : { name: 'home' }
-    router.push(next)
+    if (route.redirectedFrom) {
+      router.push({ path: route.redirectedFrom.fullPath })
+    } else if (!router.options.history.state.back) {
+      router.push({ name: 'home' })
+    }
   }
 }
 </script>
