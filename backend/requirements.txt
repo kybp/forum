@@ -17,7 +17,7 @@ flake8==6.1.0
 # Use black for code formatting
 black==23.10.1
 # Use pytest for unit testing
-pytest-django==4.6.0
+pytest-django==4.7.0
 # Use FactoryBoy for generating data in unit tests
 factory-boy==3.3.0
 
