@@ -53,4 +53,5 @@ inspector, or Playwright might not exit properly.
 ## GitHub Configuration
 
 If you put this project on GitHub, you will need to set
-`DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` as repository secrets.
+`DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` as repository secrets for
+the GitHub Actions pipeline to work.
