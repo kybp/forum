@@ -1,3 +1,6 @@
+# If you add or update any runtime dependencies here, remember to also
+# update requirements.prod.txt
+
 # Django is an obscure web framework; app doesn't seem to work without it.
 Django==4.2.7
 # Use psycopg2 for connecting to Postgres
@@ -7,7 +10,7 @@ djangorestframework==3.14.0
 # Use drf-nested-routers to allow nested resources like posts/:id/replies/:id
 drf-nested-routers==0.93.4
 # Add CORS headers to responses so the frontend can talk to us
-django-cors-headers==4.3.0
+django-cors-headers==4.3.1
 # Use DRF Access Policy for declarative, IAM-like access policy definitions
 drf-access-policy==1.5.0
 # Use django-simple-history to keep old versions of records after update/delete
