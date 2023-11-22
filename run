@@ -1,9 +1,11 @@
 #!/bin/sh -e
 
-if [ -z $CI ]; then
-    compose='docker compose'
-else
+if [ ! -z $CI ]; then
     compose='docker compose -f compose.ci.yaml'
+elif [ ! -z $PREVIEW ]; then
+    compose='docker compose -f compose.preview.yaml'
+else
+    compose='docker compose'
 fi
 
 frontend_run() {
@@ -60,16 +62,41 @@ debug_e2e() {
     set +o allexport
     . env/bin/activate
     cd e2e
-    E2E_HOST=http://localhost:3000 PWDEBUG=1 python -m pytest $*
-    deactivate
+
+    if [ ! -z $PREVIEW ]; then
+        export E2E_HOST=http://localhost:8000
+    else
+        export E2E_HOST=http://localhost:3000
+    fi
+
+    PWDEBUG=1 python -m pytest $*
+}
+
+SSL_CERT=certs/fullchain.pem
+SSL_KEY=certs/privkey.pem
+
+generate_self_signed_cert() {
+    mkcert -install -cert-file $SSL_CERT -key-file $SSL_KEY localhost
 }
 
 dev() {
-    $compose up --build -d
-}
+    if [ ! -z $PREVIEW ] && [ ! -f $SSL_CERT ]; then
+        generate_self_signed_cert
+        made_cert=true
+    fi
 
-preview() {
-    $compose -f compose.prod.yaml up --build
+    $compose up --build -d
+
+    if [ ! -z $made_cert ]; then
+        echo Generated a self-signed SSL certificate. >&2
+        echo Certificate is in $SSL_CERT and key is in $SSL_KEY >&2
+        echo -n If you did not already have the mkcert authority installed, >&2
+        echo \ restart your >&2
+        echo browser before accessing the site. >&2
+        echo -n If you still get a security warning when visiting the site, >&2
+        echo \ import the >&2
+        echo certificate in your browser. >&2
+    fi
 }
 
 if [ $# -eq 0 ]; then
@@ -80,8 +107,7 @@ else
 fi
 
 case $command in
-    dev) dev ;; # Start the app in dev mode
-    preview) preview ;; # Run a prod build
+    dev) dev ;; # Start the app for development
     restart) $compose down && dev ;; # Restart dev Docker containers
     lint) lint ;; # Check code for quality issues
     format) format ;; # Format source code

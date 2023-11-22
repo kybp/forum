@@ -22,7 +22,9 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 
 DEBUG = bool(os.environ.get("DEBUG", default=0))
 
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "").split(" ")
+domain = os.environ.get("DOMAIN", "")
+
+ALLOWED_HOSTS = [domain, "frontend", "backend"]
 
 
 # Application definition
@@ -92,10 +94,12 @@ DATABASES = {
 # Configure CORS
 
 CSRF_TRUSTED_ORIGINS = [
+    f"https://{domain}",
     "http://localhost:8000",
 ]
 
 CORS_ALLOWED_ORIGINS = [
+    f"https://{domain}",
     "http://localhost:3000",
     "http://frontend:3000",
 ]

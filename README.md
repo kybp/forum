@@ -2,7 +2,9 @@
 
 ## Setup
 
-To run the app, all you need is a recent version of Docker.
+To run the app, all you need is a recent version of Docker. If you
+want to use the production build preview, you'll also need
+[mkcert](https://github.com/FiloSottile/mkcert).
 
 To set up, first copy `.env.example` into a file named `.env`. The
 default settings should work, but take a peek in the file and see if
@@ -18,11 +20,15 @@ debugging features and will automatically reload code on save. By
 default, the site will be available at
 [http://localhost:3000](http://localhost:3000).
 
-You can also test out a production build with `./run preview`. The
-production preview will be available at
-[http://localhost:8000](http://localhost:8000). Dev and prod builds
-will step on each other's toes, so you'll need to do `./run stop`
-first if you have a dev build running.
+You can also test out a production build by setting the environment
+variable `PREVIEW` to a non-empty string. Then you will need to
+restart the app, and a production build preview will be available at
+[https://localhost](https://localhost).
+
+If you get an error like `/docker-entrypoint.sh: exec: line 47: npm:
+not found`, you're probably trying to run a command like `./run lint`
+which requires development dependencies against production preview
+images. Do `./run restart` to pick up your current `$PREVIEW` setting.
 
 The `run` script packages the most common project operations; see the
 bottom of the script for the full list of commands.

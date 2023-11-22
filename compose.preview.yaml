@@ -6,12 +6,15 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.prod
       args:
+        DOMAIN: ${DOMAIN}
         VITE_API_HOST: ${VITE_API_HOST}
     volumes:
       - /usr/src/app/node_modules/
       - backend_static:/usr/src/app/static/
+      - ./certs/:/etc/nginx/ssl/live/localhost/
     ports:
-      - 8000:80
+      - 80:80
+      - 443:443
     env_file:
       - ./.env
     depends_on:
@@ -20,11 +23,11 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile.prod
-    command: gunicorn forum.wsgi:application --bind 0.0.0.0:8000
+    command: gunicorn forum.wsgi:application --bind 0.0.0.0:9000 --access-logfile -
     volumes:
       - backend_static:/usr/src/app/static/
-    expose:
-      - 8000:8000
+    ports:
+      - 9000:9000
     env_file:
       - ./.env
     environment:
@@ -47,6 +50,19 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+  e2e:
+    build: ./e2e
+    ipc: host # Chrome can run out of memory without this
+    env_file:
+      - ./.env
+    environment:
+      E2E_HOST: https://frontend
+    profiles:
+      - e2e
+    volumes:
+      - ./e2e:/usr/src/e2e
+    depends_on:
+      - frontend
 
 volumes:
   postgres_data:
