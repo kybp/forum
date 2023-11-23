@@ -1,0 +1,4 @@
+# These directories are mounted as volumes in frontend prod containers
+# to share data with certbot. In build previews, we store self-signed
+# SSL certificates here.
+*

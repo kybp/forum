@@ -72,10 +72,12 @@ debug_e2e() {
     PWDEBUG=1 python -m pytest $*
 }
 
-SSL_CERT=certs/fullchain.pem
-SSL_KEY=certs/privkey.pem
+LOCAL_CERTS_DIR=certbot/certs/localhost
+SSL_CERT=$LOCAL_CERTS_DIR/fullchain.pem
+SSL_KEY=$LOCAL_CERTS_DIR/privkey.pem
 
 generate_self_signed_cert() {
+    mkdir -p $LOCAL_CERTS_DIR
     mkcert -install -cert-file $SSL_CERT -key-file $SSL_KEY localhost
 }
 

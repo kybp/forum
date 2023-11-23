@@ -7,11 +7,12 @@ services:
       dockerfile: Dockerfile.prod
       args:
         DOMAIN: ${DOMAIN}
+        INTERNAL_BACKEND_HOST: backend
         VITE_API_HOST: ${VITE_API_HOST}
     volumes:
       - /usr/src/app/node_modules/
       - backend_static:/usr/src/app/static/
-      - ./certs/:/etc/nginx/ssl/live/localhost/
+      - ./certbot/certs/:/etc/nginx/ssl/live/
     ports:
       - 80:80
       - 443:443
