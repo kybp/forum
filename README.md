@@ -61,3 +61,23 @@ inspector, or Playwright might not exit properly.
 If you put this project on GitHub, you will need to set
 `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` as repository secrets for
 the GitHub Actions pipeline to work.
+
+## Production provisioning and deployment
+
+To provision resources for a prod deploy you will need:
+- an AWS account set up and configured for CLI use on your computer
+- a Cloudflare account, and an API token in an exported
+  `$CLOUDFLARE_API_TOKEN` environment variable
+- Terraform installed
+
+With all that, `cd` into the `infra` directory and run `terraform
+init`, then `terraform plan` to preview what will be set up. If you're
+okay with the changes, run `terraform apply` to apply them.
+
+If all the resources are created successfully, some values will be
+displayed that you need to store in GitHub repository secrets. See the
+GitHub configuration section for details.
+
+The file `infra/ec2-ssh-key` will also be generated for use SSHing
+into the server. You can SSH in (from the `infra/` directory) with
+`ssh -i ec2-ssh-key ubuntu@example.com`.

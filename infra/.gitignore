@@ -1,0 +1,9 @@
+# Ignore Terraform's installed plugins and cache
+/.terraform/
+
+# Ignore Terraform's state files
+*.tfstate
+*.tfstate.*
+
+# Ignore generated SSH private key
+ec2-ssh-key
