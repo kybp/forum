@@ -4,3 +4,6 @@ env/
 
 # Ignore local configuration
 .env
+
+# Ignore Docker Stack config file, as we generate it from stack.yaml.template
+stack.yaml

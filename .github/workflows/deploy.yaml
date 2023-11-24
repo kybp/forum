@@ -4,7 +4,6 @@ on:
     workflows: ["Build and test"]
     types: [completed]
     branches: [main]
-  workflow_dispatch:
 env:
   DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
 
@@ -43,3 +42,51 @@ jobs:
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/backend-prod:latest
           cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/backend-prod:buildcache
           cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/backend-prod:buildcache,mode=max
+      - name: Prepare files for deploy
+        run: |
+          envsubst '$DOCKERHUB_USERNAME' < stack.yaml.template > stack.yaml
+
+          cp .env.example .env.prod
+          cat >> .env.prod <<EOF
+          DEBUG=
+          DOMAIN=${{ secrets.DOMAIN }}
+          SQL_DATABASE=${{ secrets.SQL_DATABASE }}
+          SQL_USER=${{ secrets.SQL_USER }}
+          SQL_PASSWORD=${{ secrets.SQL_PASSWORD }}
+          SQL_HOST=${{ secrets.SQL_HOST }}
+          SQL_PORT=${{ secrets.SQL_PORT }}
+          EOF
+
+          mkdir -p server_files
+          mv stack.yaml server_files
+          mv .env.prod server_files/.env
+      - name: Copy needed files to prod server
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.PROD_IP }}
+          username: ${{ secrets.PROD_USERNAME }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          source: "server_files/stack.yaml,server_files/.env"
+          target: /home/${{ secrets.PROD_USERNAME }}/app/
+          strip_components: 1
+      - name: Deploy updates to prod
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.PROD_IP }}
+          username: ${{ secrets.PROD_USERNAME }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          script: |
+            cd /home/${{ secrets.PROD_USERNAME }}/app/
+
+            sudo docker stack deploy forum -c stack.yaml
+            sudo docker service update --image ${{ secrets.DOCKERHUB_USERNAME }}/backend-prod forum_backend
+            sudo docker service update --image ${{ secrets.DOCKERHUB_USERNAME }}/frontend-prod forum_frontend
+
+            backend=$(sudo docker ps --filter name=forum_backend --format '{{.ID}}' | head -1)
+
+            if [ -z $backend ]; then
+              echo "Backend failed to start."
+              exit 1
+            fi
+
+            sudo docker exec $backend python manage.py migrate

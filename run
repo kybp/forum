@@ -51,15 +51,18 @@ install_local_e2e() {
     . env/bin/activate
     python -m pip install -r e2e/requirements.txt
     playwright install
-    deactivate
+}
+
+load_env_file() {
+    set -o allexport
+    . ./.env
+    set +o allexport
 }
 
 debug_e2e() {
     backend_run python manage.py flush --no-input
     backend_run python manage.py seed
-    set -o allexport
-    . ./.env
-    set +o allexport
+    load_env_file
     . env/bin/activate
     cd e2e
 

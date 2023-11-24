@@ -19,9 +19,16 @@ sudo apt-get update
 # Install Docker
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
+# Make app directory
+mkdir /home/ubuntu/app
+sudo chown -R ubuntu:ubuntu app
+
 # Get SSL certificates
 sudo docker run --rm -p80:80 \
-  -v /home/ubuntu/certbot/www/:/var/www/certbot/ \
-  -v /home/ubuntu/certbot/certs/:/etc/letsencrypt/ \
+  -v /home/ubuntu/app/certbot/www/:/var/www/certbot/ \
+  -v /home/ubuntu/app/certbot/certs/:/etc/letsencrypt/ \
   certbot/certbot certonly --standalone --agree-tos -n \
   --email ${email} --domains ${domain}
+
+# Get Docker ready to have our stack deployed
+sudo docker swarm init
