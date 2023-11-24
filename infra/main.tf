@@ -60,11 +60,3 @@ resource "cloudflare_record" "forum" {
   proxied = true
   value   = aws_eip.ec2.public_ip
 }
-
-resource "cloudflare_record" "www" {
-  zone_id = cloudflare_zone.forum.id
-  name    = "www"
-  type    = "CNAME"
-  proxied = true
-  value   = var.domain
-}
