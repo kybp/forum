@@ -69,6 +69,8 @@ repository secrets in order for the GitHub Actions workflows to work:
 
 You will need the following for prod deployments (see below for more
 details on provisioning):
+- `PRIMARY_EMAIL`: The email to use for the primary author. This
+  author's threads are the only ones logged-out users will see.
 - `SQL_DATABASE`: The name of the database to connect to. This is a
   Terraform variable you can configure; it defaults to forum_prod.
 - `SQL_USER`: The database user. This is a Terraform variable you can

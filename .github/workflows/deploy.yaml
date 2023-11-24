@@ -49,6 +49,7 @@ jobs:
           cp .env.example .env.prod
           cat >> .env.prod <<EOF
           DEBUG=
+          DEFAULT_AUTHOR_EMAIL=${{ secrets.PRIMARY_EMAIL }}
           DOMAIN=${{ secrets.DOMAIN }}
           SQL_DATABASE=${{ secrets.SQL_DATABASE }}
           SQL_USER=${{ secrets.SQL_USER }}
