@@ -223,8 +223,12 @@ def test_deleting_posts_and_replies(page: Page):
     home_page = HomePage(page)
 
     home_page.sign_in()
-    title = "framework"
-    home_page.post_thread(title=title)
+    existing_title = "framework 1"
+    home_page.post_thread(title=existing_title)
+
+    home_page.go_to_home_page()
+    deleted_title = "framework 2"
+    home_page.post_thread(title=deleted_title)
 
     thread_detail_page = ThreadDetailPage(page)
     body = "very informative"
@@ -236,6 +240,9 @@ def test_deleting_posts_and_replies(page: Page):
     thread_detail_page.delete_post()
     expect(thread_detail_page.author).to_have_text("[deleted]")
     expect(thread_detail_page.body).to_have_text("[deleted]")
+
+    thread_detail_page.go_to_home_page()
+    expect(home_page.newest_thread_title).to_have_text(existing_title)
 
 
 def test_editing_post(page: Page):

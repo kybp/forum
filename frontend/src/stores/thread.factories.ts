@@ -21,6 +21,7 @@ export const reactionFactory = (props: Partial<Reaction> = {}): Reaction => ({
 
 export const threadFactory = (props: Partial<Thread> = {}): Thread => ({
   id: makeId(),
+  is_deleted: false,
   author: makeId(),
   title: faker.lorem.sentence(),
   body: faker.lorem.paragraph(),

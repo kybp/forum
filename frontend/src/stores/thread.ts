@@ -20,6 +20,8 @@ export type Thread = {
   id: number
   /** The user who created the thread, or null if they have deleted it. */
   author: number | null
+  /** Whether this post has been deleted. */
+  is_deleted: boolean
   title: string
   body: string
   date_posted: string
@@ -275,9 +277,9 @@ export const useThreadStore = defineStore('thread', () => {
   const thread = (id: number): Thread | undefined => allThreads.value[id]
 
   const threads = computed(() => {
-    return Object.values(allThreads.value).sort(
-      (x, y) => +new Date(y.date_posted) - +new Date(x.date_posted),
-    )
+    return Object.values(allThreads.value)
+      .filter((x) => !x.is_deleted)
+      .sort((x, y) => +new Date(y.date_posted) - +new Date(x.date_posted))
   })
 
   const replies = (postId: number) => {
@@ -290,6 +292,7 @@ export const useThreadStore = defineStore('thread', () => {
     await api.delete(`threads/posts/${id}/`, useAuthOptions())
 
     const thread = allThreads.value[id]
+    thread.is_deleted = true
     thread.author = null
     thread.body = '[deleted]'
   }

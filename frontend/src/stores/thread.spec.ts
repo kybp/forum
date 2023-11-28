@@ -459,7 +459,7 @@ describe('thread store', () => {
 
     beforeEach(() => {
       threadStore = useThreadStore()
-      thread = threadFactory()
+      thread = threadFactory({ is_deleted: false })
       threadStore.allThreads = { [thread.id]: thread }
     })
 
@@ -481,6 +481,16 @@ describe('thread store', () => {
       expect(valueInStore?.author).toBe(null)
       expect(valueInStore?.title).toEqual(thread.title)
       expect(valueInStore?.body).toEqual('[deleted]')
+    })
+
+    it('sets is_deleted to true in the store', async () => {
+      expect(threadStore.thread(thread.id)).toEqual(thread)
+
+      await threadStore.deletePost(thread)
+
+      const valueInStore = threadStore.thread(thread.id)
+      expect(valueInStore?.author).toBe(null)
+      expect(valueInStore?.is_deleted).toBe(true)
     })
   })
 
@@ -686,6 +696,19 @@ describe('thread store', () => {
       }
 
       expect(threadStore.threads).toEqual([latest, middle, earliest])
+    })
+
+    it('does not include deleted threads', () => {
+      const notDeleted = threadFactory({ is_deleted: false })
+      const deleted = threadFactory({ is_deleted: true })
+
+      const threadStore = useThreadStore()
+      threadStore.allThreads = {
+        [notDeleted.id]: notDeleted,
+        [deleted.id]: deleted,
+      }
+
+      expect(threadStore.threads).toEqual([notDeleted])
     })
   })
 })

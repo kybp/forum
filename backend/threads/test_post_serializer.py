@@ -24,6 +24,7 @@ def post_props(user: User):
 def test_contains_expected_fields(post: Post):
     assert set(PostSerializer(post).data.keys()) == {
         "id",
+        "is_deleted",
         "author",
         "title",
         "body",
