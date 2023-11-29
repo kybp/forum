@@ -8,6 +8,12 @@ variable "certbot_email" {
   description = "The email to register certbot with for SSL certificate registration."
 }
 
+variable "aws_region" {
+  type        = string
+  description = "The AWS region to use"
+  default     = "us-east-1"
+}
+
 variable "rds_db_name" {
   type        = string
   default     = "forum_prod"

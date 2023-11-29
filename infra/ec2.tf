@@ -1,3 +1,10 @@
+locals {
+  user_data = templatefile("user_data.sh.tftpl", {
+    domain = var.domain,
+    email  = var.certbot_email,
+  })
+}
+
 resource "aws_subnet" "ec2" {
   vpc_id            = aws_vpc.forum.id
   cidr_block        = local.ec2_cider_block
@@ -46,8 +53,11 @@ resource "aws_security_group" "ec2" {
   }
 }
 
+# Generate TLS key for SSH access to the instance and save the private
+# key to the local filesystem.
+
 resource "tls_private_key" "ec2" {
-   algorithm = "ED25519"
+  algorithm = "ED25519"
 }
 
 resource "aws_key_pair" "ec2" {
@@ -60,16 +70,20 @@ resource "local_sensitive_file" "ec2" {
   filename = "${path.module}/${aws_key_pair.ec2.key_name}"
 }
 
+# Get an IP address for the instance.
+
 resource "aws_eip" "ec2" {
-  instance = "${aws_instance.forum.id}"
+  instance = aws_instance.forum.id
   domain   = "vpc"
 }
 
+# Provision EC2 instance to run the server on
+
 resource "aws_instance" "forum" {
-  ami                         = "ami-0fc5d935ebf8bc3bc"
-  instance_type               = "t2.micro"
-  vpc_security_group_ids      = [aws_security_group.ec2.id]
-  subnet_id                   = aws_subnet.ec2.id
-  key_name                    = aws_key_pair.ec2.key_name
-  user_data                   = "${templatefile("user_data.sh.tftpl", { domain = var.domain, email = var.certbot_email })}"
+  ami                    = "ami-0fc5d935ebf8bc3bc"
+  instance_type          = "t2.micro"
+  vpc_security_group_ids = [aws_security_group.ec2.id]
+  subnet_id              = aws_subnet.ec2.id
+  key_name               = aws_key_pair.ec2.key_name
+  user_data              = local.user_data
 }

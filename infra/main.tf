@@ -13,14 +13,16 @@ terraform {
 }
 
 provider "aws" {
-  region = "us-east-1"
+  region  = var.aws_region
   profile = "default"
 }
 
 locals {
-  rds_port           = 5432
-  ec2_cider_block    = "10.0.1.0/24"
-  rds_cider_blocks   = ["10.0.2.0/24", "10.0.3.0/24"]
+  rds_port         = 5432
+  ec2_cider_block  = "10.0.1.0/24"
+  rds_cider_blocks = ["10.0.2.0/24", "10.0.3.0/24"]
+
+  # We need to have 2 availability zones for RDS
   availability_zones = ["us-east-1a", "us-east-1b"]
 }
 

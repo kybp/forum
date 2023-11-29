@@ -1,34 +1,35 @@
 #!/bin/sh
 
-### Set up Docker, see: https://docs.docker.com/engine/install/ubuntu/
+# For documentation on setting up Docker, see:
+# https://docs.docker.com/engine/install/ubuntu/
 
 # Add Docker's official GPG key:
-sudo apt-get update
-sudo apt-get install -y ca-certificates curl gnupg
-sudo install -m 0755 -d /etc/apt/keyrings
+apt-get update
+apt-get install -y ca-certificates curl gnupg
+install -m 0755 -d /etc/apt/keyrings
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-sudo chmod a+r /etc/apt/keyrings/docker.gpg
+chmod a+r /etc/apt/keyrings/docker.gpg
 
 # Add the repository to Apt sources:
 echo \
   "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
   "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
-  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt-get update
+  tee /etc/apt/sources.list.d/docker.list > /dev/null
+apt-get update
 
 # Install Docker
-sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 # Make app directory
 mkdir /home/ubuntu/app
-sudo chown -R ubuntu:ubuntu app
+chown -R ubuntu:ubuntu /home/ubuntu/app
 
 # Get SSL certificates
-sudo docker run --rm -p80:80 \
+docker run --rm -p80:80 \
   -v /home/ubuntu/app/certbot/www/:/var/www/certbot/ \
   -v /home/ubuntu/app/certbot/certs/:/etc/letsencrypt/ \
   certbot/certbot certonly --standalone --agree-tos -n \
   --email ${email} --domains ${domain}
 
 # Get Docker ready to have our stack deployed
-sudo docker swarm init
+docker swarm init

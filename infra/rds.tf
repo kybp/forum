@@ -4,6 +4,8 @@ resource "aws_subnet" "rds" {
   availability_zone = local.availability_zones[0]
 }
 
+# We need a second subnet because a subnet group needs to have more
+# than one, even though this is for a single-AZ DB.
 resource "aws_subnet" "unused_rds" {
   vpc_id            = aws_vpc.forum.id
   cidr_block        = local.rds_cider_blocks[1]
@@ -38,12 +40,6 @@ resource "aws_security_group" "rds" {
   tags = {
     Name = "forum_rds"
   }
-}
-
-resource "random_password" "rds" {
-  length           = 16
-  special          = true
-  override_special = "!#$%&*()-_=+[]{}<>:?"
 }
 
 resource "aws_db_instance" "forum" {

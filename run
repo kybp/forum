@@ -33,6 +33,7 @@ format() {
     frontend_run npm run format
     backend_run python -m black --line-length 79 .
     e2e_run python -m black --line-length 79 .
+    terraform fmt infra
 }
 
 unit_test() {
