@@ -2,9 +2,12 @@
 
 ## Setup
 
-To run the app, all you need is a recent version of Docker. If you
-want to use the production build preview, you'll also need
-[mkcert](https://github.com/FiloSottile/mkcert).
+To run the app, all you need is a recent version of
+[Docker](https://docs.docker.com/get-docker/).
+
+For development, you will also need:
+- [Terraform](https://www.terraform.io/)
+- [mkcert](https://github.com/FiloSottile/mkcert)
 
 To set up, first copy `.env.example` into a file named `.env`. The
 default settings should work, but take a peek in the file and see if
@@ -97,7 +100,6 @@ To provision resources for a prod deploy you will need:
 - an AWS account set up and configured for CLI use on your computer
 - a Cloudflare account, and an API token in an exported
   `$CLOUDFLARE_API_TOKEN` environment variable
-- Terraform installed
 
 With all that, `cd` into the `infra` directory and run `terraform
 init`, then `terraform plan` to preview what will be set up. If you're

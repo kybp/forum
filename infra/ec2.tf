@@ -2,6 +2,10 @@ locals {
   user_data = templatefile("user_data.sh.tftpl", {
     domain = var.domain,
     email  = var.certbot_email,
+
+    docker_daemon_config = templatefile("docker-daemon.json.tftpl", {
+      aws_region = var.aws_region,
+    }),
   })
 }
 
@@ -77,12 +81,50 @@ resource "aws_eip" "ec2" {
   domain   = "vpc"
 }
 
+# Configure IAM profile for CloudWatch
+
+resource "aws_iam_role" "forum" {
+  name = "EC2-Role"
+  path = "/"
+
+  assume_role_policy = jsonencode(
+    {
+      "Version" : "2012-10-17",
+      "Statement" : [
+        {
+          "Action" : "sts:AssumeRole",
+          "Principal" : {
+            "Service" : "ec2.amazonaws.com"
+          },
+          "Effect" : "Allow"
+        }
+      ]
+    }
+  )
+}
+
+resource "aws_iam_instance_profile" "forum" {
+  name = "EC2-Profile"
+  role = aws_iam_role.forum.name
+}
+
+resource "aws_iam_role_policy_attachment" "systems-manager" {
+  role       = aws_iam_role.forum.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
+resource "aws_iam_role_policy_attachment" "cloudwatch" {
+  role       = aws_iam_role.forum.name
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+}
+
 # Provision EC2 instance to run the server on
 
 resource "aws_instance" "forum" {
   ami                    = "ami-0fc5d935ebf8bc3bc"
   instance_type          = "t2.micro"
   vpc_security_group_ids = [aws_security_group.ec2.id]
+  iam_instance_profile   = aws_iam_instance_profile.forum.name
   subnet_id              = aws_subnet.ec2.id
   key_name               = aws_key_pair.ec2.key_name
   user_data              = local.user_data
