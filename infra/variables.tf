@@ -36,3 +36,13 @@ variable "cloudflare_account_id" {
   type        = string
   description = "The Cloudflare account ID to use"
 }
+
+variable "grafana_api_key" {
+  type        = string
+  description = "The Grafana API key to use"
+}
+
+variable "grafana_stack_name" {
+  type        = string
+  description = "The slug naming your Grafana Cloud stack"
+}

@@ -9,6 +9,11 @@ terraform {
       source  = "cloudflare/cloudflare"
       version = "~> 4.0"
     }
+
+    grafana = {
+      source  = "grafana/grafana"
+      version = "~> 2.6"
+    }
   }
 }
 

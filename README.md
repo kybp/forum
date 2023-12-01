@@ -100,6 +100,15 @@ To provision resources for a prod deploy you will need:
 - an AWS account set up and configured for CLI use on your computer
 - a Cloudflare account, and an API token in an exported
   `$CLOUDFLARE_API_TOKEN` environment variable
+- a Grafana Cloud account, and a token for an access policy with the
+  following permissions:
+  - `stacks:read`
+  - `stacks:write`
+  - `stacks:delete`
+  - `metrics:write`
+  - `logs:write`
+  - `traces:write`
+  - `profiles:write`
 
 With all that, `cd` into the `infra` directory and run `terraform
 init`, then `terraform plan` to preview what will be set up. If you're
