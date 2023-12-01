@@ -43,18 +43,19 @@ resource "aws_security_group" "rds" {
 }
 
 resource "aws_db_instance" "forum" {
-  allocated_storage            = 5
-  engine                       = "postgres"
-  engine_version               = "15.5"
-  instance_class               = "db.t3.micro"
-  skip_final_snapshot          = true
-  db_name                      = var.rds_db_name
-  username                     = var.rds_username
-  password                     = var.rds_password
-  backup_retention_period      = 7
-  backup_window                = "03:00-04:00"
-  maintenance_window           = "sun:05:00-sun:06:00"
-  performance_insights_enabled = true
-  vpc_security_group_ids       = [aws_security_group.rds.id]
-  db_subnet_group_name         = aws_db_subnet_group.rds.name
+  allocated_storage               = 5
+  engine                          = "postgres"
+  engine_version                  = "15.5"
+  instance_class                  = "db.t3.micro"
+  skip_final_snapshot             = true
+  db_name                         = var.rds_db_name
+  username                        = var.rds_username
+  password                        = var.rds_password
+  backup_retention_period         = 7
+  backup_window                   = "03:00-04:00"
+  maintenance_window              = "sun:05:00-sun:06:00"
+  performance_insights_enabled    = true
+  vpc_security_group_ids          = [aws_security_group.rds.id]
+  db_subnet_group_name            = aws_db_subnet_group.rds.name
+  enabled_cloudwatch_logs_exports = ["postgresql", "upgrade"]
 }

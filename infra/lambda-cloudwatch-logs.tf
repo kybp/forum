@@ -101,3 +101,12 @@ resource "aws_cloudwatch_log_subscription_filter" "lambda_promtail_logfilter" {
   filter_pattern = ""
   depends_on     = [aws_iam_role_policy.lambda_promtail_policy_logs]
 }
+
+resource "aws_cloudwatch_log_subscription_filter" "rds_logfilter" {
+  name            = "rds_logfilter_forum"
+  log_group_name  = "/aws/rds/instance/${aws_db_instance.forum.identifier}/postgresql"
+  destination_arn = aws_lambda_function.lambda_promtail.arn
+  # required but can be empty string
+  filter_pattern = ""
+  depends_on     = [aws_iam_role_policy.lambda_promtail_policy_logs]
+}
