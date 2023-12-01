@@ -56,6 +56,11 @@ const router = createRouter({
       component: () => import('../views/EditReplyView.vue'),
       beforeEnter: guards.checkSignedIn,
     },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'not-found',
+      component: () => import('../views/NotFoundView.vue'),
+    },
   ],
 })
 
