@@ -26,7 +26,7 @@ services:
       - backend
   backend:
     image: $DOCKERHUB_USERNAME/backend-prod
-    command: gunicorn forum.wsgi:application --bind 0.0.0.0:9000
+    command: opentelemetry-instrument gunicorn forum.wsgi:application --bind 0.0.0.0:9000 --access-logfile -
     volumes:
       - backend_static:/usr/src/app/static/
     deploy:

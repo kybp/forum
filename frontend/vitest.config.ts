@@ -2,9 +2,8 @@ import { fileURLToPath } from 'node:url'
 import { mergeConfig, defineConfig, configDefaults } from 'vitest/config'
 import viteConfig from './vite.config'
 
-export default mergeConfig(
-  viteConfig,
-  defineConfig({
+export default defineConfig((env) => {
+  return mergeConfig(viteConfig(env), {
     test: {
       environment: 'jsdom',
       exclude: configDefaults.exclude,
@@ -12,4 +11,4 @@ export default mergeConfig(
       root: fileURLToPath(new URL('./', import.meta.url)),
     }
   })
-)
+})

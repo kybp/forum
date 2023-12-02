@@ -46,3 +46,9 @@ variable "grafana_stack_name" {
   type        = string
   description = "The slug naming your Grafana Cloud stack"
 }
+
+variable "grafana_zone" {
+  type        = string
+  default     = "prod-us-central-0"
+  description = "The instance ID under 'Details' in Grafana Cloud Portal"
+}

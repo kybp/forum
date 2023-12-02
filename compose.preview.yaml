@@ -8,6 +8,8 @@ services:
       args:
         DOMAIN: ${DOMAIN}
         INTERNAL_BACKEND_HOST: backend
+        OTLP_HOST: ${OTLP_HOST}
+        OTLP_TOKEN: ${OTLP_TOKEN}
         VITE_API_HOST: ${VITE_API_HOST}
     volumes:
       - /usr/src/app/node_modules/
@@ -24,7 +26,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile.prod
-    command: gunicorn forum.wsgi:application --bind 0.0.0.0:9000 --access-logfile -
+    command: opentelemetry-instrument gunicorn forum.wsgi:application --bind 0.0.0.0:9000 --access-logfile -
     volumes:
       - backend_static:/usr/src/app/static/
     ports:
@@ -33,6 +35,7 @@ services:
       - ./.env
     environment:
       SQL_HOST: db
+      DJANGO_SETTINGS_MODULE: forum.settings
     depends_on:
       db:
         condition: service_healthy

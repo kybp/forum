@@ -30,8 +30,10 @@ jobs:
           cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/frontend-prod:buildcache
           cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/frontend-prod:buildcache,mode=max
           build-args: |
-            INTERNAL_BACKEND_HOST=forum_backend
             DOMAIN=${{ secrets.DOMAIN }}
+            INTERNAL_BACKEND_HOST=forum_backend
+            OTLP_HOST=${{ secrets.OTLP_HOST }}
+            OTLP_TOKEN=${{ secrets.OTLP_TOKEN }}
             VITE_API_HOST=https://${{ secrets.DOMAIN }}/api/
       - name: Build backend Docker image
         uses: docker/build-push-action@v5
@@ -51,11 +53,14 @@ jobs:
           DEBUG=
           DEFAULT_AUTHOR_EMAIL=${{ secrets.PRIMARY_EMAIL }}
           DOMAIN=${{ secrets.DOMAIN }}
+          DJANGO_SETTINGS_MODULE=forum.settings
           SQL_DATABASE=${{ secrets.SQL_DATABASE }}
           SQL_USER=${{ secrets.SQL_USER }}
           SQL_PASSWORD=${{ secrets.SQL_PASSWORD }}
           SQL_HOST=${{ secrets.SQL_HOST }}
           SQL_PORT=${{ secrets.SQL_PORT }}
+          OTLP_HOST=${{ secrets.OTLP_HOST }}
+          OTLP_TOKEN=${{ secrets.OTLP_TOKEN }}
           EOF
 
           mkdir -p server_files
