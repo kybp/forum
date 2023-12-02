@@ -13,12 +13,14 @@ from .serializers import PostSerializer, ReactionSerializer, ReplySerializer
 
 
 class PostViewSet(viewsets.ModelViewSet):
-    queryset = Post.objects.all().prefetch_related("replies")
+    queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = [policies.PostAccessPolicy]
 
     def get_queryset(self):
-        queryset = Post.objects.all().prefetch_related("replies")
+        queryset = Post.objects.all()
+        queryset = queryset.select_related("author")
+        queryset = queryset.prefetch_related("reactions", "replies", "tags")
 
         if authors := self.request.query_params.getlist("author"):
             queryset = queryset.filter(author__id__in=authors)
@@ -52,7 +54,7 @@ class PostViewSet(viewsets.ModelViewSet):
         self._ensure_tags(post, self.request.data["tags"])
 
     def retrieve(self, request, pk):
-        post = get_object_or_404(self.queryset.filter(pk=pk))
+        post = get_object_or_404(self.get_queryset().filter(pk=pk))
         serializer = self.serializer_class(post)
         user_reaction = post.reactions.filter(user_id=request.user.id).first()
         user_reaction_type = user_reaction.type if user_reaction else None
