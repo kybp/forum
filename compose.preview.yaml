@@ -7,6 +7,7 @@ services:
       dockerfile: Dockerfile.prod
       args:
         DOMAIN: ${DOMAIN}
+        VERSION: ${VERSION}
         INTERNAL_BACKEND_HOST: backend
         OTLP_HOST: ${OTLP_HOST}
         OTLP_TOKEN: ${OTLP_TOKEN}

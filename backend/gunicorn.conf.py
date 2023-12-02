@@ -7,6 +7,8 @@ from opentelemetry.sdk import resources
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
+version = os.environ.get("VERSION", "0")
+
 otlp_host = os.environ.get("OTLP_HOST")
 otlp_url = otlp_host and f"https://{otlp_host}/otlp"
 otlp_token = os.environ.get("OTLP_TOKEN")
@@ -20,7 +22,7 @@ if otlp_url:
         resource = resources.Resource.create(
             attributes={
                 resources.SERVICE_NAME: "forum-backend",
-                resources.SERVICE_VERSION: "0.0.1",
+                resources.SERVICE_VERSION: version,
             }
         )
 

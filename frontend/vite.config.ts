@@ -26,6 +26,7 @@ export default defineConfig(({ mode }) => {
     },
     define: {
       'import.meta.env.DOMAIN': JSON.stringify(env.DOMAIN),
+      'import.meta.env.VERSION': JSON.stringify(env.VERSION || '0'),
       'import.meta.env.OTLP_HOST': JSON.stringify(env.OTLP_HOST),
     },
   }

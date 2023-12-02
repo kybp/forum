@@ -21,7 +21,7 @@ if (shouldTrace) {
 
   const resource = new Resource({
     [SemanticResourceAttributes.SERVICE_NAME]: 'forum-frontend',
-    [SemanticResourceAttributes.SERVICE_VERSION]: '0.0.1',
+    [SemanticResourceAttributes.SERVICE_VERSION]: import.meta.env.VERSION,
   })
 
   const provider = new WebTracerProvider({ resource })

@@ -6,6 +6,12 @@ on:
     branches: [main]
 env:
   DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+  # `run_number` increments with each workflow run. It does not
+  # increment if we re-run a workflow.
+  #
+  # `run_attempt` counts the number of times this workflow has been
+  # re-run.
+  VERSION: ${{ github.run_number }}.${{ github.run_attempt }}
 
 jobs:
   deploy:
@@ -31,6 +37,7 @@ jobs:
           cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/frontend-prod:buildcache,mode=max
           build-args: |
             DOMAIN=${{ secrets.DOMAIN }}
+            VERSION=$VERSION
             INTERNAL_BACKEND_HOST=forum_backend
             OTLP_HOST=${{ secrets.OTLP_HOST }}
             OTLP_TOKEN=${{ secrets.OTLP_TOKEN }}
@@ -53,6 +60,7 @@ jobs:
           DEBUG=
           DEFAULT_AUTHOR_EMAIL=${{ secrets.PRIMARY_EMAIL }}
           DOMAIN=${{ secrets.DOMAIN }}
+          VERSION=$VERSION
           DJANGO_SETTINGS_MODULE=forum.settings
           SQL_DATABASE=${{ secrets.SQL_DATABASE }}
           SQL_USER=${{ secrets.SQL_USER }}
@@ -96,3 +104,5 @@ jobs:
             fi
 
             sudo docker exec $backend python manage.py migrate
+      - name: Announce version
+        run: echo "Deployed forum $VERSION"
