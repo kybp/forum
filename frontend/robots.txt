@@ -1,0 +1,3 @@
+# Ignore Cloudflare-managed endpoint per their recommendation
+User-agent: *
+Disallow: /cdn-cgi/

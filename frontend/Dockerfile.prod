@@ -19,6 +19,9 @@ COPY . ./
 # Make a production build
 RUN npm run build
 
+# Copy our robots.txt into the build so Nginx will serve it
+COPY robots.txt ./dist/
+
 # Run in a separate stage that isn't bloated with our dependencies
 FROM nginx:1.25-alpine
 
