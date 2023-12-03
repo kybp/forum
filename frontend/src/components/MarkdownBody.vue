@@ -29,6 +29,7 @@ const markdown = new MarkdownIt()
   }
 
   :deep(img) {
+    max-height: 95vh;
     max-width: 80%;
 
     @media (--small-viewport) {
