@@ -68,6 +68,11 @@ const markdown = new MarkdownIt()
     padding: 0;
   }
 
+  :deep(pre + h2),
+  :deep(pre + h3) {
+    margin-top: 1rem;
+  }
+
   :deep(ul),
   :deep(ol) {
     padding-left: 1.5rem;
