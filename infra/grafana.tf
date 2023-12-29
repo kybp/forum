@@ -56,3 +56,31 @@ output "grafana_otlp_token" {
   sensitive   = true
   description = "The token to use when writing OpenTelemetry metrics"
 }
+
+resource "grafana_synthetic_monitoring_installation" "forum" {
+  provider              = grafana.cloud
+  metrics_publisher_key = var.grafana_api_key
+  stack_id              = grafana_cloud_stack.forum.id
+}
+
+provider "grafana" {
+  alias           = "sm"
+  sm_access_token = grafana_synthetic_monitoring_installation.forum.sm_access_token
+  sm_url          = grafana_synthetic_monitoring_installation.forum.stack_sm_api_url
+}
+
+data "grafana_synthetic_monitoring_probes" "forum" {
+  provider = grafana.sm
+}
+
+resource "grafana_synthetic_monitoring_check" "forum_http" {
+  provider = grafana.sm
+  job      = "HTTP Defaults"
+  target   = "https://${var.domain}"
+  probes = [
+    data.grafana_synthetic_monitoring_probes.forum.probes.Atlanta,
+  ]
+  settings {
+    http {}
+  }
+}
