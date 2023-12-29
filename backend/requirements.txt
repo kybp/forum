@@ -18,7 +18,7 @@ django-simple-history==3.4.0
 # Use flake8 for checking code quality
 flake8==6.1.0
 # Use black for code formatting
-black==23.11.0
+black==23.12.1
 # Use pytest for unit testing
 pytest-django==4.7.0
 # Use FactoryBoy for generating data in unit tests
@@ -26,5 +26,5 @@ factory-boy==3.3.0
 
 # Use mypy for typechecking, and install type stubs for dependencies
 mypy==1.7.1
-django-stubs==4.2.6
-djangorestframework-stubs==3.14.4
+django-stubs==4.2.7
+djangorestframework-stubs==3.14.5
