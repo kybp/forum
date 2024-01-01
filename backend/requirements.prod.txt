@@ -16,7 +16,7 @@ Django==5.0.0
 # https://pypi.org/project/psycopg2-binary/
 psycopg2==2.9.9
 djangorestframework==3.14.0
-drf-nested-routers==0.93.4
+drf-nested-routers==0.93.5
 django-cors-headers==4.3.1
 drf-access-policy==1.5.0
 django-simple-history==3.4.0
