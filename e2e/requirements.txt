@@ -5,6 +5,6 @@ pytest-playwright==0.4.3
 # Use Faker for generating test data
 Faker==22.0.0
 # Use flake8 for checking code quality
-flake8==6.1.0
+flake8==7.0.0
 # Use black for code formatting
 black==23.12.1
