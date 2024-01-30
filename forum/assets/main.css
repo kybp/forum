@@ -1,0 +1,119 @@
+@import './base.css';
+
+#app {
+  padding: 0.5rem 1rem;
+  display: block;
+}
+
+a {
+  color: var(--f-green-3);
+}
+
+a:visited {
+  color: var(--f-blue-5);
+}
+
+:root.dark-theme {
+  a:visited {
+    color: var(--f-blue-3);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  a:visited {
+    color: var(--f-blue-3);
+  }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+}
+
+input {
+  color: inherit;
+  background: var(--color-input-background);
+
+  &.invalid {
+    border: 1px solid var(--color-error);
+    border-radius: 3px;
+  }
+}
+
+textarea {
+  color: inherit;
+  background: var(--color-input-background);
+  border: 1px solid var(--f-blue-3);
+  border-radius: 2px;
+  padding: 0.4rem 0.6rem;
+}
+
+span[role='alert'] {
+  font-size: 0.6rem;
+  color: var(--color-error);
+  background: var(--color-error-background);
+  border: 1px solid var(--color-error);
+  border-radius: 3px;
+  margin: 0.2rem;
+  padding: 0.2rem 0.5rem;
+
+  animation-duration: 0.5s;
+  animation-name: slide-in;
+}
+
+@keyframes slide-in {
+  from {
+    transform: translateY(-0.5rem);
+    opacity: 0%;
+  }
+
+  to {
+    transform: none;
+    opacity: 100%;
+  }
+}
+
+.button {
+  text-decoration: none;
+  color: var(--f-blue-4);
+  background-color: var(--f-purple-1);
+  border: 1px solid var(--f-blue-3);
+  border-radius: 3px;
+  padding: 0.2rem 0.4rem;
+  line-height: normal;
+
+  &:enabled {
+    &:hover {
+      background-color: var(--f-pink-2);
+    }
+
+    &:active {
+      filter: brightness(85%);
+    }
+  }
+}
+
+a.button {
+  &:visited {
+    color: inherit;
+  }
+
+  &:hover {
+    background-color: var(--f-pink-2);
+  }
+
+  &:active {
+    filter: brightness(75%);
+  }
+}
+
+.note {
+  font-weight: 300;
+  font-style: italic;
+  font-size: x-small;
+}
+
+select {
+  background: var(--color-input-background);
+  border: none;
+}
