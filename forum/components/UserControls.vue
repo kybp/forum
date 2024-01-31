@@ -6,7 +6,7 @@ const authStore = useAuthStore()
 
 const { account } = storeToRefs(authStore)
 
-const signOut = () => {}
+const signOut = () => authStore.signOut()
 </script>
 
 <template>
