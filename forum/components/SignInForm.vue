@@ -17,7 +17,7 @@ const form: Ref<any> = ref(null)
 const signIn = async ({ username, password }: any) => {
     console.log('yo!')
     const { data: account, error } = await useFetch<Account | null>(
-      'http://localhost:8000/api/users/token/',
+      apiUrl('users/token/'),
       { method: 'POST',
       body: { username, password } })
 

@@ -1,24 +1,27 @@
 import { defineStore } from 'pinia'
 import type { Thread, ReactionType, Reply } from '@/api'
+import type { AsyncResponse } from '#imports'
 
 export type CreateReplyParams = {
   postId: number
   body: string
 }
 
+export type UpdateReplyParams = CreateReplyParams & { id: number }
+
 export const useThreadsStore = defineStore('threads', () => {
   const postList = ref<Thread[]>([])
 
   const getPostList = async (): Promise<void> => {
     const { data } = await useFetch<Thread[]>(
-      'http://localhost:8000/api/threads/posts/',
+      apiUrl('threads/posts/'),
     )
 
     postList.value = data.value ?? []
   }
 
   const getPost = async (id: number): Promise<void> => {
-    const { data } = await useFetch<Thread>(`http://localhost:8000/api/threads/posts/${id}/`)
+    const { data } = await useFetch<Thread>(apiUrl(`threads/posts/${id}/`))
     if (data.value) postList.value.push(data.value)
   }
 
@@ -49,31 +52,51 @@ export const useThreadsStore = defineStore('threads', () => {
   const createReply = async (params: CreateReplyParams): Promise<AsyncResponse<Reply>> => {
     const authStore = useAuthStore()
 
-    let response: any
-    try {
-      response = await useFetch<Reply>(
-        `http://localhost:8000/api/threads/posts/${params.postId}/replies/`,
+    const response = await useFetch<Reply>(
+        apiUrl(`threads/posts/${params.postId}/replies/`),
         {
           method: 'POST',
           body: params,
           ...authOptions(authStore.account),
       },
       )
-    } catch (error) {
-      console.log('saving ' + error)
-      ;(window as any).err = error
-    }
-    console.log('still here')
+
     const reply = response.data.value
-
-    console.log('saving res')
-    ;(window as any).res = response
-
-    console.log('maybe saving reply')
     if (reply !== null) saveReply(params.postId, reply)
-
-    console.log('returning response')
       return response
+  }
+
+  const updateReply = async (params: UpdateReplyParams): Promise<AsyncResponse<Reply>> => {
+    const authStore = useAuthStore()
+    const update = { body: params.body }
+
+    return await useFetch(apiUrl(`threads/posts/${params.postId}/replies/${params.id}/`), {
+      method: 'PUT',
+      body: update,
+      ...authOptions(authStore.account),
+    })
+  }
+
+  const deleteReply = async (reply: Reply): Promise<AsyncResponse<never>> => {
+    const authStore = useAuthStore()
+
+    return await useFetch(apiUrl(`threads/posts/${reply.post}/replies/${reply.id}/`), {
+      method: 'DELETE',
+      ...authOptions(authStore.account),
+    })
+  }
+
+  const getReplies = async (postId: number): Promise<AsyncResponse<Reply[]>> => {
+    const response = await useFetch<Reply[]>(apiUrl(`threads/posts/${postId}/replies`))
+    response.data.value?.forEach((reply) => saveReply(postId, reply))
+    return response
+  }
+
+  const findReply = (id: number) => allReplies.value[id] ?? null
+
+  const findRepliesByPost = (postId: number): Reply[] => {
+    const replyIds = repliesByPost.value[postId]
+    return (replyIds || []).map(id => allReplies.value[id])
   }
 
   return {
@@ -82,6 +105,11 @@ export const useThreadsStore = defineStore('threads', () => {
     findPost,
     getPost,
     togglePostReaction,
-    createReply
+    getReplies,
+    createReply,
+    updateReply,
+    deleteReply,
+    findReply,
+    findRepliesByPost,
   }
 })

@@ -21,7 +21,7 @@ const form: Ref<any> = ref(null)
 const register = async ({ username, email, password }: any) => {
   // form.value?.validate()
 
-  return await useFetch<Account>('users/accounts/', {
+  return await useFetch<Account>(apiUrl('users/accounts/'), {
     method: 'POST',
     body: { username, email, password },
   })
