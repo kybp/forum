@@ -11,7 +11,8 @@ const route = useRoute()
 
 const postId = +route.params.id
 let post = computed(() => postsStore.findPost(postId))
-if (!post.value) postsStore.getPost(postId)
+if (!post.value) await postsStore.getPost(postId)
+await postsStore.getReplies(postId)
 
 const { account } = storeToRefs(authStore)
 
@@ -68,7 +69,7 @@ const author = computed(() => {
     :post-id="postId"
   />
 
-  <!-- <ReplyList v-if="post" :post-id="post.id" /> -->
+  <ReplyList v-if="post" :post-id="post.id" />
 </template>
 
 <style scoped>
