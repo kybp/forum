@@ -31,14 +31,18 @@ export const useAuthStore = defineStore('auth', () => {
     cookie.value = newAccount
   }
 
+  const signOut = (): void => {
+    account.value = null
+    cookie.value = null
+  }
+
   const isSignedIn = computed(() => account.value !== null)
-
-
 
   return {
     account,
     setAccount,
     isSignedIn,
+    signOut,
   }
 })
 
