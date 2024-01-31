@@ -11,14 +11,14 @@ type Props = {
 const props = defineProps<Props>()
 
 const authStore = useAuthStore()
-const threadStore = useThreadsStore()
+const postsStore = useThreadsStore()
 
 const { account } = storeToRefs(authStore)
 
 const reactions = computed(() => countBy(props.post.reactions, (r) => r.type))
 
 const toggleReaction = (type: ReactionType) => {
-  threadStore.toggleThreadReaction(props.post, type)
+  postsStore.togglePostReaction(props.post, type)
 }
 
 const canReact = computed(
