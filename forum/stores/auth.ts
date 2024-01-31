@@ -21,18 +21,19 @@ export type RegisterProps = {
 }
 
 export const useAuthStore = defineStore('auth', () => {
+  const cookie = useCookie<Account | null>('account')
+
   /** The currently signed-in user, or `null` if we're signed out. */
-  const account: Ref<Account | null> = ref(null)
+  const account = ref<Account | null>(cookie.value || null)
 
   const setAccount = (newAccount: Account | null): void => {
     account.value = newAccount
+    cookie.value = newAccount
   }
 
-  const isSignedIn = computed(() => true ) // xxx: account !== null)
+  const isSignedIn = computed(() => account.value !== null)
 
-  // const account = ref<Account | null>(
-  //   JSON.parse(localStorage.getItem('account') ?? 'null'),
-  // )
+
 
   return {
     account,
