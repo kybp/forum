@@ -41,17 +41,4 @@ export const useAuthStore = defineStore('auth', () => {
   }
 })
 
-export const useAuthOptions = (options = { notSignedInOkay: false }) => {
-  const { account } = useAuthStore()
-
-  if (!account) {
-    if (options.notSignedInOkay) return {}
-    throw new Error('Not signed in')
-  }
-
-  return {
-    headers: { Authorization: `Token ${account.token}` },
-  } as const
-}
-
 export type AuthStore = ReturnType<typeof useAuthStore>

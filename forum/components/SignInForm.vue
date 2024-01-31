@@ -15,7 +15,13 @@ const schema = yup.object({
 const form: Ref<any> = ref(null)
 
 const signIn = async ({ username, password }: any) => {
-  const { data: account, error } = await useFetch<Account | null>('users/token/', { body: { username, password } })
+    console.log('yo!')
+    const { data: account, error } = await useFetch<Account | null>(
+      'http://localhost:8000/api/users/token/',
+      { method: 'POST',
+      body: { username, password } })
+
+      console.log('still here')
 
   await authStore.setAccount(account.value)
 }

@@ -22,12 +22,6 @@ const userIsAuthor = computed(() => {
 const author = computed(() => {
   return post.value ? usersStore.findUser(post.value.author) : null
   })
-
-const createReply = async ({ postId, body, onSuccess }: any) => {
-  if (await postsStore.createReply({ postId, body })) {
-    onSuccess()
-  }
-}
 </script>
 
 <template>
@@ -71,7 +65,6 @@ const createReply = async ({ postId, body, onSuccess }: any) => {
   <ReplyForm
     class="reply-form"
     v-if="authStore.isSignedIn"
-    @submit="createReply"
     :post-id="postId"
   />
 

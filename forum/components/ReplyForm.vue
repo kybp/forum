@@ -25,18 +25,24 @@ const form = ref<any>(null)
 
 const body = ref(props.initialValue?.body ?? '')
 
-const reply = async (
+      // const { replyErrors } = storeToRefs(postsStore)
+      const replyErrors = ref(null)
+
+watchEffect(() => {
+  if (replyErrors.value) form.value?.setErrors(replyErrors.value)
+})
+
+const createReply = async (
   formValues: any,
   { resetForm }: FormActions<{ body: string }>,
 ) => {
-  emit('submit', {
-    postId: props.postId,
-    body: formValues.body,
-    onSuccess: () => {
-      resetForm({ values: { body: '' } })
-    },
-  })
+  console.log('creating reply')
+  const { data, error } = await postsStore.createReply({ postId: props.postId, body: formValues.body })
+
+  if (data.value) resetForm({ values: { body: '' } })
+  if (error.value) form.value?.setErrors(error.value)
 }
+
 
 const isMobilePreviewOpen = ref(false)
 </script>
@@ -44,7 +50,7 @@ const isMobilePreviewOpen = ref(false)
 <template>
   <Form
     ref="form"
-    @submit="reply"
+    @submit="createReply"
     :validation-schema="schema"
     :class="{ 'mobile-preview': isMobilePreviewOpen }"
   >
