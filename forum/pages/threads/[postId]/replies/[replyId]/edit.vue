@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { useThreadsStore } from '@/stores/threads'
+import { usePostsStore } from '@/stores/posts'
 
 definePageMeta({
   name: 'edit-reply'
 })
 
 const route = useRoute()
-const postsStore = useThreadsStore()
+const postsStore = usePostsStore()
 
 const postId =  +route.params.postId
 const replyId = +route.params.replyId

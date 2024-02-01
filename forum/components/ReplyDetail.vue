@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import type { Reply } from '@/api'
 import { useAuthStore } from '@/stores/auth'
-import { useThreadsStore } from '@/stores/threads'
+import { usePostsStore } from '@/stores/posts'
 import { useUsersStore } from '@/stores/users'
 
 type Props = {
@@ -11,7 +11,7 @@ type Props = {
 const props = defineProps<Props>()
 
 const authStore = useAuthStore()
-const postsStore = useThreadsStore()
+const postsStore = usePostsStore()
 const usersStore = useUsersStore()
 
 const { account } = storeToRefs(authStore)

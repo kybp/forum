@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { useThreadsStore } from '@/stores/threads'
+  import { usePostsStore } from '@/stores/posts'
 
   type Props = {
   postId: number
@@ -7,7 +7,7 @@
 
 const props = defineProps<Props>()
 
-const postsStore = useThreadsStore()
+const postsStore = usePostsStore()
 
     if (!postsStore.findRepliesByPost(props.postId)) {
     await postsStore.getReplies(props.postId)

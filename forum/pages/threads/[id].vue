@@ -1,11 +1,11 @@
 <script setup lang="ts">
   import type { Thread } from '@/api'
   import { useAuthStore } from '@/stores/auth'
-import { useThreadsStore } from '@/stores/threads'
+import { usePostsStore } from '@/stores/posts'
 import { useUsersStore } from '@/stores/users'
 
 const authStore = useAuthStore()
-const postsStore = useThreadsStore()
+const postsStore = usePostsStore()
 const usersStore = useUsersStore()
 const route = useRoute()
 
