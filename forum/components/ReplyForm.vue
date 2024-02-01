@@ -29,18 +29,17 @@ const createReply = async (
   formValues: any,
   { resetForm }: FormActions<{ body: string }>,
 ) => {
-        emit('submit', {
-        postId: props.postId,
-        body: formValues.body,
-        onSuccess: () => {
-        resetForm({ values: { body: '' } })
-        },
-        onError: (errors: any) => {
-        form.value?.setErrors(errors)
-        },
-        })
+  emit('submit', {
+    postId: props.postId,
+    body: formValues.body,
+    onSuccess: () => {
+      resetForm({ values: { body: '' } })
+    },
+    onError: (errors: any) => {
+      form.value?.setErrors(errors)
+    },
+  })
 }
-
 
 const isMobilePreviewOpen = ref(false)
 </script>
