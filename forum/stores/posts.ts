@@ -6,7 +6,7 @@ CreateReplyParams,
 UpdateReplyParams,
 } from '@/api'
 
-export const useThreadsStore = defineStore('threads', () => {
+export const usePostsStore = defineStore('threads', () => {
   const postList = ref<Thread[]>([])
 
   const getPostList = async (): Promise<void> => {
@@ -126,4 +126,4 @@ export const useThreadsStore = defineStore('threads', () => {
   }
 })
 
-export type PostsStore = ReturnType<typeof useThreadsStore>
+export type PostsStore = ReturnType<typeof usePostsStore>

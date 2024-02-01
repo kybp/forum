@@ -3,7 +3,7 @@ import { ErrorMessage, Field, Form } from 'vee-validate'
 import type { FormActions } from 'vee-validate'
 import * as yup from 'yup'
 import MarkdownBody from '@/components/MarkdownBody.vue'
-import { useThreadsStore } from '@/stores/threads'
+import { usePostsStore } from '@/stores/posts'
 import type { Reply } from '@/api'
 
 type Props = {
@@ -15,7 +15,7 @@ const props = defineProps<Props>()
 
 const emit = defineEmits(['submit'])
 
-const postsStore = useThreadsStore()
+const postsStore = usePostsStore()
 
 const schema = yup.object({
   body: yup.string().required(),

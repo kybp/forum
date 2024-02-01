@@ -2,7 +2,7 @@
 import { reactionTypes } from '@/api'
 import type { Thread, ReactionType } from '@/api'
 import { useAuthStore } from '@/stores/auth'
-import { useThreadsStore } from '@/stores/threads'
+import { usePostsStore } from '@/stores/posts'
 
 type Props = {
   post: Thread
@@ -11,7 +11,7 @@ type Props = {
 const props = defineProps<Props>()
 
 const authStore = useAuthStore()
-const postsStore = useThreadsStore()
+const postsStore = usePostsStore()
 
 const { account } = storeToRefs(authStore)
 

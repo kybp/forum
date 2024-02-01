@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import ThreadList from '@/components/ThreadList.vue'
-import { useThreadsStore } from '@/stores/threads'
+import { usePostsStore } from '@/stores/posts'
 
-const threadsStore = useThreadsStore()
+const postsStore = usePostsStore()
 
-const { postList } = storeToRefs(threadsStore)
+const { postList } = storeToRefs(postsStore)
 
-await threadsStore.getPostList()
+await postsStore.getPostList()
 </script>
 
 <template>
