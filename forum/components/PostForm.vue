@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ErrorMessage, Field, FieldArray, Form } from 'vee-validate'
-import type { Thread } from '@/stores/posts'
+import type { Thread } from '@/api'
 import * as yup from 'yup'
 
 type Props = {
@@ -17,27 +17,27 @@ const schema = yup.object({
   tags: yup.array().of(yup.string()),
 })
 
-const form: Ref<any> = ref(null)
+const form = ref<any>(null)
 
 const isMobilePreviewOpen = ref(false)
 
 const postThread = async ({ title, body, tags }: any) => {
-      emit('submit', {
-      title,
-      body,
-      tags:
-      tags ?? [],
-      onSuccess() {},
-      onError(error: any) {
-        form.value?.setErrors(error)
-        form.value?.validate()
-      },
-      })
+  emit('submit', {
+    title,
+    body,
+    tags: tags ?? [],
+    onSuccess() {},
+    onError(error: any) {
+      form.value?.setErrors(error)
+      form.value?.validate()
+    },
+  })
 }
 
 const title = ref(props.initialValue?.title ?? '')
 const body = ref(props.initialValue?.body ?? '')
 </script>
+
 <template>
   <h1>New Thread</h1>
 
