@@ -1,13 +1,10 @@
 import { defineStore } from 'pinia'
 import type { Thread, ReactionType, Reply } from '@/api'
 import type { AsyncResponse } from '#imports'
-
-export type CreateReplyParams = {
-  postId: number
-  body: string
-}
-
-export type UpdateReplyParams = CreateReplyParams & { id: number }
+import type {
+CreateReplyParams,
+UpdateReplyParams,
+} from '@/api'
 
 export const useThreadsStore = defineStore('threads', () => {
   const postList = ref<Thread[]>([])
@@ -41,9 +38,10 @@ export const useThreadsStore = defineStore('threads', () => {
   /** A map of post ID's to arrays of reply ID's for that post */
   const repliesByPost = ref<Record<number, number[]>>({})
 
-  const saveReply = (postId: number, reply: Reply) => {
+  const saveReply = (reply: Reply) => {
     allReplies.value[reply.id] = reply
 
+    const postId = reply.post
     if (!(postId in repliesByPost.value)) repliesByPost.value[postId] = []
     const replies = repliesByPost.value[postId]
     if (!replies.includes(reply.id)) replies.push(reply.id)
@@ -59,10 +57,10 @@ export const useThreadsStore = defineStore('threads', () => {
           body: params,
           ...authOptions(authStore.account),
       },
-      )
+    )
 
     const reply = response.data.value
-    if (reply !== null) saveReply(params.postId, reply)
+    if (reply !== null) saveReply(reply)
       return response
   }
 
@@ -70,25 +68,39 @@ export const useThreadsStore = defineStore('threads', () => {
     const authStore = useAuthStore()
     const update = { body: params.body }
 
-    return await useFetch(apiUrl(`threads/posts/${params.postId}/replies/${params.id}/`), {
+    const response = await useFetch<Reply>(apiUrl(`threads/posts/${params.postId}/replies/${params.id}/`), {
       method: 'PUT',
       body: update,
       ...authOptions(authStore.account),
     })
+
+    const reply = response.data.value
+    if (reply) {
+      allReplies.value[params.id] = reply
+      saveReply(reply)
+    }
+
+    return response
   }
 
-  const deleteReply = async (reply: Reply): Promise<AsyncResponse<never>> => {
+  const deleteReply = async (reply: Reply): Promise<AsyncResponse<void>> => {
     const authStore = useAuthStore()
 
-    return await useFetch(apiUrl(`threads/posts/${reply.post}/replies/${reply.id}/`), {
+    const response = await useFetch(apiUrl(`threads/posts/${reply.post}/replies/${reply.id}/`), {
       method: 'DELETE',
       ...authOptions(authStore.account),
     })
+
+    delete allReplies.value[reply.id]
+    repliesByPost.value[reply.post] = repliesByPost.value[reply.post]
+      .filter(x => x !== reply.id)
+
+    return response
   }
 
   const getReplies = async (postId: number): Promise<AsyncResponse<Reply[]>> => {
     const response = await useFetch<Reply[]>(apiUrl(`threads/posts/${postId}/replies`))
-    response.data.value?.forEach((reply) => saveReply(postId, reply))
+    response.data.value?.forEach((reply) => saveReply(reply))
     return response
   }
 
@@ -113,3 +125,5 @@ export const useThreadsStore = defineStore('threads', () => {
     findRepliesByPost,
   }
 })
+
+export type PostsStore = ReturnType<typeof useThreadsStore>

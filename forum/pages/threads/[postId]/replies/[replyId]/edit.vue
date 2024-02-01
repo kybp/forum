@@ -17,15 +17,16 @@ if (!post.value) postsStore.getPost(postId)
 const reply = computed(() => postsStore.findReply(replyId))
 if (!reply.value) postsStore.getReplies(postId)
 
-const errors = ref<any>(null)
-
-const updateReply = async ({ body }: any) => {
+const updateReply = async ({ body, onSuccess, onError }: any) => {
   const { data: reply, error } = await postsStore.updateReply({
     id: replyId,
-    postId: postId,
+    postId,
     body,
     })
-    errors.value = error
+
+    if (error.value) onError(error.value)
+    else onSuccess()
+
   if (!reply) return
 
   navigateTo({
@@ -44,7 +45,6 @@ const updateReply = async ({ body }: any) => {
       @submit="updateReply"
       :initial-value="reply"
       :post-id="reply.post"
-      :errors="errors"
     />
   </div>
 </template>
