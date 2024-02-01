@@ -18,5 +18,6 @@ const createPost = async ({ title, body, tags, onSuccess, onError }: any) => {
 }
 </script>
 <template>
+  <h1>New Thread</h1>
   <PostForm @submit="createPost" />
 </template>

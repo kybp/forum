@@ -27,7 +27,7 @@ const updateReply = async ({ body, onSuccess, onError }: any) => {
   if (error.value) onError(error.value)
   else onSuccess()
 
-  if (!reply) return
+  if (!reply.value) return
 
   navigateTo({
     name: 'threads-id',

@@ -4,7 +4,7 @@ import type { Thread } from '@/api'
 import * as yup from 'yup'
 
 type Props = {
-  initialValue?: Thread
+  initialValue?: Thread | null
 }
 
 const props = defineProps<Props>()
@@ -39,13 +39,11 @@ const body = ref(props.initialValue?.body ?? '')
 </script>
 
 <template>
-  <h1>New Thread</h1>
-
   <Form
     ref="form"
     @submit="postThread"
     :validation-schema="schema"
-    :initial-values="initialValue"
+    :initial-values="initialValue ?? undefined"
     :class="{ 'mobile-preview': isMobilePreviewOpen }"
     data-testid="post-form"
   >
