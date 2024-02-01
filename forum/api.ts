@@ -54,3 +54,10 @@ export type ThreadFilters = {
   authors: number[]
   tags: string[]
 }
+
+export type CreateReplyParams = {
+  postId: number
+  body: string
+}
+
+export type UpdateReplyParams = CreateReplyParams & { id: number }

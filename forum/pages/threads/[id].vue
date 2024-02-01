@@ -23,6 +23,13 @@ const userIsAuthor = computed(() => {
 const author = computed(() => {
   return post.value ? usersStore.findUser(post.value.author) : null
   })
+
+const createReply = async ({ postId, body, onSuccess, onError }: any) => {
+  const { error } = await postsStore.createReply({ postId, body })
+
+  if (error.value) onError(error.value)
+  else onSuccess()
+}
 </script>
 
 <template>
@@ -33,7 +40,7 @@ const author = computed(() => {
     <h1 v-else>No Post</h1>
 
     <CollapsibleMenu v-if="userIsAuthor" class="menu">
-      <NuxtLink :to="`../posts/${postId}/edit`" class="button">
+      <NuxtLink :to="`/threads/${postId}/edit`" class="button">
         Edit
       </NuxtLink>
       <!-- <button @click="deletePost" class="button">Delete</button> -->
@@ -66,6 +73,7 @@ const author = computed(() => {
   <ReplyForm
     class="reply-form"
     v-if="authStore.isSignedIn"
+    @submit="createReply"
     :post-id="postId"
   />
 

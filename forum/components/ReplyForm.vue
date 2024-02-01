@@ -25,22 +25,20 @@ const form = ref<any>(null)
 
 const body = ref(props.initialValue?.body ?? '')
 
-      // const { replyErrors } = storeToRefs(postsStore)
-      const replyErrors = ref(null)
-
-watchEffect(() => {
-  if (replyErrors.value) form.value?.setErrors(replyErrors.value)
-})
-
 const createReply = async (
   formValues: any,
   { resetForm }: FormActions<{ body: string }>,
 ) => {
-  console.log('creating reply')
-  const { data, error } = await postsStore.createReply({ postId: props.postId, body: formValues.body })
-
-  if (data.value) resetForm({ values: { body: '' } })
-  if (error.value) form.value?.setErrors(error.value)
+        emit('submit', {
+        postId: props.postId,
+        body: formValues.body,
+        onSuccess: () => {
+        resetForm({ values: { body: '' } })
+        },
+        onError: (errors: any) => {
+        form.value?.setErrors(errors)
+        },
+        })
 }
 
 
