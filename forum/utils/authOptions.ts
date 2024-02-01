@@ -1,3 +1,5 @@
+import type { Account } from "~/api"
+
 export const authOptions = (account: Account | null) => {
   if (account === null) throw new Error('Not signed in')
 

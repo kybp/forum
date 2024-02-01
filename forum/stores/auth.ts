@@ -1,24 +1,5 @@
 import { defineStore } from 'pinia'
-
-export type Account = {
-  id: number
-  username: string
-  email: string
-  avatar: string
-  theme: string
-  token: string
-}
-
-export type SignInProps = {
-  username: string
-  password: string
-}
-
-export type RegisterProps = {
-  username: string
-  email: string
-  password: string
-}
+import type { Account } from '~/api'
 
 export const useAuthStore = defineStore('auth', () => {
   const cookie = useCookie<Account | null>('account')

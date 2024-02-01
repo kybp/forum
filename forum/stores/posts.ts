@@ -11,10 +11,30 @@ import type {
 export const usePostsStore = defineStore('posts', () => {
   const postList = ref<Thread[]>([])
 
+  /**
+   * Get a list of all posts from the backend and save it in the
+   * store.
+   */
   const getPostList = async (): Promise<void> => {
     const { data } = await useFetch<Thread[]>(apiUrl('threads/posts/'))
 
     postList.value = data.value ?? []
+  }
+
+  /**
+   * Get a single post from the backend by ID and save it in the
+   * store.
+   */
+  const getPost = async (id: number): Promise<void> => {
+    const { data } = await useFetch<Thread>(apiUrl(`threads/posts/${id}/`))
+    if (data.value) postList.value.push(data.value)
+  }
+
+  /**
+   * Look up and return a previously-fetched thread by ID.
+   */
+  const findPost = (id: number): Thread | null => {
+    return postList.value.find((x) => x.id === id) || null
   }
 
   const createPost = async (
@@ -33,13 +53,30 @@ export const usePostsStore = defineStore('posts', () => {
     return response
   }
 
-  const getPost = async (id: number): Promise<void> => {
-    const { data } = await useFetch<Thread>(apiUrl(`threads/posts/${id}/`))
-    if (data.value) postList.value.push(data.value)
-  }
+  const updatePost = async (
+    params: UpdatePostParams,
+  ): Promise<AsyncResponse<Thread>> => {
+    const authStore = useAuthStore()
 
-  const findPost = (id: number): Thread | null => {
-    return postList.value.find((x) => x.id === id) || null
+    const response = await useFetch<Thread>(
+      apiUrl(`threads/posts/${params.id}/`),
+      {
+        method: 'PUT',
+        body: params,
+        ...authOptions(authStore.account),
+      },
+    )
+
+    const post = response.data.value
+    if (post !== null) {
+      for (const storePost of postList.value) {
+        if (storePost.id === post.id) {
+          Object.assign(storePost, post)
+        }
+      }
+    }
+
+    return response
   }
 
   const togglePostReaction = (post: Thread, type: ReactionType) => {
@@ -149,6 +186,7 @@ export const usePostsStore = defineStore('posts', () => {
     findPost,
     getPost,
     createPost,
+    updatePost,
     togglePostReaction,
 
     // Replies

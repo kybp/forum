@@ -6,6 +6,8 @@ import type {
   Reaction,
   Thread,
   Reply,
+  CreatePostParams,
+  UpdatePostParams,
   CreateReplyParams,
   UpdateReplyParams,
 } from '@/api'
@@ -40,6 +42,25 @@ export const threadFactory = (props: Partial<Thread> = {}): Thread => ({
   reactions: [],
   user_reaction_type: 'like',
   tags: [faker.animal.cat()],
+  ...props,
+})
+
+export const createPostParamsFactory = (
+  props: Partial<CreatePostParams> = {},
+): CreatePostParams => ({
+  title: faker.lorem.sentence(),
+  body: faker.lorem.paragraph(),
+  tags: [faker.animal.bird()],
+  ...props,
+})
+
+export const updatePostParamsFactory = (
+  props: Partial<UpdatePostParams> = {},
+): UpdatePostParams => ({
+  id: makeId(),
+  title: faker.lorem.sentence(),
+  body: faker.lorem.paragraph(),
+  tags: [faker.animal.bird()],
   ...props,
 })
 
