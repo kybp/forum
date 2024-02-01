@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import type { Thread } from '@/api'
-  import { useAuthStore } from '@/stores/auth'
+import type { Thread } from '@/api'
+import { useAuthStore } from '@/stores/auth'
 import { usePostsStore } from '@/stores/posts'
 import { useUsersStore } from '@/stores/users'
 
@@ -22,7 +22,7 @@ const userIsAuthor = computed(() => {
 
 const author = computed(() => {
   return post.value ? usersStore.findUser(post.value.author) : null
-  })
+})
 
 const createReply = async ({ postId, body, onSuccess, onError }: any) => {
   const { error } = await postsStore.createReply({ postId, body })
@@ -40,9 +40,7 @@ const createReply = async ({ postId, body, onSuccess, onError }: any) => {
     <h1 v-else>No Post</h1>
 
     <CollapsibleMenu v-if="userIsAuthor" class="menu">
-      <NuxtLink :to="`/threads/${postId}/edit`" class="button">
-        Edit
-      </NuxtLink>
+      <NuxtLink :to="`/threads/${postId}/edit`" class="button"> Edit </NuxtLink>
       <!-- <button @click="deletePost" class="button">Delete</button> -->
     </CollapsibleMenu>
   </div>

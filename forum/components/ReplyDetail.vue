@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { Reply } from '@/api'
+import type { Reply } from '@/api'
 import { useAuthStore } from '@/stores/auth'
 import { usePostsStore } from '@/stores/posts'
 import { useUsersStore } from '@/stores/users'

@@ -2,13 +2,13 @@
 import { usePostsStore } from '@/stores/posts'
 
 definePageMeta({
-  name: 'edit-reply'
+  name: 'edit-reply',
 })
 
 const route = useRoute()
 const postsStore = usePostsStore()
 
-const postId =  +route.params.postId
+const postId = +route.params.postId
 const replyId = +route.params.replyId
 
 const post = computed(() => postsStore.findPost(postId))
@@ -22,10 +22,10 @@ const updateReply = async ({ body, onSuccess, onError }: any) => {
     id: replyId,
     postId,
     body,
-    })
+  })
 
-    if (error.value) onError(error.value)
-    else onSuccess()
+  if (error.value) onError(error.value)
+  else onSuccess()
 
   if (!reply) return
 

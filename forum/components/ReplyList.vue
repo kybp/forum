@@ -1,7 +1,7 @@
 <script setup lang="ts">
-  import { usePostsStore } from '@/stores/posts'
+import { usePostsStore } from '@/stores/posts'
 
-  type Props = {
+type Props = {
   postId: number
 }
 
@@ -9,9 +9,9 @@ const props = defineProps<Props>()
 
 const postsStore = usePostsStore()
 
-    if (!postsStore.findRepliesByPost(props.postId)) {
-    await postsStore.getReplies(props.postId)
-    }
+if (!postsStore.findRepliesByPost(props.postId)) {
+  await postsStore.getReplies(props.postId)
+}
 
 const replies = computed(() => postsStore.findRepliesByPost(props.postId))
 </script>
