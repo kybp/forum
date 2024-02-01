@@ -55,6 +55,14 @@ export type ThreadFilters = {
   tags: string[]
 }
 
+export type CreatePostParams = {
+  title: string
+  body: string
+  tags: string[]
+}
+
+export type UpdatePostParams = CreatePostParams & { id: number }
+
 export type CreateReplyParams = {
   postId: number
   body: string

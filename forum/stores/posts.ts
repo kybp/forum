@@ -1,15 +1,36 @@
 import { defineStore } from 'pinia'
 import type { Thread, ReactionType, Reply } from '@/api'
 import type { AsyncResponse } from '#imports'
-import type { CreateReplyParams, UpdateReplyParams } from '@/api'
+import type {
+  CreateReplyParams,
+  UpdateReplyParams,
+  CreatePostParams,
+  UpdatePostParams,
+} from '@/api'
 
-export const usePostsStore = defineStore('threads', () => {
+export const usePostsStore = defineStore('posts', () => {
   const postList = ref<Thread[]>([])
 
   const getPostList = async (): Promise<void> => {
     const { data } = await useFetch<Thread[]>(apiUrl('threads/posts/'))
 
     postList.value = data.value ?? []
+  }
+
+  const createPost = async (
+    params: CreatePostParams,
+  ): Promise<AsyncResponse<Thread>> => {
+    const authStore = useAuthStore()
+
+    const response = await useFetch<Thread>(apiUrl('threads/posts/'), {
+      method: 'POST',
+      body: params,
+      ...authOptions(authStore.account),
+    })
+
+    const post = response.data.value
+    if (post !== null) postList.value.unshift(post)
+    return response
   }
 
   const getPost = async (id: number): Promise<void> => {
@@ -122,11 +143,15 @@ export const usePostsStore = defineStore('threads', () => {
   }
 
   return {
+    // Posts
     postList,
     getPostList,
     findPost,
     getPost,
+    createPost,
     togglePostReaction,
+
+    // Replies
     getReplies,
     createReply,
     updateReply,
