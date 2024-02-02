@@ -1,5 +1,5 @@
 # Use pytest for running the tests
-pytest==7.4.3
+pytest==8.0.0
 # Use Playwright for controlling browsers during tests
 pytest-playwright==0.4.3
 # Use Faker for generating test data
