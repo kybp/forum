@@ -3,9 +3,11 @@ import { ErrorMessage, Form, Field } from 'vee-validate'
 import { storeToRefs } from 'pinia'
 import * as yup from 'yup'
 import { useAuthStore } from '@/stores/auth'
+import { useUsersStore } from '@/stores/users'
 import type { Account } from '@/api'
 
 const authStore = useAuthStore()
+const usersStore = useUsersStore()
 
 const schema = yup.object({
   username: yup.string().required(),
@@ -19,12 +21,11 @@ const schema = yup.object({
 const form: Ref<any> = ref(null)
 
 const register = async ({ username, email, password }: any) => {
-  // form.value?.validate()
+  form.value?.validate()
 
-  return await useFetch<Account>(apiUrl('users/accounts/'), {
-    method: 'POST',
-    body: { username, email, password },
-  })
+  const { error } = await usersStore.createUser({ username, email, password })
+
+  if (!error.value) navigateTo({ name: 'index' })
 }
 </script>
 
