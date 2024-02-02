@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Thread } from '@/types'
+import type { Thread } from '~/types'
 
 type Props = {
   threads: Thread[] | null

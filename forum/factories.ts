@@ -1,13 +1,13 @@
 import { faker } from '@faker-js/faker'
 
-import type { Account, ThreadFilters, Reaction, Thread, Reply } from '@/types'
+import type { Account, ThreadFilters, Reaction, Thread, Reply } from '~/types'
 import type {
   CreatePostParams,
   UpdatePostParams,
   CreateReplyParams,
   UpdateReplyParams,
-} from '@/stores/posts'
-import { makeId } from '@/test-utils'
+} from '~/stores/posts'
+import { makeId } from '~/test-utils'
 
 export const accountFactory = (props: Partial<Account> = {}): Account => ({
   id: Math.floor(Math.random()),

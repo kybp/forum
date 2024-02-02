@@ -2,9 +2,9 @@
 import { ErrorMessage, Field, Form } from 'vee-validate'
 import type { FormActions } from 'vee-validate'
 import * as yup from 'yup'
-import MarkdownBody from '@/components/MarkdownBody.vue'
-import { usePostsStore } from '@/stores/posts'
-import type { Reply } from '@/types'
+import MarkdownBody from '~/components/MarkdownBody.vue'
+import { usePostsStore } from '~/stores/posts'
+import type { Reply } from '~/types'
 
 type Props = {
   postId: number

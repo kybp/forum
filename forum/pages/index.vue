@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import ThreadList from '@/components/ThreadList.vue'
-import { useAuthStore } from '@/stores/auth'
-import { usePostsStore } from '@/stores/posts'
+import ThreadList from '~/components/ThreadList.vue'
+import { useAuthStore } from '~/stores/auth'
+import { usePostsStore } from '~/stores/posts'
 
 const authStore = useAuthStore()
 const postsStore = usePostsStore()

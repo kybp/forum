@@ -2,9 +2,9 @@
 import { ErrorMessage, Form, Field } from 'vee-validate'
 import { storeToRefs } from 'pinia'
 import * as yup from 'yup'
-import { useAuthStore } from '@/stores/auth'
-import { useUsersStore } from '@/stores/users'
-import type { Account } from '@/types'
+import { useAuthStore } from '~/stores/auth'
+import { useUsersStore } from '~/stores/users'
+import type { Account } from '~/types'
 
 const authStore = useAuthStore()
 const usersStore = useUsersStore()
