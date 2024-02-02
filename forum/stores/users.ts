@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { Account, User } from '@/types'
+import type { Account, User } from '~/types'
 
 export type CreateUserParams = {
   username: string

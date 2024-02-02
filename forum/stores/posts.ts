@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { Thread, ReactionType, Reply } from '@/types'
+import type { Thread, ReactionType, Reply } from '~/types'
 
 export type CreatePostParams = {
   title: string

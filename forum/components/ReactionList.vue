@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { reactionTypes } from '@/types'
-import type { Thread, ReactionType } from '@/types'
-import { useAuthStore } from '@/stores/auth'
-import { usePostsStore } from '@/stores/posts'
+import { reactionTypes } from '~/types'
+import type { Thread, ReactionType } from '~/types'
+import { useAuthStore } from '~/stores/auth'
+import { usePostsStore } from '~/stores/posts'
 
 type Props = {
   post: Thread

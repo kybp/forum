@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { usePostsStore } from '@/stores/posts'
+import { usePostsStore } from '~/stores/posts'
 
 definePageMeta({
   name: 'edit-reply',

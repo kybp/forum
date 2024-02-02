@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { Thread } from '@/types'
-import { useAuthStore } from '@/stores/auth'
-import { usePostsStore } from '@/stores/posts'
-import { useUsersStore } from '@/stores/users'
+import type { Thread } from '~/types'
+import { useAuthStore } from '~/stores/auth'
+import { usePostsStore } from '~/stores/posts'
+import { useUsersStore } from '~/stores/users'
 
 const authStore = useAuthStore()
 const postsStore = usePostsStore()

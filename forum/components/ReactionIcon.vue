@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { ReactionType } from '@/types'
+import type { ReactionType } from '~/types'
 
 type Props = {
   type: ReactionType
