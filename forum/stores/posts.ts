@@ -1,12 +1,20 @@
 import { defineStore } from 'pinia'
-import type { Thread, ReactionType, Reply } from '@/api'
-import type { AsyncResponse } from '#imports'
-import type {
-  CreateReplyParams,
-  UpdateReplyParams,
-  CreatePostParams,
-  UpdatePostParams,
-} from '@/api'
+import type { Thread, ReactionType, Reply } from '@/types'
+
+export type CreatePostParams = {
+  title: string
+  body: string
+  tags: string[]
+}
+
+export type UpdatePostParams = CreatePostParams & { id: number }
+
+export type CreateReplyParams = {
+  postId: number
+  body: string
+}
+
+export type UpdateReplyParams = CreateReplyParams & { id: number }
 
 export const usePostsStore = defineStore('posts', () => {
   const postList = ref<Thread[]>([])

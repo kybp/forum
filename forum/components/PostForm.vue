@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ErrorMessage, Field, FieldArray, Form } from 'vee-validate'
-import type { Thread } from '@/api'
+import type { Thread } from '@/types'
 import * as yup from 'yup'
 
 type Props = {

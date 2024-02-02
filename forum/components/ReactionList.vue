@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { reactionTypes } from '@/api'
-import type { Thread, ReactionType } from '@/api'
+import { reactionTypes } from '@/types'
+import type { Thread, ReactionType } from '@/types'
 import { useAuthStore } from '@/stores/auth'
 import { usePostsStore } from '@/stores/posts'
 

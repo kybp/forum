@@ -1,16 +1,12 @@
 import { faker } from '@faker-js/faker'
 
+import type { Account, ThreadFilters, Reaction, Thread, Reply } from '@/types'
 import type {
-  Account,
-  ThreadFilters,
-  Reaction,
-  Thread,
-  Reply,
   CreatePostParams,
   UpdatePostParams,
   CreateReplyParams,
   UpdateReplyParams,
-} from '@/api'
+} from '@/stores/posts'
 import { makeId } from '@/test-utils'
 
 export const accountFactory = (props: Partial<Account> = {}): Account => ({
