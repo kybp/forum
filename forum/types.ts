@@ -9,20 +9,6 @@ export type Account = {
   token: string
 }
 
-// xxx: This and RegisterParams are never used because right now that
-// component just fetches them itself. I should update it to be like
-// the others.
-export type SignInParams = {
-  username: string
-  password: string
-}
-
-export type RegisterParams = {
-  username: string
-  email: string
-  password: string
-}
-
 export type User = {
   id: number | null
   username: string
@@ -68,18 +54,3 @@ export type ThreadFilters = {
   authors: number[]
   tags: string[]
 }
-
-export type CreatePostParams = {
-  title: string
-  body: string
-  tags: string[]
-}
-
-export type UpdatePostParams = CreatePostParams & { id: number }
-
-export type CreateReplyParams = {
-  postId: number
-  body: string
-}
-
-export type UpdateReplyParams = CreateReplyParams & { id: number }

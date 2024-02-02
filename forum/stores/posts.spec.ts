@@ -9,7 +9,7 @@ import {
 } from '~/factories'
 import { makeId } from '~/test-utils'
 import type { AuthStore } from '~/stores/auth'
-import type { Account } from '~/api'
+import type { Account } from '~/types'
 
 const mockFetch = vi.hoisted(() => vi.fn())
 mockNuxtImport('useFetch', () => mockFetch)

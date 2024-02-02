@@ -9,7 +9,7 @@ import {
 } from '~/factories'
 import { makeId } from '~/test-utils'
 import type { AuthStore } from '~/stores/auth'
-import type { Account } from '~/api'
+import type { Account } from '~/types'
 import type { UsersStore } from './users'
 import { createUserParamsFactory } from './users.factories'
 
