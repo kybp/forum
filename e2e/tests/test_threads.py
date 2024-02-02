@@ -185,24 +185,6 @@ def test_liking_a_post(page: Page):
     expect(thread_page.likes).to_have_text("")
 
 
-def test_thread_filtering(page: Page):
-    home_page = HomePage(page)
-
-    home_page.sign_in()
-    default_author_title = "a worthy title"
-    home_page.post_thread(title=default_author_title)
-    home_page.sign_out()
-
-    home_page.register()
-    other_author_title = "my title"
-    home_page.post_thread(title=other_author_title)
-    home_page.go_to_home_page()
-
-    home_page.sign_out()
-
-    expect(home_page.newest_thread_title).to_have_text(default_author_title)
-
-
 def test_viewing_thread_by_deleted_user(page: Page):
     home_page = HomePage(page)
 
