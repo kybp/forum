@@ -4,7 +4,7 @@ gunicorn==21.2.0
 # Instrument Django for OpenTelemetry
 opentelemetry-instrumentation-django==0.42b0
 # Instrument database calls
-opentelemetry-instrumentation-psycopg2==0.42b0
+opentelemetry-instrumentation-psycopg2==0.44b0
 # Export data via OTLP
 opentelemetry-exporter-otlp-proto-http==1.21.0
 
