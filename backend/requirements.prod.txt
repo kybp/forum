@@ -6,7 +6,7 @@ opentelemetry-instrumentation-django==0.42b0
 # Instrument database calls
 opentelemetry-instrumentation-psycopg2==0.42b0
 # Export data via OTLP
-opentelemetry-exporter-otlp-proto-http==1.21.0
+opentelemetry-exporter-otlp-proto-http==1.23.0
 
 # These are the requirements from requirements.txt that are used by
 # the app at runtime.
