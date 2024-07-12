@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { ErrorMessage, Field, FieldArray, Form } from 'vee-validate'
-import type { Thread } from '@/stores/posts'
 import * as yup from 'yup'
+import MarkdownBody from '@/components/MarkdownBody.vue'
+import type { Thread } from '@/stores/posts'
 
 type Props = {
   initialValue?: Thread
@@ -25,8 +27,7 @@ const postThread = async ({ title, body, tags }: any) => {
       emit('submit', {
       title,
       body,
-      tags:
-      tags ?? [],
+      tags: tags ?? [],
       onSuccess() {},
       onError(error: any) {
         form.value?.setErrors(error)
