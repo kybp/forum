@@ -1,8 +1,8 @@
-import type { RouteLocation } from 'vue-router'
+import type { RouteLocationNormalized } from 'vue-router'
 
 export const routeLocationFactory = (
-  props: Partial<RouteLocation> = {},
-): RouteLocation => ({
+  props: Partial<RouteLocationNormalized> = {},
+): RouteLocationNormalized => ({
   matched: [],
   fullPath: '',
   query: {},

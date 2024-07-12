@@ -1,15 +1,15 @@
 import { createTestingPinia } from '@pinia/testing'
 import { setActivePinia } from 'pinia'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import type { RouteLocation } from 'vue-router'
+import type { RouteLocationNormalized } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import * as guards from './guards'
 import { accountFactory } from '@/stores/auth.factories'
 import { routeLocationFactory } from './factories'
 
 let authStore: ReturnType<typeof useAuthStore>
-let from: RouteLocation
-let to: RouteLocation
+let from: RouteLocationNormalized
+let to: RouteLocationNormalized
 
 beforeEach(() => {
   setActivePinia(createTestingPinia({ createSpy: vi.fn }))
