@@ -20,7 +20,7 @@
     "@opentelemetry/resources": "^1.18.1",
     "@opentelemetry/sdk-trace-base": "^1.18.1",
     "@opentelemetry/sdk-trace-web": "^1.18.1",
-    "@opentelemetry/semantic-conventions": "^1.18.1",
+    "@opentelemetry/semantic-conventions": "^1.25.1",
     "@vueuse/core": "^10.7.0",
     "axios": "^1.6.2",
     "markdown-it": "^13.0.2",
