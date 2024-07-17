@@ -13,7 +13,7 @@ defineProps<Props>()
   </div>
   <ul v-else class="thread-list">
     <li v-for="thread in threads" :key="thread.id" data-testid="thread">
-      <NuxtLink :to="`threads/${thread.id}`">
+      <NuxtLink :to="`/threads/${thread.id}`">
         {{ thread.title }}
       </NuxtLink>
     </li>

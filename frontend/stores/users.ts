@@ -15,7 +15,7 @@ export const useUsersStore = defineStore('users', () => {
   const createUser = async (
     params: CreateUserParams,
   ): Promise<AsyncResponse<User>> => {
-    const response = await useFetch<Account>(apiUrl('users/accounts/'), {
+    const response = await useFetch<Account>('/api/users/accounts/', {
       method: 'POST',
       body: params,
     })
@@ -28,7 +28,7 @@ export const useUsersStore = defineStore('users', () => {
   }
 
   const getUser = async (id: number): Promise<AsyncResponse<User>> => {
-    const response = await useFetch<User>(apiUrl(`users/users/${id}/`))
+    const response = await useFetch<User>(`/api/users/users/${id}/`)
     if (response.data.value !== null) users.value[id] = response.data.value
     return response
   }
@@ -42,6 +42,7 @@ export const useUsersStore = defineStore('users', () => {
   }
 
   return {
+    users,
     createUser,
     getUser,
     findUser,

@@ -22,6 +22,7 @@ const register = async ({ username, email, password }: any) => {
   const { error } = await usersStore.createUser({ username, email, password })
 
   if (!error.value) navigateTo({ name: 'index' })
+  else form.value?.setErrors(error.value.data.data)
 }
 </script>
 

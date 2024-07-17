@@ -24,8 +24,7 @@ export const usePostsStore = defineStore('posts', () => {
    * store.
    */
   const getPostList = async (): Promise<void> => {
-    const { data } = await useFetch<Thread[]>(apiUrl('threads/posts/'))
-
+    const { data } = await useFetch<Thread[]>('/api/threads/posts/')
     postList.value = data.value ?? []
   }
 
@@ -34,7 +33,7 @@ export const usePostsStore = defineStore('posts', () => {
    * store.
    */
   const getPost = async (id: number): Promise<void> => {
-    const { data } = await useFetch<Thread>(apiUrl(`threads/posts/${id}/`))
+    const { data } = await useFetch<Thread>(`/api/threads/posts/${id}/`)
     if (data.value) postList.value.push(data.value)
   }
 
@@ -50,10 +49,9 @@ export const usePostsStore = defineStore('posts', () => {
   ): Promise<AsyncResponse<Thread>> => {
     const authStore = useAuthStore()
 
-    const response = await useFetch<Thread>(apiUrl('threads/posts/'), {
+    const response = await useFetch<Thread>('/api/threads/posts/', {
       method: 'POST',
-      body: params,
-      ...authOptions(authStore.account),
+      body: { params, account: authStore.account },
     })
 
     const post = response.data.value
@@ -67,11 +65,10 @@ export const usePostsStore = defineStore('posts', () => {
     const authStore = useAuthStore()
 
     const response = await useFetch<Thread>(
-      apiUrl(`threads/posts/${params.id}/`),
+      `/api/threads/posts/${params.id}/`,
       {
         method: 'PUT',
-        body: params,
-        ...authOptions(authStore.account),
+        body: { params, account: authStore.account },
       },
     )
 
@@ -116,11 +113,10 @@ export const usePostsStore = defineStore('posts', () => {
     const authStore = useAuthStore()
 
     const response = await useFetch<Reply>(
-      apiUrl(`threads/posts/${params.postId}/replies/`),
+      `/api/threads/posts/${params.postId}/replies/`,
       {
         method: 'POST',
-        body: params,
-        ...authOptions(authStore.account),
+        body: { params, account: authStore.account },
       },
     )
 
@@ -136,10 +132,10 @@ export const usePostsStore = defineStore('posts', () => {
     const update = { body: params.body }
 
     const response = await useFetch<Reply>(
-      apiUrl(`threads/posts/${params.postId}/replies/${params.id}/`),
+      `/api/threads/posts/${params.postId}/replies/${params.id}/`,
       {
         method: 'PUT',
-        body: update,
+        body: { params: update, account: authStore.account },
         ...authOptions(authStore.account),
       },
     )
@@ -157,10 +153,10 @@ export const usePostsStore = defineStore('posts', () => {
     const authStore = useAuthStore()
 
     const response = await useFetch(
-      apiUrl(`threads/posts/${reply.post}/replies/${reply.id}/`),
+      `/api/threads/posts/${reply.post}/replies/${reply.id}/`,
       {
         method: 'DELETE',
-        ...authOptions(authStore.account),
+        body: { account: authStore.account },
       },
     )
 
@@ -176,7 +172,7 @@ export const usePostsStore = defineStore('posts', () => {
     postId: number,
   ): Promise<AsyncResponse<Reply[]>> => {
     const response = await useFetch<Reply[]>(
-      apiUrl(`threads/posts/${postId}/replies`),
+      `/api/threads/posts/${postId}/replies`,
     )
     response.data.value?.forEach((reply) => saveReply(reply))
     return response
