@@ -1,0 +1,22 @@
+FROM node:20-alpine as build
+
+# TODO
+#
+# Copy our robots.txt into the build so Nginx will serve it
+#
+# COPY robots.txt ./dist/
+
+# Run in a separate stage that isn't bloated with our dependencies
+FROM nginx:1.25-alpine
+
+# Process environment variables in nginx.conf
+ARG DOMAIN
+ENV DOMAIN $DOMAIN
+ARG INTERNAL_BACKEND_HOST
+ENV INTERNAL_BACKEND_HOST $INTERNAL_BACKEND_HOST
+ARG OTLP_HOST
+ENV OTLP_HOST $OTLP_HOST
+ARG OTLP_TOKEN
+ENV OTLP_TOKEN $OTLP_TOKEN
+COPY nginx.conf nginx.conf.template
+RUN envsubst '$INTERNAL_BACKEND_HOST $INTERNAL_FRONTEND_HOST $DOMAIN $OTLP_HOST $OTLP_TOKEN' < nginx.conf.template > /etc/nginx/conf.d/default.conf

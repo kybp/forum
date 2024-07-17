@@ -1,10 +1,14 @@
-# Ignore logs
+# Nuxt dev/build outputs
+.output
+.data
+.nuxt
+.nitro
+.cache
+dist
+
+# Node dependencies
+node_modules
+
+# Logs
+logs
 *.log
-npm-debug.log*
-
-# Ignore compiler output
-dist/
-.vite/
-
-# Ignore installed dependencies
-node_modules/

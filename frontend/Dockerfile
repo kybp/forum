@@ -4,7 +4,7 @@ WORKDIR /usr/src/app
 
 # Install dependencies before copying the rest of the app, so that
 # this step can be cached.
-COPY package.json ./
+COPY package.json package-lock.json ./
 RUN npm install
 
 # Copy the rest of the project.
