@@ -16,6 +16,14 @@ defineProps<Props>()
       <NuxtLink :to="`/threads/${thread.id}`">
         {{ thread.title }}
       </NuxtLink>
+
+      <div class="tags" data-testid="tags">
+        <PostTag
+          v-for="tag in thread.tags"
+          :key="`${thread.id}-${tag}`"
+          :value="tag"
+        />
+      </div>
     </li>
   </ul>
 </template>
