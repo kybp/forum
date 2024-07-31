@@ -25,8 +25,6 @@ const deleteAccount = async () => {
     password: password.value,
   })
 
-  console.log(response)
-
   if (response.error.value) {
     error.value = response.error.value.data.non_field_errors[0]
   } else {

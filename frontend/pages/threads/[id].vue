@@ -2,7 +2,6 @@
 import { useAuthStore } from '~/stores/auth'
 import { usePostsStore } from '~/stores/posts'
 import { useUsersStore } from '~/stores/users'
-import type { Account } from '~/types'
 
 const authStore = useAuthStore()
 const postsStore = usePostsStore()
@@ -27,7 +26,8 @@ const author = computed(() => {
 watch(
   () => author.value,
   (value) => {
-    if (value === undefined) usersStore.getUser(value)
+    if (post.value === null || post.value.author === null) return
+    if (value === undefined) usersStore.getUser(post.value.author)
   },
   { immediate: true },
 )

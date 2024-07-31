@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import type { Account } from '~/types'
-import { authOptions } from '~/utils'
 import { useUsersStore } from './users'
 
 export type SignInParams = {

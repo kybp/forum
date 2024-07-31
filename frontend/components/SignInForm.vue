@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ErrorMessage, Field, Form } from 'vee-validate'
 import * as yup from 'yup'
-import type { Account } from '~/types'
 import { useAuthStore } from '~/stores/auth'
 
 const authStore = useAuthStore()
