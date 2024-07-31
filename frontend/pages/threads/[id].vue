@@ -27,7 +27,7 @@ const author = computed(() => {
 watch(
   () => author.value,
   (value) => {
-    if (value === undefined) usersStore.getUser(post.value.author)
+    if (value === undefined) usersStore.getUser(value)
   },
   { immediate: true },
 )
@@ -40,6 +40,8 @@ const createReply = async ({ postId, body, onSuccess, onError }: any) => {
 }
 
 const deletePost = async () => {
+  if (post.value === null) throw new Error('No post to delete')
+
   await postsStore.deletePost(post.value)
 }
 </script>

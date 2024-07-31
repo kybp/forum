@@ -112,7 +112,7 @@ describe('updatePost', () => {
 
   it('saves the returned post in the store', async () => {
     const post = threadFactory()
-    store.postList = [post]
+    // store.postList = [post]
 
     const newTitle = post.title + ' but different'
     mockFetch.mockResolvedValueOnce({

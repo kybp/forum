@@ -20,13 +20,15 @@ const error = ref<string | null>(null)
 const deleteAccount = async () => {
   if (!authStore.account) throw new Error('Not signed in')
 
-  await authStore.signIn({
+  const response = await authStore.signIn({
     username: authStore.account.username,
     password: password.value,
   })
 
-  if (authStore.signInErrors) {
-    error.value = authStore.signInErrors.non_field_errors[0]
+  console.log(response)
+
+  if (response.error.value) {
+    error.value = response.error.value.data.non_field_errors[0]
   } else {
     authStore.deleteAccount()
   }
