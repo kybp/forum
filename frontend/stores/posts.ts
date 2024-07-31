@@ -90,10 +90,43 @@ export const usePostsStore = defineStore('posts', () => {
     return response
   }
 
-  const togglePostReaction = (post: Thread, type: ReactionType) => {
-    void post
-    void type
-    // TODO
+  const togglePostReaction = async (
+    { id, user_reaction_type }: Thread,
+    type: ReactionType,
+  ) => {
+    const { account } = useAuthStore()
+
+    if (account === null) throw new Error('Not signed in')
+    const userId = account.id
+
+    const post = allPosts.value.find(x => x.id === id)
+
+    if (post === undefined) {
+      throw new Error('Toggling reaction on invalid post')
+    }
+
+    if (user_reaction_type && user_reaction_type === type) {
+      await useFetch(`/api/threads/posts/${id}/reactions/${type}`, {
+        method: 'DELETE',
+        body: { account },
+      })
+      post.user_reaction_type = null
+      post.reactions = post.reactions.filter((r) => r.user !== userId)
+    } else {
+      await useFetch<null>(`/api/threads/posts/${id}/reactions/`, {
+        method: 'POST',
+        body: { params: { type }, account },
+      })
+      post.user_reaction_type = type
+
+      if (user_reaction_type) {
+        const reaction = post.reactions.find((r) => r.user === userId)
+        if (!reaction) throw new Error('Reaction not found')
+        reaction.type = type
+      } else {
+        post.reactions.push({ user: userId, content: id, type })
+      }
+    }
   }
 
   /// Replies
