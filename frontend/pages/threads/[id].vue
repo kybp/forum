@@ -34,6 +34,10 @@ const createReply = async ({ postId, body, onSuccess, onError }: any) => {
   if (error.value) onError(error.value)
   else onSuccess()
 }
+
+const deletePost = async () => {
+  await postsStore.deletePost(post.value)
+}
 </script>
 
 <template>
@@ -45,7 +49,7 @@ const createReply = async ({ postId, body, onSuccess, onError }: any) => {
 
     <CollapsibleMenu v-if="userIsAuthor" class="menu">
       <NuxtLink :to="`/threads/${postId}/edit`" class="button"> Edit </NuxtLink>
-      <!-- <button @click="deletePost" class="button">Delete</button> -->
+      <button @click="deletePost" class="button">Delete</button>
     </CollapsibleMenu>
   </div>
 

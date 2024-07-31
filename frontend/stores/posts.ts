@@ -90,6 +90,20 @@ export const usePostsStore = defineStore('posts', () => {
     return response
   }
 
+  const deletePost = async ({ id }: Thread) => {
+    const { account } = useAuthStore()
+
+    await useFetch(`/api/threads/posts/${id}/`, {
+      method: 'DELETE',
+      body: { account },
+    })
+
+    const post = findPost(id)!
+    post.is_deleted = true
+    post.author = null
+    post.body = '[deleted]'
+  }
+
   const togglePostReaction = async (
     { id, user_reaction_type }: Thread,
     type: ReactionType,
@@ -233,6 +247,7 @@ export const usePostsStore = defineStore('posts', () => {
     getPost,
     createPost,
     updatePost,
+    deletePost,
     togglePostReaction,
 
     // Replies
