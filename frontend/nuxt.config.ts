@@ -4,4 +4,15 @@ export default defineNuxtConfig({
   css: ['./assets/breakpoints.css', './assets/base.css', './assets/main.css'],
   modules: ['@pinia/nuxt', '@nuxt/test-utils/module'],
   experimental: { asyncContext: true },
+  postcss: {
+    plugins: {
+      '@csstools/postcss-global-data': {
+        files: [
+          'assets/breakpoints.css',
+        ],
+      },
+      'postcss-nested': {},
+      'postcss-custom-media': {},
+    }
+  }
 })
