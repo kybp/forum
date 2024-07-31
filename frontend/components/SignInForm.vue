@@ -19,7 +19,10 @@ const signIn = async ({ username, password }: any) => {
   const { error } = await authStore.signIn({ username, password })
   if (error.value) form.value?.setErrors(error.value.data.data)
 
-  if (route.path === '/sign-in') navigateTo('/')
+  if (route.path === '/sign-in') {
+    const urlParams = new URLSearchParams(window.location.search);
+    navigateTo(urlParams.get('redirectTo'))
+  }
 }
 
 watch(
