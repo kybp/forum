@@ -17,7 +17,13 @@ export type CreateReplyParams = {
 export type UpdateReplyParams = CreateReplyParams & { id: number }
 
 export const usePostsStore = defineStore('posts', () => {
-  const postList = ref<Thread[]>([])
+  const allPosts = ref<Thread[]>([])
+
+  const postList = computed(() => {
+    return Object.values(allPosts.value)
+      .filter((x) => !x.is_deleted)
+      .sort((x, y) => +new Date(y.date_posted) - +new Date(x.date_posted))
+  })
 
   /**
    * Get a list of all posts from the backend and save it in the
@@ -25,7 +31,7 @@ export const usePostsStore = defineStore('posts', () => {
    */
   const getPostList = async (): Promise<void> => {
     const { data } = await useFetch<Thread[]>('/api/threads/posts/')
-    postList.value = data.value ?? []
+    allPosts.value = data.value ?? []
   }
 
   /**
@@ -34,14 +40,14 @@ export const usePostsStore = defineStore('posts', () => {
    */
   const getPost = async (id: number): Promise<void> => {
     const { data } = await useFetch<Thread>(`/api/threads/posts/${id}/`)
-    if (data.value) postList.value.push(data.value)
+    if (data.value) allPosts.value.push(data.value)
   }
 
   /**
    * Look up and return a previously-fetched thread by ID.
    */
   const findPost = (id: number): Thread | null => {
-    return postList.value.find((x) => x.id === id) || null
+    return allPosts.value.find((x) => x.id === id) || null
   }
 
   const createPost = async (
@@ -55,7 +61,7 @@ export const usePostsStore = defineStore('posts', () => {
     })
 
     const post = response.data.value
-    if (post !== null) postList.value.unshift(post)
+    if (post !== null) allPosts.value.unshift(post)
     return response
   }
 
@@ -74,7 +80,7 @@ export const usePostsStore = defineStore('posts', () => {
 
     const post = response.data.value
     if (post !== null) {
-      for (const storePost of postList.value) {
+      for (const storePost of allPosts.value) {
         if (storePost.id === post.id) {
           Object.assign(storePost, post)
         }
@@ -187,6 +193,7 @@ export const usePostsStore = defineStore('posts', () => {
 
   return {
     // Posts
+    allPosts,
     postList,
     getPostList,
     findPost,
