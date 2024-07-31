@@ -1,4 +1,4 @@
-import { Account } from "~/types"
+import type { Account } from "~/types"
 import { apiUrl, authOptions } from "~/utils"
 
 export default defineEventHandler(async (event) => {

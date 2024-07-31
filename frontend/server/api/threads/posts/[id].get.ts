@@ -1,4 +1,4 @@
-import { Thread } from "~/types"
+import type { Thread } from "~/types"
 import { apiUrl } from "~/utils"
 
 export default defineEventHandler((event) => {
