@@ -1,5 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  compatibilityDate: '2024-07-31',
   devtools: { enabled: true },
   css: ['./assets/breakpoints.css', './assets/base.css', './assets/main.css'],
   modules: ['@pinia/nuxt', '@nuxt/test-utils/module'],
