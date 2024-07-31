@@ -6,6 +6,8 @@ import { useAuthStore } from '~/stores/auth'
 
 const authStore = useAuthStore()
 
+const route = useRoute()
+
 const schema = yup.object({
   username: yup.string().required(),
   password: yup.string().required(),
@@ -17,6 +19,13 @@ const signIn = async ({ username, password }: any) => {
   const { error } = await authStore.signIn({ username, password })
   if (error.value) form.value?.setErrors(error.value.data.data)
 }
+
+watch(
+  () => route.path,
+  () => {
+    if (form.value) form.value.resetForm({ values: form.value.getValues() })
+  },
+)
 </script>
 
 <template>
