@@ -53,7 +53,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     const response = await useFetch<Account>(`/api/users/accounts/${account.value.id}/`, {
       method: 'PATCH',
-      body: { params, account },
+      body: { params, account: account.value },
     })
 
     if (response.data.value === null) throw new Error(`${response.error.value}`)
@@ -66,7 +66,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     await useFetch(`/api/users/accounts/${account.value.id}/`, {
       method: 'DELETE',
-      body: { account },
+      body: { account: account.value },
     })
     await usersStore.getUser(account.value.id)
 
