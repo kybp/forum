@@ -11,8 +11,8 @@ const className = computed(() => {
 
 useHead({
   htmlAttrs: {
-    class: className
-  }
+    class: className,
+  },
 })
 </script>
 

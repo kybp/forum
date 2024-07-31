@@ -26,10 +26,10 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   const signIn = async ({ username, password }: SignInParams) => {
-    const response = await useFetch<Account | null>(
-      '/api/users/token/',
-      { method: 'POST', body: { username, password } },
-    )
+    const response = await useFetch<Account | null>('/api/users/token/', {
+      method: 'POST',
+      body: { username, password },
+    })
 
     if (response.data.value) setAccount(response.data.value)
 
@@ -51,10 +51,13 @@ export const useAuthStore = defineStore('auth', () => {
   const updateAccount = async (params: Partial<Account>) => {
     if (!account.value) throw new Error('Not signed in')
 
-    const response = await useFetch<Account>(`/api/users/accounts/${account.value.id}/`, {
-      method: 'PATCH',
-      body: { params, account: account.value },
-    })
+    const response = await useFetch<Account>(
+      `/api/users/accounts/${account.value.id}/`,
+      {
+        method: 'PATCH',
+        body: { params, account: account.value },
+      },
+    )
 
     if (response.data.value === null) throw new Error(`${response.error.value}`)
 

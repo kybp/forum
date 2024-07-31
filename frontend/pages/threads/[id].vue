@@ -24,9 +24,13 @@ const author = computed(() => {
   return post.value ? usersStore.findUser(post.value.author) : null
 })
 
-watch(() => author.value, (value) => {
-  if (value === undefined) usersStore.getUser(post.value.author)
-}, { immediate: true })
+watch(
+  () => author.value,
+  (value) => {
+    if (value === undefined) usersStore.getUser(post.value.author)
+  },
+  { immediate: true },
+)
 
 const createReply = async ({ postId, body, onSuccess, onError }: any) => {
   const { error } = await postsStore.createReply({ postId, body })

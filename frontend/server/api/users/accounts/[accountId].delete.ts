@@ -1,4 +1,4 @@
-import { apiUrl, authOptions } from "~/utils"
+import { apiUrl, authOptions } from '~/utils'
 
 export default defineEventHandler(async (event) => {
   const { account } = await readBody(event)

@@ -113,7 +113,7 @@ export const usePostsStore = defineStore('posts', () => {
     if (account === null) throw new Error('Not signed in')
     const userId = account.id
 
-    const post = allPosts.value.find(x => x.id === id)
+    const post = allPosts.value.find((x) => x.id === id)
 
     if (post === undefined) {
       throw new Error('Toggling reaction on invalid post')

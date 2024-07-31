@@ -1,4 +1,4 @@
-import type { Account } from "~/types"
+import type { Account } from '~/types'
 
 export type AsyncResponse<T> = ReturnType<typeof useFetch<T | null>>
 

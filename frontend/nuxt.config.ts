@@ -7,12 +7,10 @@ export default defineNuxtConfig({
   postcss: {
     plugins: {
       '@csstools/postcss-global-data': {
-        files: [
-          'assets/breakpoints.css',
-        ],
+        files: ['assets/breakpoints.css'],
       },
       'postcss-nested': {},
       'postcss-custom-media': {},
-    }
-  }
+    },
+  },
 })

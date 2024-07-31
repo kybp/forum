@@ -1,9 +1,7 @@
 import { mockNuxtImport } from '@nuxt/test-utils/runtime'
 import { createPinia, setActivePinia } from 'pinia'
 import { vi, expect, it, describe, beforeEach } from 'vitest'
-import {
-  accountFactory,
-} from '~/factories'
+import { accountFactory } from '~/factories'
 import type { AuthStore } from '~/stores/auth'
 import type { UsersStore } from './users'
 import { createUserParamsFactory } from './users.factories'

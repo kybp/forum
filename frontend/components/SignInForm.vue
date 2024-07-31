@@ -20,7 +20,7 @@ const signIn = async ({ username, password }: any) => {
   if (error.value) form.value?.setErrors(error.value.data.data)
 
   if (route.path === '/sign-in') {
-    const urlParams = new URLSearchParams(window.location.search);
+    const urlParams = new URLSearchParams(window.location.search)
     navigateTo(urlParams.get('redirectTo'))
   }
 }
