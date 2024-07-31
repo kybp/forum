@@ -7,7 +7,7 @@ import { usePostsStore } from '~/stores/posts'
 import { wrap } from '~/test-utils'
 import { replyFactory } from '~/factories'
 
-let wrapper: VueWrapper<typeof ReplyList>
+let wrapper: VueWrapper
 let postsStore: ReturnType<typeof usePostsStore>
 
 const postId = 10

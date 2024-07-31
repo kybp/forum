@@ -1,5 +1,5 @@
 import { createTestingPinia } from '@pinia/testing'
-import { VueWrapper } from '@vue/test-utils'
+import { DOMWrapper, VueWrapper } from '@vue/test-utils'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { vi } from 'vitest'
 
@@ -16,6 +16,9 @@ export const wrap = async <T>(
 
   return result as any
 }
+
+/** A type for an element returned by `get` or `findAll`. */
+export type Wrapper<T extends Node = any> = Omit<DOMWrapper<T>, "exists">
 
 export const mockResponse = <T>(data: T): AsyncResponse<T | null> => {
   return {
