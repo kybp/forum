@@ -2,6 +2,7 @@
 import { usePostsStore } from '~/stores/posts'
 
 definePageMeta({
+  middleware: 'check-signed-in',
   name: 'edit-reply',
 })
 

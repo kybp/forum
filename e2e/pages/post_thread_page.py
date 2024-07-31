@@ -13,7 +13,7 @@ class PostThreadPage(BasePage):
         self.form = PostForm(self.page)
 
     def navigate(self):
-        self.page.goto(f"{config.HOST}/post")
+        self.page.goto(f"{config.HOST}/threads/new")
 
     def post_thread(self, title: str, body: str, tags: Iterable[str]):
         self.form.title_input.fill(title)

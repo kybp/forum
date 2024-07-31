@@ -68,10 +68,24 @@ def test_redirected_back_from_unauthorized_after_sign_in(page: Page):
     expect(post_thread_page.form.body_input).to_be_visible()
 
 
+def test_redirected_home_from_direct_unauthorized_when_signed_in(page: Page):
+    home_page = HomePage(page)
+    home_page.sign_in()
+    page.goto(f"{config.HOST}/sign-in")
+    expect(home_page.post_thread_button).to_be_visible()
+
+
 def test_redirected_home_from_direct_unauthorized_after_sign_in(page: Page):
     page.goto(f"{config.HOST}/sign-in")
     home_page = HomePage(page, navigate=False)
     home_page.sign_in()
+    expect(home_page.post_thread_button).to_be_visible()
+
+
+def test_redirected_home_from_direct_register_when_signed_in(page: Page):
+    home_page = HomePage(page)
+    home_page.sign_in()
+    page.goto(f"{config.HOST}/register")
     expect(home_page.post_thread_button).to_be_visible()
 
 

@@ -3,6 +3,10 @@ import { ErrorMessage, Form, Field } from 'vee-validate'
 import * as yup from 'yup'
 import { useUsersStore } from '~/stores/users'
 
+definePageMeta({
+  middleware: 'check-not-signed-in',
+})
+
 const usersStore = useUsersStore()
 
 const schema = yup.object({

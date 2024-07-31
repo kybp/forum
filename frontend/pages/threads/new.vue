@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { usePostsStore } from '~/stores/posts'
 
+definePageMeta({
+  middleware: 'check-signed-in',
+})
+
 const postsStore = usePostsStore()
 
 const createPost = async ({ title, body, tags, onSuccess, onError }: any) => {
