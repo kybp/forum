@@ -1,3 +1,21 @@
+<script setup lang="ts">
+import { useAuthStore } from '@/stores/auth'
+
+const authStore = useAuthStore()
+
+const className = computed(() => {
+  const theme = authStore.account?.theme
+
+  return theme ? `${theme}-theme` : ''
+})
+
+useHead({
+  htmlAttrs: {
+    class: className
+  }
+})
+</script>
+
 <template>
   <header>
     <nav>
