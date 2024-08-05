@@ -7,4 +7,4 @@ Faker==24.3.0
 # Use flake8 for checking code quality
 flake8==7.0.0
 # Use black for code formatting
-black==24.3.0
+black==24.8.0
