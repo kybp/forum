@@ -1,4 +1,4 @@
-import { flushPromises, VueWrapper } from '@vue/test-utils'
+import { flushPromises, type VueWrapper } from '@vue/test-utils'
 import { beforeEach, expect, it, test } from 'vitest'
 import waitForExpect from 'wait-for-expect'
 
@@ -13,9 +13,9 @@ let bodyField: Wrapper<HTMLTextAreaElement>
 
 beforeEach(async () => {
   wrapper = await wrap(PostForm)
-  titleField = wrapper.get('input')
-  addTagButton = wrapper.get('button')
-  bodyField = wrapper.get('textarea')
+  titleField = wrapper.find('input')
+  addTagButton = wrapper.find('button')
+  bodyField = wrapper.find('textarea')
   await titleField.setValue('text')
 })
 

@@ -14,7 +14,9 @@ const signOut = () => authStore.signOut()
     <NuxtLink v-if="account" to="/account" data-testid="account-link">
       {{ account.username }}
     </NuxtLink>
-    <button v-if="account" @click="signOut" class="button">Sign out</button>
+    <button v-if="account" @click="signOut" class="button sign-out">
+      Sign out
+    </button>
     <div v-else class="forms">
       <SignInForm />
     </div>
