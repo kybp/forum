@@ -44,7 +44,14 @@ unit_test() {
 e2e() {
     backend_run python manage.py flush --no-input
     backend_run python manage.py seed
-    e2e_run python -m pytest $*
+    # FIXME: We need to run with slowmo because otherwise tests fail
+    # because typing in inputs, and possibly other input events, don't
+    # have an effect immediately after the page loads. I can't figure
+    # out why Playwright's auto-waiting isn't working, but it must
+    # have something to do with SSR. Maybe the inputs are going to an
+    # element that gets replaced or something. If that's right, is
+    # there some way to detect when that's happened?
+    e2e_run python -m pytest --slowmo=500 $*
 }
 
 install_local_e2e() {
