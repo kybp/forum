@@ -12,7 +12,7 @@ let addTagButton: Wrapper<HTMLButtonElement>
 let bodyField: Wrapper<HTMLTextAreaElement>
 
 beforeEach(async () => {
-  wrapper = await wrap(PostForm, { propsData: { errors: null } })
+  wrapper = await wrap(PostForm)
   titleField = wrapper.get('input')
   addTagButton = wrapper.get('button')
   bodyField = wrapper.get('textarea')

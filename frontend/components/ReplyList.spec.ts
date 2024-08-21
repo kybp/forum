@@ -13,7 +13,7 @@ let postsStore: ReturnType<typeof usePostsStore>
 const postId = 10
 
 beforeEach(async () => {
-  wrapper = await wrap(ReplyList, { propsData: { postId } })
+  wrapper = await wrap(ReplyList, { props: { postId } })
   postsStore = usePostsStore()
   postsStore.getReplies = vi.fn()
 })
