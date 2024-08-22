@@ -1,5 +1,8 @@
 FROM node:20-alpine
 
+ARG VITE_API_HOST
+ENV VITE_API_HOST $VITE_API_HOST
+
 WORKDIR /usr/src/app
 
 # Install dependencies before copying the rest of the app, so that

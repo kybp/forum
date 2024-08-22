@@ -15,7 +15,10 @@ services:
     depends_on:
       - frontend
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      args:
+        VITE_API_HOST: http://backend:8000/api/
     command: npm run dev
     volumes:
       - /usr/src/app/node_modules/

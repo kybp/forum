@@ -41,7 +41,7 @@ jobs:
             INTERNAL_BACKEND_HOST=forum_backend
             OTLP_HOST=${{ secrets.OTLP_HOST }}
             OTLP_TOKEN=${{ secrets.OTLP_TOKEN }}
-            VITE_API_HOST=https://${{ secrets.DOMAIN }}/api/
+            VITE_API_HOST=http://forum_backend/api/
       - name: Build backend Docker image
         uses: docker/build-push-action@v5
         with:
