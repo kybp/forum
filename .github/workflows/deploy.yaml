@@ -26,6 +26,22 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build nginx Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: nginx
+          file: nginx/Dockerfile.prod
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/nginx-prod:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/nginx-prod:buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/nginx-prod:buildcache,mode=max
+          build-args: |
+            DOMAIN=${{ secrets.DOMAIN }}
+            VERSION=$VERSION
+            INTERNAL_FRONTEND_HOST=forum_frontend
+            INTERNAL_BACKEND_HOST=forum_backend
+            OTLP_HOST=${{ secrets.OTLP_HOST }}
+            OTLP_TOKEN=${{ secrets.OTLP_TOKEN }}
       - name: Build frontend Docker image
         uses: docker/build-push-action@v5
         with:
@@ -36,12 +52,7 @@ jobs:
           cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/frontend-prod:buildcache
           cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/frontend-prod:buildcache,mode=max
           build-args: |
-            DOMAIN=${{ secrets.DOMAIN }}
-            VERSION=$VERSION
-            INTERNAL_BACKEND_HOST=forum_backend
-            OTLP_HOST=${{ secrets.OTLP_HOST }}
-            OTLP_TOKEN=${{ secrets.OTLP_TOKEN }}
-            VITE_API_HOST=http://forum_backend/api/
+            VITE_API_HOST=https://${{ secrets.DOMAIN }}/be/
       - name: Build backend Docker image
         uses: docker/build-push-action@v5
         with:
@@ -95,6 +106,7 @@ jobs:
             sudo docker stack deploy forum -c stack.yaml
             sudo docker service update --image ${{ secrets.DOCKERHUB_USERNAME }}/backend-prod forum_backend
             sudo docker service update --image ${{ secrets.DOCKERHUB_USERNAME }}/frontend-prod forum_frontend
+            sudo docker service update --image ${{ secrets.DOCKERHUB_USERNAME }}/nginx-prod forum_nginx
 
             backend=$(sudo docker ps --filter name=forum_backend --format '{{.ID}}' | head -1)
 

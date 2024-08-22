@@ -21,7 +21,7 @@ def test_returns_201_when_valid(
     user_client: APIClient, create_reply_props: dict, post: Post
 ):
     response = user_client.post(
-        f"/api/threads/posts/{post.id}/replies/", create_reply_props
+        f"/be/threads/posts/{post.id}/replies/", create_reply_props
     )
     assert response.status_code == 201
 
@@ -32,7 +32,7 @@ def test_saves_db_record(
 ):
     initial_count = Reply.objects.count()
     user_client.post(
-        f"/api/threads/posts/{post.id}/replies/", create_reply_props
+        f"/be/threads/posts/{post.id}/replies/", create_reply_props
     )
     assert Reply.objects.count() == initial_count + 1
 
@@ -42,7 +42,7 @@ def test_returns_401_when_not_authenticated(
     client: Client, create_reply_props: dict, post: Post
 ):
     response = client.post(
-        f"/api/threads/posts/{post.id}/replies/", create_reply_props
+        f"/be/threads/posts/{post.id}/replies/", create_reply_props
     )
     assert response.status_code == 401
 
@@ -53,7 +53,7 @@ def test_returns_400_when_invalid(
 ):
     del create_reply_props["body"]
     response = user_client.post(
-        f"/api/threads/posts/{post.id}/replies/", create_reply_props
+        f"/be/threads/posts/{post.id}/replies/", create_reply_props
     )
     assert response.status_code == 400
 
@@ -65,7 +65,7 @@ def test_can_reply_when_post_is_deleted(
     post_id = post.id
     post.delete()
     response = user_client.post(
-        f"/api/threads/posts/{post_id}/replies/", create_reply_props
+        f"/be/threads/posts/{post_id}/replies/", create_reply_props
     )
     assert response.status_code == 201
 
@@ -77,7 +77,7 @@ def test_returns_404_when_post_does_not_exist(
     post_id = post.id
     Post.objects.filter(pk=post_id).delete()
     response = user_client.post(
-        f"/api/threads/posts/{post_id}/replies/", create_reply_props
+        f"/be/threads/posts/{post_id}/replies/", create_reply_props
     )
     assert response.status_code == 404
 
@@ -87,7 +87,7 @@ def test_create_reply_assigns_request_user_as_author(
     user_client: APIClient, user: User, create_reply_props: dict, post: Post
 ):
     user_client.post(
-        f"/api/threads/posts/{post.id}/replies/", create_reply_props
+        f"/be/threads/posts/{post.id}/replies/", create_reply_props
     )
 
     reply = Reply.objects.last()

@@ -1,16 +1,10 @@
 FROM node:20-alpine as build
 
-ARG VITE_API_HOST
-ENV VITE_API_HOST $VITE_API_HOST
-
-ARG OTLP_HOST
-ENV OTLP_HOST $OTLP_HOST
-
 WORKDIR /usr/src/app
 
 # Install dependencies before copying the rest of the app, so that
 # this step can be cached.
-COPY package.json ./
+COPY package.json package-lock.json ./
 RUN npm install
 
 # Copy the rest of the project.
@@ -19,22 +13,12 @@ COPY . ./
 # Make a production build
 RUN npm run build
 
-# Copy our robots.txt into the build so Nginx will serve it
-COPY robots.txt .output/
-
 # Run in a separate stage that isn't bloated with our dependencies
-FROM nginx:1.25-alpine
+FROM node:20-alpine
 
-# Process environment variables in nginx.conf
-ARG DOMAIN
-ENV DOMAIN $DOMAIN
-ARG INTERNAL_BACKEND_HOST
-ENV INTERNAL_BACKEND_HOST $INTERNAL_BACKEND_HOST
-ARG OTLP_HOST
-ENV OTLP_HOST $OTLP_HOST
-ARG OTLP_TOKEN
-ENV OTLP_TOKEN $OTLP_TOKEN
-COPY nginx.conf nginx.conf.template
-RUN envsubst '$INTERNAL_BACKEND_HOST $DOMAIN $OTLP_HOST $OTLP_TOKEN' < nginx.conf.template > /etc/nginx/conf.d/default.conf
+ARG VITE_API_HOST
+ENV VITE_API_HOST $VITE_API_HOST
 
-COPY --from=build /usr/src/app/.output/ /usr/src/app/dist/
+WORKDIR /usr/src/app
+
+COPY --from=build /usr/src/app/.output/ ./

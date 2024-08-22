@@ -6,7 +6,7 @@ from .serializers import UserSerializer
 
 
 def make_request(client: APIClient, user: User):
-    return client.get(f"/api/users/users/{user.id}/")
+    return client.get(f"/be/users/users/{user.id}/")
 
 
 @pytest.mark.django_db

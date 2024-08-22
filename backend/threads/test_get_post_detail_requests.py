@@ -5,7 +5,7 @@ from .models import Post
 
 
 def url(post_id: int) -> str:
-    return f"/api/threads/posts/{post_id}/"
+    return f"/be/threads/posts/{post_id}/"
 
 
 @pytest.mark.django_db

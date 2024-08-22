@@ -22,7 +22,7 @@ def create_post_props(user: User):
 def test_create_post_returns_201(
     user_client: APIClient, create_post_props: dict, user: User
 ):
-    response = user_client.post("/api/threads/posts/", create_post_props)
+    response = user_client.post("/be/threads/posts/", create_post_props)
     assert response.status_code == 201
 
 
@@ -31,7 +31,7 @@ def test_create_post_saves_db_record(
     user_client: APIClient, create_post_props: dict
 ):
     initial_count = Post.objects.count()
-    user_client.post("/api/threads/posts/", create_post_props)
+    user_client.post("/be/threads/posts/", create_post_props)
     assert Post.objects.count() == initial_count + 1
 
 
@@ -42,7 +42,7 @@ def test_create_post_saves_unique_trimmed_non_blank_tags(
     create_post_props["tags"] = "one", "", "  ", " two ", "   two"
 
     user_client.post(
-        "/api/threads/posts/",
+        "/be/threads/posts/",
         data=json.dumps(create_post_props),
         content_type="application/json",
     )
@@ -56,7 +56,7 @@ def test_create_post_saves_unique_trimmed_non_blank_tags(
 def test_create_post_returns_401_when_not_authenticated(
     client: APIClient, create_post_props: dict, user: User
 ):
-    response = client.post("/api/threads/posts/", create_post_props)
+    response = client.post("/be/threads/posts/", create_post_props)
     assert response.status_code == 401
 
 
@@ -65,7 +65,7 @@ def test_create_post_returns_400_when_invalid(
     user_client: APIClient, create_post_props: dict
 ):
     del create_post_props["title"]
-    response = user_client.post("/api/threads/posts/", create_post_props)
+    response = user_client.post("/be/threads/posts/", create_post_props)
     assert response.status_code == 400
 
 
@@ -73,7 +73,7 @@ def test_create_post_returns_400_when_invalid(
 def test_create_post_assigns_request_user_as_author(
     user_client: APIClient, user: User, create_post_props: dict
 ):
-    user_client.post("/api/threads/posts/", create_post_props)
+    user_client.post("/be/threads/posts/", create_post_props)
 
     post = Post.objects.last()
     assert post is not None

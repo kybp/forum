@@ -19,13 +19,13 @@ def props():
 
 @pytest.mark.django_db
 def test_returns_201(client: APIClient, props: dict):
-    response = client.post("/api/users/accounts/", props)
+    response = client.post("/be/users/accounts/", props)
     assert response.status_code == 201
 
 
 @pytest.mark.django_db
 def test_returns_account_and_token(client: APIClient, props: dict):
-    response = client.post("/api/users/accounts/", props)
+    response = client.post("/be/users/accounts/", props)
     data = {**response.data}
     assert type(data["token"]) is str
     del data["token"]
@@ -36,5 +36,5 @@ def test_returns_account_and_token(client: APIClient, props: dict):
 @pytest.mark.django_db
 def test_returns_400_when_invalid(client: APIClient, props: dict):
     del props["username"]
-    response = client.post("/api/users/accounts/", props)
+    response = client.post("/be/users/accounts/", props)
     assert response.status_code == 400

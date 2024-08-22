@@ -24,7 +24,7 @@ DEBUG = bool(os.environ.get("DEBUG", default=0))
 
 domain = os.environ.get("DOMAIN", "")
 
-ALLOWED_HOSTS = [domain, "frontend", "backend"]
+ALLOWED_HOSTS = [domain, "nginx", "frontend", "backend"]
 
 
 # Application definition
@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "rest_framework",
     "rest_framework.authtoken",
     "corsheaders",
     "simple_history",

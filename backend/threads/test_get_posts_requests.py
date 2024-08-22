@@ -9,20 +9,20 @@ from .serializers import PostSerializer
 
 @pytest.mark.django_db
 def test_returns_200(client: APIClient):
-    response = client.get("/api/threads/posts/")
+    response = client.get("/be/threads/posts/")
     assert response.status_code == 200
 
 
 @pytest.mark.django_db
 def test_returns_posts(client: APIClient, post: Post):
-    response = client.get("/api/threads/posts/")
+    response = client.get("/be/threads/posts/")
     assert response.data == [PostSerializer(post).data]
 
 
 @pytest.mark.django_db
 def test_does_not_return_deleted_posts(client: APIClient, post: Post):
     post.delete()
-    response = client.get("/api/threads/posts/")
+    response = client.get("/be/threads/posts/")
     assert response.data == []
 
 
@@ -35,7 +35,7 @@ def test_filtered_by_tags(client: APIClient):
         TagFactory(post=PostFactory(), name=f"other #{tag}")
 
     query_string = f"?tag={tags[0]}&tag={tags[1]}"
-    response = client.get(f"/api/threads/posts/{query_string}")
+    response = client.get(f"/be/threads/posts/{query_string}")
 
     assert response.json() == PostSerializer(posts, many=True).data
 
@@ -47,6 +47,6 @@ def test_filtered_by_authors(client: APIClient):
     PostFactory()
 
     query_string = f"?author={authors[0].id}&author={authors[1].id}"
-    response = client.get(f"/api/threads/posts/{query_string}")
+    response = client.get(f"/be/threads/posts/{query_string}")
 
     assert response.json() == PostSerializer(posts, many=True).data

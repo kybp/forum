@@ -5,7 +5,7 @@ from .models import User
 
 
 def make_request(client: APIClient):
-    return client.get("/api/users/themes/")
+    return client.get("/be/users/themes/")
 
 
 @pytest.mark.django_db

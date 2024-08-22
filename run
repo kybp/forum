@@ -74,13 +74,7 @@ debug_e2e() {
     . env/bin/activate
     cd e2e
 
-    if [ ! -z $PREVIEW ]; then
-        export E2E_HOST=http://localhost:8000
-    else
-        export E2E_HOST=http://localhost:3000
-    fi
-
-    PWDEBUG=1 python -m pytest $*
+    E2E_HOST=http://localhost:3000 PWDEBUG=1 python -m pytest $*
 }
 
 LOCAL_CERTS_DIR=certbot/certs/localhost

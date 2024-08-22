@@ -21,7 +21,7 @@ def update_reply_props(reply: Reply):
 
 def make_request(client: APIClient, props: dict):
     return client.put(
-        f"/api/threads/posts/{props['post']}/replies/{props['id']}/",
+        f"/be/threads/posts/{props['post']}/replies/{props['id']}/",
         data=json.dumps(props),
         content_type="application/json",
     )

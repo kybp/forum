@@ -7,7 +7,7 @@ from .models import Reply
 
 
 def url(post_id: int, reply_id: int):
-    return f"/api/threads/posts/{post_id}/replies/{reply_id}/"
+    return f"/be/threads/posts/{post_id}/replies/{reply_id}/"
 
 
 @pytest.mark.django_db

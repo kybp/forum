@@ -6,16 +6,28 @@
 version: '3'
 
 services:
-  frontend:
-    image: $DOCKERHUB_USERNAME/frontend-prod
+  nginx:
+    image: $DOCKERHUB_USERNAME/nginx-prod
     volumes:
-      - /usr/src/app/node_modules/
       - backend_static:/usr/src/app/static/
       - ./certbot/certs/:/etc/nginx/ssl/:ro
       - ./certbot/www/:/var/www/certbot/:ro
     ports:
       - 80:80
       - 443:443
+    deploy:
+      replicas: 2
+      update_config:
+        delay: 20s
+    depends_on:
+      - frontend
+      - backend
+  frontend:
+    image: $DOCKERHUB_USERNAME/frontend-prod
+    volumes:
+      - /usr/src/app/node_modules/
+    ports:
+      - 3000:3000
     deploy:
       replicas: 2
       update_config:

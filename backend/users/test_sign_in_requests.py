@@ -11,7 +11,7 @@ def props(user: User):
 
 
 def make_request(client: APIClient, props: dict):
-    return client.post("/api/users/token/", props)
+    return client.post("/be/users/token/", props)
 
 
 @pytest.mark.django_db

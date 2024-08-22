@@ -18,7 +18,7 @@ def test_create_post_reaction_returns_201(
     user_client: Client, post: Post, create_post_reaction_props
 ):
     response = user_client.post(
-        f"/api/threads/posts/{post.id}/reactions/",
+        f"/be/threads/posts/{post.id}/reactions/",
         create_post_reaction_props,
     )
 
@@ -31,7 +31,7 @@ def test_create_post_reaction_saves_db_record(
 ):
     initial_count = Reaction.objects.count()
     user_client.post(
-        f"/api/threads/posts/{post.id}/reactions/", create_post_reaction_props
+        f"/be/threads/posts/{post.id}/reactions/", create_post_reaction_props
     )
     assert Reaction.objects.count() == initial_count + 1
 
@@ -44,7 +44,7 @@ def test_create_post_reaction_gets_user_from_request(
     user: User,
 ):
     user_client.post(
-        f"/api/threads/posts/{post.id}/reactions/", create_post_reaction_props
+        f"/be/threads/posts/{post.id}/reactions/", create_post_reaction_props
     )
 
     reaction = Reaction.objects.last()
@@ -57,7 +57,7 @@ def test_create_post_reaction_gets_post_from_url(
     user_client: APIClient, create_post_reaction_props: dict, post: Post
 ):
     user_client.post(
-        f"/api/threads/posts/{post.id}/reactions/", create_post_reaction_props
+        f"/be/threads/posts/{post.id}/reactions/", create_post_reaction_props
     )
 
     reaction = Reaction.objects.last()
@@ -72,7 +72,7 @@ def test_create_post_reaction_deletes_previous_reaction(
     # Create the first reaction
     create_post_reaction_props["type"] = "like"
     user_client.post(
-        f"/api/threads/posts/{post.id}/reactions/", create_post_reaction_props
+        f"/be/threads/posts/{post.id}/reactions/", create_post_reaction_props
     )
 
     old_reaction = Reaction.objects.last()
@@ -81,7 +81,7 @@ def test_create_post_reaction_deletes_previous_reaction(
     new_type = "laugh"
     create_post_reaction_props["type"] = new_type
     user_client.post(
-        f"/api/threads/posts/{post.id}/reactions/", create_post_reaction_props
+        f"/be/threads/posts/{post.id}/reactions/", create_post_reaction_props
     )
 
     # Check that the old reaction was deleted
@@ -99,7 +99,7 @@ def test_create_post_reaction_returns_401_when_not_authenticated(
     client: Client, post: Post, create_post_reaction_props
 ):
     response = client.post(
-        f"/api/threads/posts/{post.id}/reactions/",
+        f"/be/threads/posts/{post.id}/reactions/",
         create_post_reaction_props,
     )
 
@@ -113,7 +113,7 @@ def test_create_post_reaction_returns_400_when_invalid(
     del create_post_reaction_props["type"]
 
     response = user_client.post(
-        f"/api/threads/posts/{post.id}/reactions/",
+        f"/be/threads/posts/{post.id}/reactions/",
         create_post_reaction_props,
     )
 

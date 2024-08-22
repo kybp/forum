@@ -1,24 +1,37 @@
 version: '3'
 
 services:
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile.prod
+      args:
+        DOMAIN: ${DOMAIN}
+        VERSION: ${VERSION}
+        INTERNAL_FRONTEND_HOST: frontend
+        INTERNAL_BACKEND_HOST: backend
+        OTLP_HOST: ${OTLP_HOST}
+        OTLP_TOKEN: ${OTLP_TOKEN}
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - backend_static:/usr/src/app/static/
+      - ./certbot/certs/:/etc/nginx/ssl/live/
+    depends_on:
+      - frontend
+      - backend
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile.prod
       args:
-        DOMAIN: ${DOMAIN}
-        VERSION: ${VERSION}
-        INTERNAL_BACKEND_HOST: backend
-        OTLP_HOST: ${OTLP_HOST}
-        OTLP_TOKEN: ${OTLP_TOKEN}
-        VITE_API_HOST: http://backend:8000/api/
+        VITE_API_HOST: http://backend:9000/be/
+    command: node server/index.mjs
     volumes:
       - /usr/src/app/node_modules/
-      - backend_static:/usr/src/app/static/
-      - ./certbot/certs/:/etc/nginx/ssl/live/
     ports:
-      - 80:80
-      - 443:443
+      - 3000:3000
     env_file:
       - ./.env
     depends_on:
@@ -61,7 +74,7 @@ services:
     env_file:
       - ./.env
     environment:
-      E2E_HOST: https://frontend
+      E2E_HOST: https://nginx
     profiles:
       - e2e
     volumes:

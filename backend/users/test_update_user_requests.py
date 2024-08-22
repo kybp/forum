@@ -7,7 +7,7 @@ from .serializers import AccountSerializer
 
 
 def make_request(client: APIClient, user: User, props: dict):
-    return client.patch(f"/api/users/accounts/{user.id}/", props)
+    return client.patch(f"/be/users/accounts/{user.id}/", props)
 
 
 @pytest.mark.django_db
