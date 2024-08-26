@@ -24,6 +24,7 @@ services:
       - backend
   frontend:
     image: $DOCKERHUB_USERNAME/frontend-prod
+    command: node server/index.mjs
     volumes:
       - /usr/src/app/node_modules/
     ports:
