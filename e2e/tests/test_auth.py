@@ -11,6 +11,9 @@ from e2e.pages.thread_detail_page import ThreadDetailPage
 def test_registering(page: Page):
     home_page = HomePage(page)
 
+    import time
+    time.sleep(10)
+
     username, password = home_page.register()
     home_page.sign_out()
     home_page.sign_in(username, password)
