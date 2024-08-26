@@ -17,7 +17,7 @@ jobs:
       - name: Init .env from .env.example
         run: cp .env.example .env
       - name: Edit .env to work for CI
-        run: sed -i 's/VITE_API_HOST=.*/VITE_API_HOST=http:\/\/backend:8000\/api\//' .env
+        run: sed -i 's/VITE_API_HOST=.*/VITE_API_HOST=http:\/\/backend:8000\/be\//' .env
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Login to Docker Hub
@@ -29,6 +29,8 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: frontend
+          build-args: |
+            VITE_API_HOST=http://backend:8000/be/
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/frontend:latest
           cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/frontend:buildcache
@@ -58,7 +60,10 @@ jobs:
       - name: Run unit tests
         run: ./run test
       - name: Run e2e tests
-        run: ./run e2e --video=retain-on-failure --screenshot=only-on-failure
+        # I hate to do this, but there seems to be an issue with the
+        # service starting up slowly and causing the first test to
+        # fail.
+        run: sleep 60 && ./run e2e --video=retain-on-failure --screenshot=only-on-failure
       - uses: actions/upload-artifact@v3
         if: always()
         with:
