@@ -38,22 +38,23 @@ bottom of the script for the full list of commands.
 
 ### e2e Specs
 
-You have two choices for running the e2e specs.
+You have two choices for running the e2e specs:
 
-If you want to run them inside Docker (note that the graphical
-debugger will not work), you can just do `./run e2e`.
+- `./run e2e`: This runs the tests entirely inside of Docker in
+  headless mode.
+- `./run debug-e2e`: This runs the test locally with a graphical
+  debugger and a browser window you can interact with. It will install
+  dependencies in a virtual environment automatically. **Note**: You
+  need Python installed locally to use this.
 
-If you want to use the graphical debugger, you will need to install
-Python v3.8+ locally. Then you can `./run install-local-e2e` to
-install the e2e project in a virtual environment, and from there
-`./run debug-e2e` will run the tests.
-
-Both `./run e2e` and `./run debug-e2e` forward arguments to `pytest`
-with the Playwright plugin installed, which supports many options. Run
-with `--help` to see a full list.
+Both commands forward any arguments to `pytest` with the Playwright
+plugin installed, which supports many options. Most importantly, you
+can pass a filename to run that file, or `-k foo` to run tests whose
+names contain `foo`. Run with `--help` to see a full list.
 
 If you want to bail on a test run, close the browser before the
-inspector, or Playwright might not exit properly.
+inspector, or Playwright might not exit properly. Or just control-C it
+from the terminal.
 
 ## GitHub Configuration
 
@@ -120,6 +121,8 @@ If all the resources are created successfully, some values will be
 displayed that you need to store in GitHub repository secrets. See the
 GitHub configuration section for details.
 
-The file `infra/ec2-ssh-key` will also be generated for use SSHing
-into the server. You can SSH in (from the `infra/` directory) with
+### Connecting to the production server
+
+The file `infra/ec2-ssh-key` will be generated for use SSHing into the
+server. You can SSH in (from the `infra/` directory) with
 `ssh -i ec2-ssh-key ubuntu@example.com`.

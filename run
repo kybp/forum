@@ -71,6 +71,11 @@ debug_e2e() {
     backend_run python manage.py flush --no-input
     backend_run python manage.py seed
     load_env_file
+
+    if [ ! -e env ]; then
+        install_local_e2e
+    fi
+
     . env/bin/activate
     cd e2e
 
@@ -123,7 +128,6 @@ case $command in
     pull) $compose pull && $compose pull e2e ;; # Pull Docker images
     e2e) e2e $* ;; # Run e2e specs
     build-e2e) $compose build e2e ;; # Build Docker image for e2e specs
-    install-local-e2e) install_local_e2e ;; # Install e2e outside of Docker
     debug-e2e) debug_e2e $* ;; # Run local e2e with the Playwright Inspector
     stop) $compose down ;;
     rm) $compose down -v ;;
