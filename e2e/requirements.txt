@@ -3,7 +3,7 @@ pytest==8.1.1
 # Use Playwright for controlling browsers during tests
 pytest-playwright==0.4.4
 # Use Faker for generating test data
-Faker==24.3.0
+Faker==28.0.0
 # Use flake8 for checking code quality
 flake8==7.0.0
 # Use black for code formatting
