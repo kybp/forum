@@ -5,7 +5,7 @@ from users import views
 
 router = routers.SimpleRouter()
 router.register("users", views.UserViewSet)
-router.register("accounts", views.AccountViewSet)
+router.register("accounts", views.AccountViewSet, "account")
 
 urlpatterns = [
     path("", include(router.urls)),

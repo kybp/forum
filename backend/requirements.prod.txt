@@ -1,5 +1,5 @@
 # Use Gunicorn to serve our app in production
-gunicorn==21.2.0
+gunicorn==22.0.0
 
 # Instrument Django for OpenTelemetry
 opentelemetry-instrumentation-django==0.42b0
@@ -10,13 +10,13 @@ opentelemetry-exporter-otlp-proto-http==1.21.0
 
 # These are the requirements from requirements.txt that are used by
 # the app at runtime.
-Django==5.0.0
+Django==5.1
 # This package is built from C sources and is recommended by the
 # maintainers for production. See
 # https://pypi.org/project/psycopg2-binary/
 psycopg2==2.9.9
-djangorestframework==3.14.0
+djangorestframework==3.15.2
 drf-nested-routers==0.93.5
 django-cors-headers==4.3.1
 drf-access-policy==1.5.0
-django-simple-history==3.4.0
+django-simple-history==3.7.0
