@@ -11,6 +11,9 @@ from e2e.pages.thread_detail_page import ThreadDetailPage
 def test_registering(page: Page):
     home_page = HomePage(page)
 
+    # I hate to do this, but there seems to be an issue with the
+    # service starting up slowly and causing the first test (this one)
+    # to fail.
     import time
     time.sleep(10)
 
