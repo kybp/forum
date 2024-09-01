@@ -80,6 +80,11 @@ jobs:
           SQL_PORT=${{ secrets.SQL_PORT }}
           OTLP_HOST=${{ secrets.OTLP_HOST }}
           OTLP_TOKEN=${{ secrets.OTLP_TOKEN }}
+          AWS_S3_REGION_NAME=${{ secrets.AWS_S3_REGION_NAME }}
+          AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_S3_BUCKET_NAME=${{ secrets.AWS_S3_BUCKET_NAME }}
+          AWS_CLOUDFRONT_DOMAIN=${{ secrets.AWS_CLOUDFRONT_DOMAIN }}
           EOF
 
           mkdir -p server_files

@@ -24,6 +24,17 @@ class ThreadDetailPage(BasePage):
         return self.page.get_by_test_id("body")
 
     @property
+    def images(self):
+        with open("log", "a") as f:
+            print(
+                ">> in thread_detail_page: self.body is:",
+                self.body.inner_html(),
+                file=f,
+            )
+        images = self.body.locator("img").all()
+        return [image.get_attribute("src") for image in images]
+
+    @property
     def tags(self):
         return self.page.get_by_test_id("tags")
 

@@ -45,7 +45,7 @@ resource "aws_security_group" "rds" {
 resource "aws_db_instance" "forum" {
   allocated_storage               = 5
   engine                          = "postgres"
-  engine_version                  = "15.5"
+  engine_version                  = "15.7"
   instance_class                  = "db.t3.micro"
   skip_final_snapshot             = true
   db_name                         = var.rds_db_name

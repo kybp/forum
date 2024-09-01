@@ -160,3 +160,32 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.TokenAuthentication",
     ],
 }
+
+if DEBUG:
+    # Serve images ourselves for development
+    MEDIA_URL = "/be/media/"
+    MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+else:
+    AWS_S3_BUCKET_NAME = os.getenv("AWS_S3_BUCKET_NAME")
+    AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME")
+    AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+    AWS_CLOUDFRONT_DOMAIN = os.getenv("AWS_CLOUDFRONT_DOMAIN")
+
+    s3_storage = {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "bucket_name": AWS_S3_BUCKET_NAME,
+            "region_name": AWS_S3_REGION_NAME,
+            "custom_domain": AWS_CLOUDFRONT_DOMAIN,
+        },
+    }
+
+    # Store images in S3
+    STORAGES = {
+        "default": s3_storage,
+        "staticfiles": s3_storage,
+    }
+
+    # Serve images from CloudFront
+    MEDIA_URL = f"https://{AWS_CLOUDFRONT_DOMAIN}/media/"

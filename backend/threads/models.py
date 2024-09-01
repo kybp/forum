@@ -78,11 +78,28 @@ class Post(models.Model):
     def save(self, **kwargs):
         if self.id:
             self.is_edited = True
+            for image in PostImage.objects.filter(post=self):
+                if image.url not in self.body:
+                    image.delete()
+
         super().save(**kwargs)
 
     def delete(self):
         self.is_deleted = True
         self.save()
+
+
+class PostImage(models.Model):
+    """An image from a post."""
+
+    image = models.ImageField(upload_to="posts")
+    post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE,
+        related_name="images",
+        null=True,
+        blank=True,
+    )
 
 
 class Tag(models.Model):

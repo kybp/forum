@@ -4,6 +4,7 @@ from rest_framework_nested import routers
 from threads import views
 
 router = routers.SimpleRouter()
+router.register("post-images", views.PostImageViewSet)
 router.register("posts", views.PostViewSet)
 
 posts_router = routers.NestedSimpleRouter(router, "posts", lookup="post")

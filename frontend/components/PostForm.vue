@@ -17,6 +17,42 @@ const schema = yup.object({
   tags: yup.array().of(yup.string()),
 })
 
+const imagesInput = ref<HTMLInputElement>()
+
+const openImagesInput = () => {
+  imagesInput.value?.click()
+}
+
+const uploadedImages = ref(new Map<string, File>())
+
+const uploadedImageUrls = ref(new Set<string>())
+
+const handleImageChange = async (event: Event) => {
+  const selectedImages = [...((event.target as HTMLInputElement).files ?? [])]
+  const isImageNotUploaded = ({ name }: File) => !uploadedImages.value.has(name)
+  const imagesToUpload = selectedImages.filter(isImageNotUploaded)
+
+  const formData = new FormData()
+  for (const image of imagesToUpload) {
+    formData.append('images', image)
+    uploadedImages.value.set(image.name, image)
+  }
+
+  const { account } = useAuthStore()
+
+  if (account === null) throw new Error('Not signed in')
+
+  const response = await useFetch('/api/threads/post-images/', {
+    method: 'POST',
+    body: formData,
+    ...authOptions(account),
+  })
+
+  ;(response.data.value ?? []).forEach((url) => {
+    uploadedImageUrls.value.add(url)
+  })
+}
+
 const form = ref<any>(null)
 
 const isMobilePreviewOpen = ref(false)
@@ -26,6 +62,7 @@ const postThread = async ({ title, body, tags }: any) => {
     title,
     body,
     tags: tags ?? [],
+    uploaded_images: uploadedImageUrls.value,
     onSuccess() {},
     onError(error: any) {
       form.value?.setErrors(error)
@@ -36,6 +73,13 @@ const postThread = async ({ title, body, tags }: any) => {
 
 const title = ref(props.initialValue?.title ?? '')
 const body = ref(props.initialValue?.body ?? '')
+
+const imageMarkdown = (imageUrl: string) => `![](${imageUrl})`
+
+const writeImageToClipboard = (event: Event, imageUrl: string): void => {
+  event.preventDefault()
+  navigator.clipboard.writeText(imageMarkdown(imageUrl))
+}
 </script>
 
 <template>
@@ -73,6 +117,33 @@ const body = ref(props.initialValue?.body ?? '')
             +
           </button>
         </FieldArray>
+      </div>
+
+      <div class="field attachments">
+        <button class="button" type="button" @click="openImagesInput">
+          Attach images
+        </button>
+        <input
+          ref="imagesInput"
+          data-testid="images-input"
+          type="file"
+          accept="image/*"
+          @change="handleImageChange"
+          multiple
+        />
+        <div class="uploaded-attachments">
+          <div
+            class="image"
+            v-for="imageUrl in uploadedImageUrls"
+            :key="imageUrl"
+          >
+            <input
+              type="image"
+              :src="imageUrl"
+              @click="(event) => writeImageToClipboard(event, imageUrl)"
+            />
+          </div>
+        </div>
       </div>
 
       <div class="field body">
@@ -137,6 +208,10 @@ form {
   justify-self: end;
 }
 
+.actions button + button {
+  margin-left: 0.5rem;
+}
+
 .preview {
   grid-column: 2;
   grid-row: 1;
@@ -185,14 +260,47 @@ button.toggle-mobile-preview {
       margin-bottom: 0.1rem;
     }
   }
+
+  &.attachments {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    margin: 0.5rem;
+    gap: 1.5rem;
+
+    button {
+      min-width: 8rem;
+    }
+
+    input[type='file'] {
+      display: none;
+    }
+
+    input[type='image'] {
+      width: 5rem;
+    }
+
+    .uploaded-attachments {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 1rem;
+
+      .image {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        img {
+          cursor: pointer;
+        }
+      }
+    }
+  }
 }
 
 .button.add-tag {
   margin-left: 0.5rem;
   align-self: flex-start;
-}
-
-.actions button + button {
-  margin-left: 0.5rem;
 }
 </style>

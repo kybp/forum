@@ -62,6 +62,16 @@ class ReplyAccessPolicy(AccessPolicy):
         return reply is None or request.user == reply.author
 
 
+class PostImageAccessPolicy(AccessPolicy):
+    statements = [
+        {
+            "action": ["create"],
+            "principal": "authenticated",
+            "effect": "allow",
+        },
+    ]
+
+
 class PostReactionAccessPolicy(AccessPolicy):
     statements = [
         {
