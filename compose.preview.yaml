@@ -40,6 +40,12 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile.prod
+      args:
+        AWS_S3_REGION_NAME: ${AWS_S3_REGION_NAME}
+        AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+        AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+        AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME}
+        AWS_CLOUDFRONT_DOMAIN: ${AWS_CLOUDFRONT_DOMAIN}
     command: opentelemetry-instrument gunicorn forum.wsgi:application --bind 0.0.0.0:9000 --access-logfile -
     volumes:
       - backend_static:/usr/src/app/static/

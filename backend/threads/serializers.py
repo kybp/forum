@@ -65,6 +65,9 @@ class PostSerializer(serializers.ModelSerializer):
             "tags",
         ]
 
+    def create(self, validated_data):
+        return Post.objects.create(**validated_data)
+
     def to_representation(self, post):
         result = super().to_representation(post)
 

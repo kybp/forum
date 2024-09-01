@@ -4,12 +4,31 @@ from django.contrib.contenttypes.models import ContentType
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from rest_framework import mixins, views, viewsets
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from threads import policies
-from .models import Post, Reaction, Reply, Tag
-from .serializers import PostSerializer, ReactionSerializer, ReplySerializer
+from .models import Post, PostImage, Reaction, Reply, Tag
+from .serializers import (
+    PostSerializer,
+    ReactionSerializer,
+    ReplySerializer,
+)
+
+
+class PostImageViewSet(viewsets.ViewSet):
+    queryset = PostImage.objects.all()
+    permission_classes = [policies.PostImageAccessPolicy]
+    parser_classes = (MultiPartParser, FormParser)
+
+    def create(self, request):
+        images = [
+            PostImage.objects.create(image=image)
+            for image in request.FILES.getlist("images")
+        ]
+
+        return Response([x.image.url for x in images], status=201)
 
 
 class PostViewSet(viewsets.ModelViewSet):

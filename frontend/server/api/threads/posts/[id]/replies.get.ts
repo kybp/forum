@@ -1,5 +1,4 @@
 import type { Reply } from '~/types'
-import { apiUrl } from '~/utils'
 
 export default defineEventHandler((event) => {
   const id = getRouterParam(event, 'id')

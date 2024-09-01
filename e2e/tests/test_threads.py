@@ -1,3 +1,4 @@
+from pytest import mark
 from playwright.sync_api import Page, expect
 
 from e2e.pages.account_page import AccountPage
@@ -6,6 +7,9 @@ from e2e.pages.edit_reply_page import EditReplyPage
 from e2e.pages.home_page import HomePage
 from e2e.pages.post_thread_page import PostThreadPage
 from e2e.pages.thread_detail_page import ThreadDetailPage
+
+
+IMAGES = [f"assets/{path}" for path in ["image.png", "image.jpg", "image.gif"]]
 
 
 def test_posting_a_thread(page: Page):
@@ -278,3 +282,17 @@ def test_editing_reply(page: Page):
     # Check update
     expect(thread_detail_page.first_reply_edited).to_be_visible()
     expect(thread_detail_page.first_reply_body).to_have_text(new_body)
+
+
+@mark.skip(
+    reason="Copying the image URL to the clipboard only works in headed mode"
+)
+def test_attaching_images_to_a_post(page: Page):
+    home_page = HomePage(page)
+
+    home_page.sign_in()
+    data = home_page.post_thread(images=IMAGES)
+
+    thread_detail_page = ThreadDetailPage(page)
+
+    assert set(thread_detail_page.images) == set(data.image_urls)

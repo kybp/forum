@@ -5,3 +5,6 @@ __pycache__/
 
 # Ignore collectstatic output
 static/
+
+# Ignore images uploaded in development
+media/

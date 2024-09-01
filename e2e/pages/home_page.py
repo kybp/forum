@@ -3,6 +3,7 @@ from playwright.sync_api import Page
 
 from e2e import config
 from .base_page import BasePage
+from .post_thread_data import PostThreadData
 from .post_thread_page import PostThreadPage
 from .registration_page import RegistrationPage
 
@@ -44,10 +45,12 @@ class HomePage(BasePage):
         username, password = registration_page.register(username, email)
         return [username, password]
 
-    def post_thread(self, title: str = "title", body: str = "body", tags=[]):
+    def post_thread(
+        self, title: str = "title", body: str = "body", tags=[], images=[]
+    ) -> PostThreadData:
         self.post_thread_button.click()
         post_thread_page = PostThreadPage(self.page)
-        post_thread_page.post_thread(title, body, tags)
+        return post_thread_page.post_thread(title, body, tags, images)
 
     def open_thread(self, title=None):
         if title is None:
