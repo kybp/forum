@@ -21,19 +21,26 @@ e2e_run() {
     $compose run --rm e2e $*
 }
 
+infra_run() {
+    cd infra
+    $@
+    cd - >/dev/null
+}
+
 lint() {
     frontend_run npm run lint
     frontend_run npm run typecheck
     backend_run python -m flake8
     backend_run python -m mypy .
     e2e_run python -m flake8
+    infra_run terraform validate
 }
 
 format() {
     frontend_run npm run format
     backend_run python -m black --line-length 79 .
     e2e_run python -m black --line-length 79 .
-    terraform fmt infra
+    infra_run terraform fmt
 }
 
 unit_test() {
