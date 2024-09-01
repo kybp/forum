@@ -12,9 +12,13 @@ opentelemetry-exporter-otlp-proto-http==1.21.0
 # the app at runtime.
 Django==5.1
 # This package is built from C sources and is recommended by the
-# maintainers for production. See
+# maintainers for production, according to
 # https://pypi.org/project/psycopg2-binary/
-psycopg2==2.9.9
+#
+# https://pypi.org/project/psycopg-binary/ doesn't mention it, but
+# doesn't justify the reason for both otherwise, so I'll assume it's
+# the same.
+psycopg==3.2.1
 djangorestframework==3.15.2
 drf-nested-routers==0.93.5
 django-cors-headers==4.3.1
