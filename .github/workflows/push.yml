@@ -53,6 +53,8 @@ jobs:
           cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/e2e:buildcache,mode=max
       - name: Pull images
         run: ./run pull
+      - name: Set up Terraform
+        run: terraform -chdir=infra init
       - name: Lint code
         run: ./run lint
       - name: Run migrations
