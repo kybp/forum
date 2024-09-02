@@ -15,6 +15,7 @@ def test_registering(page: Page):
     # service starting up slowly and causing the first test (this one)
     # to fail.
     import time
+
     time.sleep(10)
 
     username, password = home_page.register()

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { formatDate } from '~/utils/formatDate'
+
 type Props = {
   article: {
     date_posted: string

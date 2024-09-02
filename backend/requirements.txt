@@ -22,7 +22,7 @@ black==24.3.0
 # Use pytest for unit testing
 pytest-django==4.8.0
 # Use FactoryBoy for generating data in unit tests
-factory-boy==3.3.0
+factory-boy==3.3.1
 
 # Use mypy for typechecking, and install type stubs for dependencies
 mypy==1.11.2
