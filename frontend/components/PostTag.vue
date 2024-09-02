@@ -49,7 +49,7 @@ watch(
   margin-left: 0.5rem;
   font-size: x-small;
   padding: 0.2rem 0.6rem;
-  border-radius: 5px;
+  border-radius: 0.2rem;
   display: flex;
   width: fit-content;
 

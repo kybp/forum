@@ -116,7 +116,7 @@ form {
   margin-left: 1rem;
   grid-template-columns: 50% 50%;
   column-gap: 2rem;
-  row-gap: 0.5em;
+  row-gap: 0.5rem;
 
   @media (--small-viewport) {
     grid-template-columns: 100%;

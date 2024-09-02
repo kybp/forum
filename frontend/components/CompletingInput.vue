@@ -116,7 +116,7 @@ ul {
   background: var(--color-input-background);
   color: var(--color-text);
   z-index: 5;
-  border: 1px solid var(--f-purple-3);
+  border: 0.01rem solid var(--f-purple-3);
   border-top: none;
 
   &.closed {

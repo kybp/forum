@@ -43,7 +43,7 @@ const markdown = new MarkdownIt()
 
   :deep(pre),
   :deep(code) {
-    border-radius: 5px;
+    border-radius: 0.2rem;
     width: fit-content;
     filter: brightness(150%);
     backdrop-filter: brightness(63%);

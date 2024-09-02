@@ -33,7 +33,7 @@ const toggleIsMenuExpanded = () => {
   @media (--small-viewport) {
     display: inline-block;
     align-self: right;
-    border: 1px solid var(--f-purple-3);
+    border: 0.01rem solid var(--f-purple-3);
     border-radius: 1rem;
     padding: 0 0.5rem 0.2rem 0.5rem;
 
