@@ -8,7 +8,7 @@ psycopg[binary]==3.2.1
 # Use DRF for more robust REST API support in Django
 djangorestframework==3.15.2
 # Use drf-nested-routers to allow nested resources like posts/:id/replies/:id
-drf-nested-routers==0.93.5
+drf-nested-routers==0.94.1
 # Add CORS headers to responses so the frontend can talk to us
 django-cors-headers==4.3.1
 # Use DRF Access Policy for declarative, IAM-like access policy definitions
