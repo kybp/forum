@@ -65,7 +65,7 @@ jobs:
         # I hate to do this, but there seems to be an issue with the
         # service starting up slowly and causing the first test to
         # fail.
-        run: sleep 10 && ./run e2e --video=retain-on-failure --screenshot=only-on-failure
+        run: sleep 10 && ./run e2e --screenshot=only-on-failure
       - uses: actions/upload-artifact@v3
         if: always()
         with:
