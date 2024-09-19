@@ -1,9 +1,9 @@
 # Use pytest for running the tests
-pytest==8.3.2
+pytest==8.3.3
 # Use Playwright for controlling browsers during tests
-pytest-playwright==0.5.1
+pytest-playwright==0.5.2
 # Use Faker for generating test data
-Faker==28.1.0
+Faker==28.4.1
 # Use flake8 for checking code quality
 flake8==7.1.1
 # Use black for code formatting
