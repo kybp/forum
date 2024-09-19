@@ -10,7 +10,7 @@ ENV PYTHONUNBUFFERED 1
 RUN pip install --upgrade pip
 COPY requirements.txt ./
 RUN pip install -r requirements.txt
-RUN playwright install
+RUN playwright install --with-deps
 
 # Copy the rest of the project
 COPY . ./
