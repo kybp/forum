@@ -1,4 +1,4 @@
-FROM node:20-alpine
+FROM node:22-alpine
 
 ARG VITE_API_HOST
 ENV VITE_API_HOST $VITE_API_HOST

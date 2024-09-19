@@ -1,4 +1,4 @@
-FROM node:20-alpine as build
+FROM node:22-alpine as build
 
 WORKDIR /usr/src/app
 
@@ -14,7 +14,7 @@ COPY . ./
 RUN npm run build
 
 # Run in a separate stage that isn't bloated with our dependencies
-FROM node:20-alpine
+FROM node:22-alpine
 
 ARG VITE_API_HOST
 ENV VITE_API_HOST $VITE_API_HOST

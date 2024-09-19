@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright/python:v1.31.0-focal
+FROM mcr.microsoft.com/playwright/python:v1.47.0-noble
 
 WORKDIR /usr/src/e2e
 

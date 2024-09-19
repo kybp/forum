@@ -1,4 +1,4 @@
-FROM python:3.11.4-slim-buster as build
+FROM python:3.12.6-slim as build
 
 WORKDIR /usr/src/app
 
@@ -16,7 +16,7 @@ COPY ./requirements.prod.txt ./
 # Save wheels so we can have a smaller final stage
 RUN pip wheel --no-cache-dir --wheel-dir /usr/src/app/wheels -r requirements.prod.txt
 
-FROM python:3.11.4-slim-buster
+FROM python:3.12.6-slim
 COPY --from=build /usr/src/app/wheels/ /wheels/
 
 # Install dependencies

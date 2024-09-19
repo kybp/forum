@@ -1,4 +1,4 @@
-FROM nginx:1.25-alpine
+FROM nginx:1.27.1-alpine
 
 # Process environment variables in nginx.conf
 ARG DOMAIN
