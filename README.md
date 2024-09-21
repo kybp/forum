@@ -64,6 +64,24 @@ If you want to bail on a test run, close the browser before the
 inspector, or Playwright might not exit properly. Or just control-C it
 from the terminal.
 
+## Directory Structure
+
+The project is split up into the following directories:
+- `frontend/`: This directory contains a Nuxt app that serves the web
+  UI with server-side rendering.
+- `backend/`: This directory contains a Django app that implements the
+  REST API that the frontend relies on.
+- `e2e/`: This directory contains the end-to-end tests that use
+  Playwright to use the site as a user would and ensure everything
+  works.
+- `infra/`: This directory contains the Terraform code for
+  provisioning servers, databases, etc to host the app in production.
+- `nginx/`: This directory contains the configuration for Nginx, which
+  is used in production to proxy requests to the frontend and backend
+  servers.
+- `certbot/`: This directory contains the SSL certificates for the
+  site. You probably won't need to go in here, but it needs to exist.
+
 ## GitHub Configuration
 
 If you put this project on GitHub, you will need to add the following
