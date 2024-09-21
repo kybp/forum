@@ -1,5 +1,13 @@
 # Forum
 
+This project implements a discussion platform where users can create
+accounts and post threads with replies. It also supports a default
+author whose posts are the only ones that will show on the index for
+unauthenticated users, allowing it to double as a blog. It primarily
+consists of a Django API and a Nuxt 3 SPA with server-side rendering.
+There is Terraform code for provision resources in AWS and a GitHub
+Actions pipeline for deploying whenever things are merged to main.
+
 ## Setup
 
 To run the app, all you need is a recent version of
