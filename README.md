@@ -5,8 +5,10 @@ accounts and post threads with replies. It also supports a default
 author whose posts are the only ones that will show on the index for
 unauthenticated users, allowing it to double as a blog. It primarily
 consists of a Django API and a Nuxt 3 SPA with server-side rendering.
-There is Terraform code for provision resources in AWS and a GitHub
-Actions pipeline for deploying whenever things are merged to main.
+
+There is Terraform code for provisioning resources and a GitHub
+Actions pipeline for deploying whenever things are merged to main. The
+deploy requires AWS, Cloudflare, and Grafana accounts.
 
 ## Setup
 
