@@ -44,7 +44,7 @@ format() {
 }
 
 unit_test() {
-    backend_run python -m pytest
+    backend_run python -m pytest -n logical
     frontend_run npm run test -- --run
 }
 
