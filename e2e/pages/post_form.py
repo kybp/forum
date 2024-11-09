@@ -58,7 +58,6 @@ class PostForm(BasePage):
 
         for image in self.images.all():
             image_urls.append(image.get_attribute("src"))
-            breakpoint()
             image.click()
             self.paste()
 
