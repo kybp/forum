@@ -24,7 +24,7 @@ class PostThreadPage(BasePage):
         self.form.add_tags(tags)
         self.form.add_images(images)
 
-        image_urls = self.form.insert_images()
+        image_urls = self.form.insert_images() if images else []
         data = PostThreadData(image_urls=image_urls)
         self.form.submit_button.click()
 

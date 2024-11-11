@@ -193,3 +193,4 @@ def test_attaching_images_to_a_post(page: Page):
     thread_detail_page = ThreadDetailPage(page)
 
     assert set(thread_detail_page.images) == set(data.image_urls)
+    assert len(thread_detail_page.images) == len(IMAGES)

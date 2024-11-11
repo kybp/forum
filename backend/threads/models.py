@@ -1,3 +1,4 @@
+import uuid
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import (
     GenericForeignKey,
@@ -5,6 +6,7 @@ from django.contrib.contenttypes.fields import (
 )
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django.utils.deconstruct import deconstructible
 from simple_history.models import HistoricalRecords
 
 User = get_user_model()
@@ -89,10 +91,23 @@ class Post(models.Model):
         self.save()
 
 
+@deconstructible
+class PathAndRename:
+    """Change filenames to a UUID and an extension."""
+
+    def __init__(self, path):
+        self.path = path
+
+    def __call__(self, instance, filename):
+        ext = filename.split(".")[-1]
+        filename = f"posts/{uuid.uuid4()}.{ext}"
+        return filename
+
+
 class PostImage(models.Model):
     """An image from a post."""
 
-    image = models.ImageField(upload_to="posts")
+    image = models.ImageField(upload_to=PathAndRename("posts"))
     post = models.ForeignKey(
         Post,
         on_delete=models.CASCADE,

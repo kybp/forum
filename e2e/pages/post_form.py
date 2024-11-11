@@ -56,6 +56,8 @@ class PostForm(BasePage):
     def insert_images(self):
         image_urls = []
 
+        self.images.first.wait_for()
+
         for image in self.images.all():
             image_urls.append(image.get_attribute("src"))
             image.click()
