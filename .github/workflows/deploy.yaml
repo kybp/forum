@@ -115,10 +115,14 @@ jobs:
             cd /home/${{ secrets.PROD_USERNAME }}/app/
 
             sudo docker stack deploy forum -c stack.yaml
+
+            for image in backend-prod frontend-prod nginx-prod; do
+                sudo docker image pull --image ${{ secrets.DOCKERHUB_USERNAME }}/$image
+            done
+
             sudo docker service update --image ${{ secrets.DOCKERHUB_USERNAME }}/backend-prod forum_backend
             sudo docker service update --image ${{ secrets.DOCKERHUB_USERNAME }}/frontend-prod forum_frontend
             sudo docker service update --image ${{ secrets.DOCKERHUB_USERNAME }}/nginx-prod forum_nginx
-
             backend=$(sudo docker ps --filter name=forum_backend --format '{{.ID}}' | head -1)
 
             if [ -z $backend ]; then
