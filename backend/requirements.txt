@@ -4,7 +4,7 @@
 # Django is an obscure web framework; app doesn't seem to work without it.
 Django==5.1
 # Use psycopg for connecting to Postgres
-psycopg[binary]==3.2.2
+psycopg[binary]==3.2.3
 # Use DRF for more robust REST API support in Django
 djangorestframework==3.15.2
 # Use drf-nested-routers to allow nested resources like posts/:id/replies/:id
