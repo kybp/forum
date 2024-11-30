@@ -22,7 +22,7 @@ flake8==7.1.1
 # Use black for code formatting
 black==24.3.0
 # Use pytest for unit testing
-pytest-django==4.8.0
+pytest-django==4.9.0
 # Use pytest-xdist for running tests in parallel, with psutil for
 # automatically detecting the number of CPU's
 pytest-xdist[psutil]
