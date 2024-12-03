@@ -1,6 +1,13 @@
 import { faker } from '@faker-js/faker'
 
-import type { Account, ThreadFilters, Reaction, Thread, Reply } from '~/types'
+import type {
+  Account,
+  ThreadFilters,
+  Reaction,
+  Thread,
+  Reply,
+  Page,
+} from '~/types'
 import type {
   CreatePostParams,
   UpdatePostParams,
@@ -91,6 +98,12 @@ export const updateReplyParamsFactory = (
 ): UpdateReplyParams => ({
   id: makeId(),
   postId: makeId(),
+  body: faker.lorem.paragraph(),
+  ...props,
+})
+
+export const pageFactory = (props: Partial<Page> = {}): Page => ({
+  title: faker.animal.bear(),
   body: faker.lorem.paragraph(),
   ...props,
 })

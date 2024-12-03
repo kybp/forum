@@ -181,6 +181,30 @@ def test_editing_reply(page: Page):
     expect(thread_detail_page.first_reply_body).to_have_text(new_body)
 
 
+def test_posts_with_h1_headers_are_split_into_multiple_pages(page: Page):
+    home_page = HomePage(page)
+    home_page.sign_in()
+
+    page_1_title = "Title 1"
+    page_1_body = "Body 1"
+    page_2_title = "Title 2"
+    page_2_body = "Body 2"
+    markdown = f"{page_1_body}\n\n# {page_2_title}\n\n{page_2_body}"
+    home_page.post_thread(title=page_1_title, body=markdown)
+    thread_detail_page = ThreadDetailPage(page)
+
+    expect(thread_detail_page.title).to_have_text(page_1_title)
+    expect(thread_detail_page.body).to_have_text(page_1_body)
+
+    thread_detail_page.next_page()
+    expect(thread_detail_page.title).to_have_text(page_2_title)
+    expect(thread_detail_page.body).to_have_text(page_2_body)
+
+    thread_detail_page.previous_page()
+    expect(thread_detail_page.title).to_have_text(page_1_title)
+    expect(thread_detail_page.body).to_have_text(page_1_body)
+
+
 @mark.skip(
     reason="Copying the image URL to the clipboard only works in headed mode"
 )

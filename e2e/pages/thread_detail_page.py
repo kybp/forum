@@ -81,6 +81,14 @@ class ThreadDetailPage(BasePage):
         return self.page.get_by_role("button", name="👍")
 
     @property
+    def previous_page_button(self):
+        return self.page.get_by_test_id("previous-page")
+
+    @property
+    def next_page_button(self):
+        return self.page.get_by_test_id("next-page")
+
+    @property
     def toggle_preview_button(self):
         return self.page.get_by_role("button", name="Preview")
 
@@ -97,6 +105,12 @@ class ThreadDetailPage(BasePage):
     def unlike_thread(self):
         # It's just a toggle for now
         self.like_thread()
+
+    def previous_page(self):
+        self.previous_page_button.click()
+
+    def next_page(self):
+        self.next_page_button.click()
 
     def reply(self, body: str = "some response message"):
         self.reply_input.fill(body)

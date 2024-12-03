@@ -41,6 +41,11 @@ export type Thread = {
   tags: string[]
 }
 
+export type Page = {
+  title: string
+  body: string
+}
+
 export type Reply = {
   id: number
   post: number

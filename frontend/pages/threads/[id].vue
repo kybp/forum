@@ -13,6 +13,8 @@ let post = computed(() => postsStore.findPost(postId))
 if (!post.value) await postsStore.getPost(postId)
 await postsStore.getReplies(postId)
 
+const title = ref<string | null>(null)
+
 const { account } = storeToRefs(authStore)
 
 const userIsAuthor = computed(() => {
@@ -48,11 +50,10 @@ const deletePost = async () => {
 
 <template>
   <div class="header">
-    <Title>{{ post?.title ?? 'Viewing Thread' }}</Title>
-    <h1 class="title" v-if="post" data-testid="thread-detail-title">
-      {{ post.title }}
+    <Title> {{ title ?? post?.title ?? 'Thread' }}</Title>
+    <h1 class="title" data-testid="thread-detail-title">
+      {{ title ?? post?.title ?? 'Viewing Thread' }}
     </h1>
-    <h1 v-else>No Post</h1>
 
     <CollapsibleMenu v-if="userIsAuthor" class="menu">
       <NuxtLink :to="`/threads/${postId}/edit`" class="button"> Edit </NuxtLink>
@@ -64,11 +65,11 @@ const deletePost = async () => {
     {{ author.username }}
   </div>
 
-  <MarkdownBody
+  <MarkdownPages
     v-if="post"
+    :title="post.title"
     :value="post.body"
-    class="body"
-    data-testid="body"
+    @pageChange="title = $event.title"
   />
 
   <div class="extras">
