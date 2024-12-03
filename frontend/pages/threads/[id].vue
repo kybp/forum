@@ -48,6 +48,7 @@ const deletePost = async () => {
 
 <template>
   <div class="header">
+    <Title>{{ post?.title ?? 'Viewing Thread' }}</Title>
     <h1 class="title" v-if="post" data-testid="thread-detail-title">
       {{ post.title }}
     </h1>

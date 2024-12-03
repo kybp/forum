@@ -34,6 +34,7 @@ const updatePost = async ({ title, body, tags, onSuccess, onError }: any) => {
 </script>
 
 <template>
+  <Title>Editing Thread</Title>
   <h1>Editing Thread</h1>
   <PostForm @submit="updatePost" :initial-value="post" />
 </template>

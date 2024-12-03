@@ -36,6 +36,7 @@ const demo = `
 </script>
 
 <template>
+  <Title>Formatting</Title>
   <h1>Formatting</h1>
   <p>You can use Markdown to format your posts and replies.</p>
   <div class="demo">

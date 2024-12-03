@@ -31,6 +31,7 @@ const register = async ({ username, email, password }: any) => {
 </script>
 
 <template>
+  <Title>Register</Title>
   <h1>Register</h1>
 
   <div class="wrapper" data-testid="registration-form">

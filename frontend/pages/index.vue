@@ -14,6 +14,7 @@ await postsStore.getPostList()
 <template>
   <main>
     <div class="meta">
+      <Title>Threads</Title>
       <h1>Threads</h1>
       <NuxtLink
         v-if="authStore.isSignedIn"

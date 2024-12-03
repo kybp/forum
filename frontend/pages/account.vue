@@ -39,6 +39,7 @@ const updateTheme = ({ target: { value } }: any) => {
 
 <template>
   <div class="wrapper">
+    <Title>Account</Title>
     <h1>Account</h1>
 
     <div class="controls">
