@@ -24,7 +24,7 @@ const author = computed(() => {
 })
 
 watch(
-  () => author.value,
+  author,
   (value) => {
     if (post.value === null || post.value.author === null) return
     if (value === undefined) usersStore.getUser(post.value.author)
