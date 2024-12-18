@@ -69,7 +69,7 @@ const hasNextPage = computed(() => pageIndex.value + 1 < pages.value.length)
 </script>
 <template>
   <MarkdownBody :value="page.body" class="body" data-testid="body" />
-  <div class="toc" v-if="pages.length > 0 && pageIndex === 0">
+  <div class="toc" v-if="pages.length > 1 && pageIndex === 0">
     <h3>Pages</h3>
     <ul>
       <li v-for="(page, index) in pages.slice(1)" :key="`page-${index}`">
@@ -79,7 +79,7 @@ const hasNextPage = computed(() => pageIndex.value + 1 < pages.value.length)
       </li>
     </ul>
   </div>
-  <div class="page-controls">
+  <div class="page-controls" v-if="pages.length > 1">
     <NuxtLink
       :to="previousPageLink"
       v-if="showPageControls && hasPreviousPage"

@@ -9,6 +9,10 @@ import { pageFactory } from '~/factories'
 
 let wrapper: VueWrapper<typeof MarkdownPages>
 
+const tableOfContents = () => wrapper.find('.toc')
+
+const pageCounter = () => wrapper.find('.counter')
+
 const previousPageLink = () => wrapper.find('[data-testid="previous-page"]')
 
 const nextPageLink = () => wrapper.find('[data-testid="next-page"]')
@@ -43,6 +47,14 @@ describe('rendering', () => {
       })
     })
 
+    it('renders the table of contents', () => {
+      expect(tableOfContents().exists()).toBe(true)
+    })
+
+    it('renders the page counter', () => {
+      expect(pageCounter().exists()).toBe(true)
+    })
+
     describe('when on first page', () => {
       it('renders the first page of the post body', () => {
         expect(markdownBody().text()).toBe(pages[0].body)
@@ -71,6 +83,14 @@ describe('rendering', () => {
     it('renders the post body in a MarkdownBody', () => {
       // The pagination logic appends an extra newline
       expect(markdownBody().props().value.trimEnd()).toBe(props.value)
+    })
+
+    it('does not render the table of contents', () => {
+      expect(tableOfContents().exists()).toBe(false)
+    })
+
+    it('does not render the page counter', () => {
+      expect(pageCounter().exists()).toBe(false)
     })
 
     it('does not render the previous page link', () => {
